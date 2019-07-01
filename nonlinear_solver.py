@@ -7,8 +7,7 @@ class NewtonRahpson:
         self._elements = elements
         self.n_dof = len(nodes)*3
 
-        self.u_bc = np.zeros(self.n_dof, dtype=bool)
-        self.f_bc = np.zeros(self.n_dof, dtype=bool)
+        self._u_bc = np.zeros(self.n_dof, dtype=bool)
 
         self.u = np.zeros(self.n_dof)
         self.f = np.zeros(self.n_dof)
@@ -17,6 +16,7 @@ class NewtonRahpson:
         self._fint = np.zeros(self.n_dof)
 
         self.tol = 1e-10
+        self.assembly()
 
     # noinspection PyPep8Naming
     def solve(self):
@@ -31,6 +31,8 @@ class NewtonRahpson:
         print "The load step completed in", iteration, 'iterations'
 
     def convergence(self, du):
+        if np.sum(du**2) == 0.:
+            return 0
         return np.sqrt(np.dot(du, du))/(np.dot(self.u, self.u))
 
     def assembly(self):
@@ -40,8 +42,7 @@ class NewtonRahpson:
     # noinspection PyPep8Naming
     def _reduce(self, iteration):
         K_red = np.copy(self._Kt)
-        bc_idx = np.where(self.u_bc)[0]
-        print bc_idx
+        bc_idx = np.where(self._u_bc)[0]
         R = self.f - self._fint
         for i in range(self.n_dof):
             for l in bc_idx:
@@ -51,7 +52,7 @@ class NewtonRahpson:
                     du = 0
                 if i == l:
                     R[i] = du
-                    K_red[l, l] = 0
+                    K_red[l, l] = 1
                 else:
                     R[i] -= K_red[i, l]*du
                     K_red[i, l] = 0
@@ -61,3 +62,11 @@ class NewtonRahpson:
     def update_elements(self):
         for e in self._elements:
             e.update(self.u)
+        self._fint = self._elements[0].f_int()
+
+    def set_displacement_bc(self, nodes, components, value=0):
+        for node in nodes:
+            for comp in components:
+                idx = node*3 + comp
+                self._u_bc[idx] = True
+                self.u[idx] = value
