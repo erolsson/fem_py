@@ -12,11 +12,13 @@ class ElasticMaterial:
         C3 = self.E/2/(1+self.v)
 
         self.C = np.array([[C1, C2, C2, 0,  0,  0],
-                           [C2, C1, C1, 0,  0,  0],
+                           [C2, C1, C2, 0,  0,  0],
                            [C2, C2, C1, 0,  0,  0],
                            [0,  0,  0,  C3, 0,  0],
                            [0,  0,  0,  0,  C3, 0],
                            [0,  0,  0,  0,  0,  C3]])
+
+        self._stress = np.zeros(6)
 
     # noinspection PyPep8Naming
     def C_el(self):
@@ -26,4 +28,7 @@ class ElasticMaterial:
         return self.C
 
     def update(self, strain):
-        pass
+        self._stress = np.dot(self.C, strain)
+
+    def stress(self):
+        return self._stress

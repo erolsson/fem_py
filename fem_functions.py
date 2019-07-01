@@ -2,6 +2,7 @@ import numpy as np
 
 from elastic_material import ElasticMaterial
 
+
 # noinspection PyPep8Naming
 class GaussPoint:
     def __init__(self, coordinates, B, detJ, material):
@@ -10,32 +11,36 @@ class GaussPoint:
         self.detJ = detJ
         self.material = material
 
+
 class Node:
     def __init__(self, coordinates):
         self.coordinates = np.array(coordinates)
 
 
 class Element8:
-    def __init__(self, nodes, material):
-        self.pos = np.array([[-1, -1, -1],
-                             [1,  -1, -1],
-                             [1,   1, -1],
-                             [-1,  1, -1],
-                             [-1, -1,  1],
-                             [1,  -1,  1],
-                             [1,   1,  1],
-                             [-1,  1,  1]])
+    def __init__(self, nodes, material, material_parameters):
+        self._pos = np.array([[-1, -1, -1],
+                              [1,  -1, -1],
+                              [1,   1, -1],
+                              [-1,  1, -1],
+                              [-1, -1,  1],
+                              [1,  -1,  1],
+                              [1,   1,  1],
+                              [-1,  1,  1]])
 
-        self.nodes = nodes
-        self.gauss_points = []
+        self._nodes = nodes
+        self._gauss_points = []
+        self._K = np.zeros((24, 24))
+        self._fint = np.zeros(24)
         for i in [-1, 1]:
             for j in [-1, 1]:
                 for k in [-1, 1]:
                     coordinates = (i/np.sqrt(3), j/np.sqrt(3), k/np.sqrt(3))
                     b_matrix = self.B(*coordinates)
                     jacobian = np.linalg.det(self.J(*coordinates))
-                    self.gauss_points.append(GaussPoint(coordinates=coordinates, B=b_matrix, detJ=jacobian,
-                                                        material=material()))
+                    self._gauss_points.append(GaussPoint(coordinates=coordinates, B=b_matrix, detJ=jacobian,
+                                                         material=material(**material_parameters)))
+        self.update(np.zeros(24))
 
     # noinspection PyPep8Naming
     def B(self, xi, eta, zeta):
@@ -60,27 +65,33 @@ class Element8:
     def d_matrix(self, xi, eta, zeta):
         d = np.zeros((3, 8))
         for i in range(8):
-            d[0, i] = (1.+eta*self.pos[i, 1])*(1.+zeta*self.pos[i, 2])*self.pos[i, 0]/8
-            d[1, i] = (1.+xi*self.pos[i, 0])*(1.+zeta*self.pos[i, 2])*self.pos[i, 1]/8
-            d[2, i] = (1.+xi*self.pos[i, 0])*(1.+eta*self.pos[i, 1])*self.pos[i, 2]/8
+            d[0, i] = (1. + eta*self._pos[i, 1])*(1. + zeta*self._pos[i, 2])*self._pos[i, 0]/8
+            d[1, i] = (1. + xi*self._pos[i, 0])*(1. + zeta*self._pos[i, 2])*self._pos[i, 1]/8
+            d[2, i] = (1. + xi*self._pos[i, 0])*(1. + eta*self._pos[i, 1])*self._pos[i, 2]/8
         return d
 
     # noinspection PyPep8Naming
     def J(self, xi, eta, zeta):
         pos_matrix = np.zeros((8, 3))
         for i in range(3):
-            pos_matrix[:, i] = [n.coordinates[i] for n in self.nodes]
+            pos_matrix[:, i] = [n.coordinates[i] for n in self._nodes]
         return np.dot(self.d_matrix(xi, eta, zeta), pos_matrix)
 
     def update(self, nodal_displacements):
-        for gp in self.gauss_points:
+        self._K *= 0
+        self._fint = 0
+        for gp in self._gauss_points:
             strain = np.dot(gp.B, nodal_displacements)
             gp.material.update(strain)
+            self._K += np.dot(gp.B.transpose(), np.dot(gp.material.tangent(), gp.B))*gp.detJ
+            self._fint += np.dot(gp.B.transpose(), gp.material.stress())*gp.detJ
 
     # noinspection PyPep8Naming
     def Kt(self):
+        return self._K
 
-
+    def f_int(self):
+        return self._fint
 
 
 if __name__ == '__main__':
@@ -93,5 +104,5 @@ if __name__ == '__main__':
                  Node(coordinates=[1, 1, 1]),
                  Node(coordinates=[0, 1, 1])]
 
-    element = Element8(nodes=node_list, ElasticMaterial)
-    print element.B(0, 0, 0)
+    element = Element8(nodes=node_list, material=ElasticMaterial, material_parameters={'E': 1., 'v': 0.0})
+    print element.Kt()[22:, 22:]
