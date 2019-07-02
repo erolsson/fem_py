@@ -21,13 +21,15 @@ class NewtonRahpson:
     # noinspection PyPep8Naming
     def solve(self):
         convergent = False
-        iteration = 1
+        iteration = 0
         while not convergent:
+            iteration = 1
             K_red, R = self._reduce(iteration)
             du = np.linalg.solve(K_red, R)
             self.u += du
             self.update_elements()
             convergent = self.convergence(du) < self.tol
+            iteration += 1
         print "The load step completed in", iteration, 'iterations'
 
     def convergence(self, du):
