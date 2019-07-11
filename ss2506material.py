@@ -9,6 +9,15 @@ def vector_det(a):
     return a[0]*(a[1]*a[2] - a[5]**2) - a[3]*(a[3]*a[2]-a[5]*a[4]) + a[4]*(a[1]*a[4]-a[3]*a[5])
 
 
+def matrix_contract(a, b):
+    return np.array([a[0]*b[0] + a[3]*b[3] + a[4]*b[4],
+                     a[1]*b[1] + a[3]*b[3] + a[5]*b[5],
+                     a[2]*b[2] + a[4]*b[4] + a[5]*b[5],
+                     a[0]*b[3] + a[3]*b[1] + a[4]*b[5],
+                     a[0]*b[4] + a[4]*b[2] + a[3]*b[5],
+                     a[1]*b[5] + a[3]*b[4] + a[5]*b[2]])
+
+
 class SS2506:
     # noinspection PyPep8Naming
     J = np.array([[2./3,  -1./3, -1./3, 0,    0,    0],
@@ -20,6 +29,8 @@ class SS2506:
 
     E3 = np.zeros((6, 6))
     E3[0:3, 0:3] = np.ones((3, 3))
+
+    I3 = np.array([1, 1, 1, 0, 0, 0])
 
     # noinspection PyPep8Naming
     def __init__(self, E, v, a, dV, R_params, sy0_au, fM):
@@ -74,7 +85,7 @@ class SS2506:
         # Calculating trial stress
         st = self._stress + np.dot(self.D_el, de)
         # Check if phase transformations occur
-        phase_transformations = self._h(st) > 0
+        phase_transformations = self._h(st, self._fM) > 0
 
         plastic = False
         elastic = not phase_transformations and not plastic
@@ -83,28 +94,45 @@ class SS2506:
             self._stress = st
             self.D_alg = self.D_el
         else:
-            st_dev = st - np.sum(st[0:3])/3
+            st_dev = np.copy(st)
+            st_dev[0:3] = st[0:3] - np.sum(st[0:3])/3
             st_eq = np.sqrt(3./2*matrix_double_contract(st_dev - self._alpha, st_dev - self._alpha))
             s2 = st
 
-            B =
-
             if not plastic:
-                # Newton - Rahpson algorithm for determining the increase in martensite fraction dfM
-                residual = 1e99
-                dfM = 0
-                while residual > 1e-9:
-                    s_eq_2 = (st_eq - 3*self.G*self.R1*dfM)/(1+3*self.G*self.R2/self.sy0_au*dfM)
-                    RA = self.R1 + self.R2*s_eq_2/self.sy0_au
-                    s2 = (1-3*self.G*RA*dfM/st_eq)*(st_dev - self._alpha) - self._alpha
-                    s2[0:3] += self.K*self.dV*dfM
+                # Newton - Rahpson algorithm for determining the increase in martensite fraction DfM
+                dDfM = 1e99
+                DfM = 0
+                while abs(dDfM) > 1e-9:
+                    # Equivalent stress at time (2)
+                    s2_eq = (st_eq - 3*self.G*self.R1*DfM)/(1+3*self.G*self.R2/self.sy0_au*DfM)
 
-                    dhddfm = self.k*np.exp(-self.k*(self.Ms + self._M_stress(s2) + self.Mss - self.T)) - 1
+                    RA = self.R1 + self.R2*s2_eq/self.sy0_au
 
-                    dfM -= self._h(s2)/dhddfm
-                    residual = dfM/(dfM + self._fM)
+                    # Deviatoric stress at time (2)
+                    s2_dev = (1-3*self.G*RA*DfM/st_eq)*(st_dev - self._alpha) + self._alpha
 
-                self._fM += dfM
+                    #  Stress at time 2
+                    s2 = np.copy(s2_dev)
+                    s2[0:3] += (np.sum(st[0:3]) - self.K*self.dV*DfM)/3
+
+                    # B - tensor derivative of Mstress due to sigma_ij
+                    F = self.k*np.exp(-self.k*(self.Ms + self._M_stress(s2) + self.Mss - self.T))
+                    B = (self.a1*self.I3
+                         + self.a2*3./2*s2_dev/s2_eq
+                         + self.a3*(matrix_contract(s2_dev, s2_dev) - 2./9*s2_eq*self.I3))
+
+                    # Derivative of RA with respect to dFM
+                    dRAdDfM = (3*self.G*self.R2*(self.R2*st_eq + self.R1*self.sy0_au)
+                               / (3*self.G*self.R2*DfM + self.sy0_au)**2)
+
+                    ds2dDfM = -3*self.G*(RA/st_eq + DfM/st_eq*dRAdDfM)*(st_dev - self._alpha) - self.K*self.dV*self.I3/3
+
+                    dhddfM = F*matrix_double_contract(B, ds2dDfM) - 1
+                    dDfM = self._h(s2, self._fM + DfM)/dhddfM
+                    DfM -= dDfM
+
+                self._fM += DfM
                 self._stress = s2
 
             else:
@@ -114,8 +142,8 @@ class SS2506:
         self._strain = strain
     # noinspection PyPep8Naming
 
-    def _h(self, s):
-        return 1. - np.exp(-self.k*(self.Ms + self._M_stress(s) + self.Mss - self.T)) - self._fM
+    def _h(self, s, fM):
+        return 1. - np.exp(-self.k*(self.Ms + self._M_stress(s) + self.Mss - self.T)) - fM
 
     # noinspection PyPep8Naming
     def _M_stress(self, s):

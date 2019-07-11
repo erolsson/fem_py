@@ -29,8 +29,7 @@ class NewtonRahpson:
             self.update_elements()
             convergent = self.convergence(du) < self.tol
             iteration += 1
-            print iteration, self.convergence(du)
-        print "The load step completed in", iteration, 'iterations'
+        print "The load step completed in", iteration, 'iterations', self._elements[0]._gauss_points[0].material._fM
 
     def convergence(self, du):
         if np.sum(du**2) == 0.:
