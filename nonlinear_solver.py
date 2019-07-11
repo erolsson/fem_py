@@ -23,13 +23,13 @@ class NewtonRahpson:
         convergent = False
         iteration = 0
         while not convergent:
-            iteration = 1
             K_red, R = self._reduce(iteration)
             du = np.linalg.solve(K_red, R)
             self.u += du
             self.update_elements()
             convergent = self.convergence(du) < self.tol
             iteration += 1
+            print iteration, self.convergence(du)
         print "The load step completed in", iteration, 'iterations'
 
     def convergence(self, du):
