@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 import matplotlib
 
 from fem_functions import Node, Element8
-# from elastic_material import ElasticMaterial
-from ss2506material import SS2506
+from materials.SS2506 import test_material
+from transformation_material import TransformationMaterial
 from nonlinear_solver import NewtonRahpson
 
 matplotlib.style.use('classic')
@@ -16,7 +16,9 @@ plt.rcParams['text.latex.preamble'] = [r"\usepackage{amsmath}"]
 plt.rc('font', **{'family': 'serif', 'serif': ['Computer Modern Roman'],
                   'monospace': ['Computer Modern Typewriter']})
 
-if __name__ == '__main__':
+
+def one_element_simulation(material_parameters, increments, exx=None, eyy=None, ezz=None, pxx=None, pyy=None, pzz=None,
+                           **_):
     node_list = [Node(coordinates=[0, 0, 0]),
                  Node(coordinates=[1, 0, 0]),
                  Node(coordinates=[1, 1, 0]),
@@ -25,31 +27,55 @@ if __name__ == '__main__':
                  Node(coordinates=[1, 0, 1]),
                  Node(coordinates=[1, 1, 1]),
                  Node(coordinates=[0, 1, 1])]
-    SS2506(E=200e3, v=0.3, a=[0.056, 0.028, 0.], dV=0.037, R_params=[0.02, 0.02], sy0_au=400, fM=0.8)
-    element = Element8(nodes=node_list, material=SS2506,
-                       material_parameters={'E': 200e3, 'v': 0.3,
-                                            'a': [0.056, 0.028, 0.],
-                                            'dV': 0.037, 'R_params': [0.02, 0.02], 'sy0_au': 400,
-                                            'fM': 0.8})
+
+    element = Element8(nodes=node_list, material=TransformationMaterial,
+                       material_parameters={'parameters': material_parameters, 'fM': 0.8})
 
     solver = NewtonRahpson(node_list, [element])
     solver.set_displacement_bc(nodes=[0, 3, 4, 7], components=[0])
     solver.set_displacement_bc(nodes=[0, 1, 4, 5], components=[1])
     solver.set_displacement_bc(nodes=[0, 1, 2, 3], components=[2])
-    s_max = 2000
-    nodal_forces = np.linspace(0, s_max/4, 100)
-    uz = 0*nodal_forces
-    ux = 0*nodal_forces
-    for i, f in enumerate(nodal_forces):
-        solver.f[14] = f
-        solver.f[17] = f
-        solver.f[20] = f
-        solver.f[23] = f
-        solver.solve()
-        uz[i] = solver.u[20]
-        ux[i] = solver.u[18]
 
-    plt.plot(uz, nodal_forces*4)
+    strains = np.zeros((increments, 3))
+    stresses = np.zeros((increments, 3))
+
+    old_exx = 0
+    old_eyy = 0
+    old_ezz = 0
+
+    for i in range(increments):
+        if exx is not None:
+            solver.set_displacement_bc(nodes=[1, 2, 5, 6], components=[0], value=exx[i, 1] - old_exx)
+            old_exx = exx[i, 1]
+        if eyy is not None:
+            solver.set_displacement_bc(nodes=[2, 3, 6, 7], components=[1], value=eyy[i, 1] - old_eyy)
+            old_eyy = eyy[i, 1]
+        if ezz is not None:
+            solver.set_displacement_bc(nodes=[4, 5, 6, 7], components=[2], value=ezz[i, 1] - old_ezz)
+            old_ezz = ezz[i, 1]
+
+        if pxx is not None:
+            solver.set_displacement_bc(nodes=[1, 2, 5, 6], components=[0], value=pxx[i, 1]/4)
+        if pyy is not None:
+            solver.set_displacement_bc(nodes=[2, 3, 6, 7], components=[1], value=pyy[i, 1]/4)
+        if pzz is not None:
+            solver.set_displacement_bc(nodes=[4, 5, 6, 7], components=[2], value=pzz[i, 1]/4)
+
+        solver.solve()
+        for comp in range(3):
+            strains[i, comp] = solver.u[6*3 + comp]
+            stresses[i, comp] = solver.reaction_forces()[6*3 + comp]*4
+    return strains, stresses
+
+
+if __name__ == '__main__':
+    time = np.linspace(0., 1., 1000)
+    strain_z = np.zeros((1000, 2))
+    strain_z[:, 0] = time
+    strain_z[:, 1] = 0.02*np.sin(2*np.pi*time)
+    e, s = one_element_simulation(1000, test_material, ezz=strain_z)
+
+    plt.plot(e[:, 2], s[:, 2])
     plt.figure()
-    plt.plot(uz, ux)
+    plt.plot(e[:, 2], e[:, 0])
     plt.show()
