@@ -55,11 +55,11 @@ def one_element_simulation(material_parameters, increments, exx=None, eyy=None, 
             old_ezz = ezz[i, 1]
 
         if pxx is not None:
-            solver.set_displacement_bc(nodes=[1, 2, 5, 6], components=[0], value=pxx[i, 1]/4)
+            solver.set_force_bc(nodes=[1, 2, 5, 6], components=[0], value=pxx[i, 1]/4)
         if pyy is not None:
-            solver.set_displacement_bc(nodes=[2, 3, 6, 7], components=[1], value=pyy[i, 1]/4)
+            solver.set_force_bc(nodes=[2, 3, 6, 7], components=[1], value=pyy[i, 1]/4)
         if pzz is not None:
-            solver.set_displacement_bc(nodes=[4, 5, 6, 7], components=[2], value=pzz[i, 1]/4)
+            solver.set_force_bc(nodes=[4, 5, 6, 7], components=[2], value=pzz[i, 1]/4)
 
         solver.solve()
         for comp in range(3):

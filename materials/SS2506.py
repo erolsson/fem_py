@@ -40,5 +40,7 @@ class ElasticPlasticTransformMaterial:
         self.s_lim = 485.
 
 
-test_material = ElasticPlasticTransformMaterial(E=200e3, v=0.3, sy0=600, Q=200, b=100, Cm=np.array([10000.]),
-                                                gamma_m=np.array([1.]), a=[0., 0., 0.])
+test_material = ElasticPlasticTransformMaterial(E=200e3, v=0.3, sy0=500920., Q=180., b=100.,
+                                                Cm=np.array([135e3, 700e3, 50e3]),
+                                                gamma_m=np.array([950., 500., 50.]), a=[0.056, 0., 0.])
+

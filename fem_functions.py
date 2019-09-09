@@ -80,9 +80,13 @@ class Element8:
     def update(self, nodal_displacements):
         self._K *= 0
         self._fint = 0
-        for gp in self._gauss_points:
+        B21 = np.zeros(3)
+        B24 = np.zeros(3)
+        for i, gp in enumerate(self._gauss_points):
             strain = np.dot(gp.B, nodal_displacements)
             gp.material.update(strain)
+            B21 += gp.B[[2, 4, 5], 20]**2
+            B24 += gp.B[[2, 4, 5], 23]**2
             self._K += np.dot(gp.B.transpose(), np.dot(gp.material.tangent(), gp.B))*gp.detJ
             self._fint += np.dot(gp.B.transpose(), gp.material.stress())*gp.detJ
 

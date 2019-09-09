@@ -15,7 +15,7 @@ class NewtonRahpson:
         self._Kt = np.zeros((self.n_dof, self.n_dof))
         self._fint = np.zeros(self.n_dof)
 
-        self.tol = 1e-10
+        self.tol = 1e-12
         self.assembly()
 
     # noinspection PyPep8Naming
@@ -25,12 +25,14 @@ class NewtonRahpson:
         while not convergent:
             K_red, R = self._reduce(iteration)
             du = np.linalg.solve(K_red, R)
-            self.u += du
-            self.update_elements()
+
             convergent = self.convergence(du) < self.tol
+            if not convergent:
+                self.u += du
+                self.update_elements()
             iteration += 1
             print "iteration", iteration, ", residual", self.convergence(du)
-        print "The load step completed in", iteration, 'iterations', self._elements[0]._gauss_points[0].material._fM
+        print "The load step completed in", iteration, 'iterations'
 
     @staticmethod
     def convergence(du):

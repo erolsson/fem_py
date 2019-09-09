@@ -1,3 +1,4 @@
+import os
 import pickle
 import sys
 
@@ -104,7 +105,7 @@ comp = model.StaticStep(name='step',
                         initialInc=1E-5*time_period,
                         maxNumInc=10000000,
                         minInc=1E-12*time_period,
-                        maxInc=1E-2*time_period,
+                        maxInc=1E-3*time_period,
                         nlgeom=OFF)
 
 comp.control.setValues(allowPropagation=OFF,
@@ -166,7 +167,7 @@ def create_bc(direction, e, p):
         model.Pressure(name='p' + direction + '2',
                        createStepName='step',
                        region=surf,
-                       magnitude=p,
+                       magnitude=-1.,
                        amplitude='p' + direction + direction + '_amp')
 
 
@@ -195,6 +196,9 @@ job = mdb.Job(name='oneElement',
               numCpus=1,
               numDomains=1,
               multiprocessingMode=THREADS)
+
+if os.path.exists('oneElement.lck'):
+    os.remove('oneElement.lck')
 
 job.submit()
 job.waitForCompletion()
