@@ -21,7 +21,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     typedef Eigen::Matrix<double, 6, 1> Vector6;
     double E = props[0];
     double v = props[1];
-
+    // comment
     double G = E/2/(1+v);
     double K = E/3/(1-2*v);
 
