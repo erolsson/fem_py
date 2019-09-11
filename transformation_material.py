@@ -17,7 +17,7 @@ def matrix_contract(a, b):
                      a[0]*b[4] + a[4]*b[2] + a[3]*b[5],
                      a[1]*b[5] + a[3]*b[4] + a[5]*b[2]])
 
-
+# test
 class TransformationMaterial:
     # noinspection PyPep8Naming
     J = np.array([[2./3,  -1./3, -1./3, 0,    0,    0],
