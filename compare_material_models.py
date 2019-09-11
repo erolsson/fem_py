@@ -13,7 +13,7 @@ Simulation = namedtuple('Simulation', ['model', 'label', 'color'])
 simulations = [Simulation(model=one_element_simulation, label='New', color='b'),
                Simulation(model=one_element_abaqus, label='Abaqus', color='r')]
 
-increments = 100
+increments = 1000
 
 time = np.linspace(0., 1., increments)
 strain_z = np.zeros((increments, 2))
@@ -28,7 +28,7 @@ args = {'pzz': pressure_z, 'increments': increments, 'material_parameters': test
 for simulation in simulations:
     e, s = simulation.model(**args)
     plt.figure(1)
-    plt.plot(e[:, 2], s[:, 2], '-*' + simulation.color, lw=2, label=simulation.label)
+    plt.plot(e[:, 2], s[:, 2], '-' + simulation.color, lw=2, label=simulation.label)
     plt.figure(2)
-    plt.plot(e[:, 2], e[:, 1], '-*' + simulation.color, lw=2, label=simulation.label)
+    plt.plot(e[:, 2], e[:, 1], '-' + simulation.color, lw=2, label=simulation.label)
 plt.show()

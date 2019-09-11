@@ -30,8 +30,8 @@ class ElasticPlasticTransformMaterial:
         self.a2 = a[1]
         self.a3 = a[2]
 
-        self.R1 = 0.02
-        self.R2 = 0.02
+        self.R1 = 0.0
+        self.R2 = 0.0
 
         self.dV = 0.037
         self.sy0_au = 400
@@ -42,5 +42,5 @@ class ElasticPlasticTransformMaterial:
 
 test_material = ElasticPlasticTransformMaterial(E=200e3, v=0.3, sy0=500920., Q=180., b=100.,
                                                 Cm=np.array([135e3, 700e3, 50e3]),
-                                                gamma_m=np.array([950., 500., 50.]), a=[0.056, 0., 0.])
+                                                gamma_m=np.array([950., 500., 50.]), a=[0.056, 0.028, 0.])
 

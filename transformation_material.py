@@ -83,7 +83,6 @@ class TransformationMaterial:
             st_dev[0:3] = st[0:3] - np.sum(st[0:3])/3
             st_eq = np.sqrt(3./2*matrix_double_contract(st_dev - self.alpha(), st_dev - self.alpha()))
 
-            s2 = None
             dDfM = 1e99
             DfM = 0
 
@@ -109,25 +108,22 @@ class TransformationMaterial:
             dV = self.parameters.dV
             k = self.parameters.k
             nij = None
-            Hinv = 0
-            Y = 0
             A = np.copy(self.I1)
             if not plastic:
                 # Newton - Rahpson algorithm for determining the increase in martensite fraction DfM
-                while abs(dDfM) > 1e-14:
+                transformation_res = []
+                while abs(dDfM) > 1e-15:
                     # Equivalent stress at time (2)
                     s2_eq = (st_eq - 3*G*R1*DfM)/(1+3*G*R2/sy0_au*DfM)
-
                     RA = R1 + R2*s2_eq/sy0_au
 
                     # Deviatoric stress at time (2)
                     s2_dev = (1-3*G*RA*DfM/st_eq)*(st_dev - self.alpha()) + self.alpha()
-
                     #  Stress at time 2
                     s2 = np.copy(s2_dev)
                     s2[0:3] += (np.sum(st[0:3]) - K*dV*DfM)/3
 
-                    # B - tensor derivative of Mstress due to sigma_ij
+                    # b - tensor derivative of Mstress due to sigma_ij
                     F = k*np.exp(-k*(Ms + self._M_stress(s2) + self.Mss - self.T))
                     bij = F*(a1*self.I3 + a2*3./2*s2_dev/s2_eq +
                              a3*(matrix_contract(s2_dev, s2_dev) - 2./9*s2_eq**2*self.I3))
@@ -136,11 +132,13 @@ class TransformationMaterial:
                     dRAdDfM = (3*G*R2*(R2*st_eq + R1*sy0_au)/(3*G*R2*DfM + sy0_au)**2)
 
                     ds2dDfM = -3*G*(RA/st_eq + DfM/st_eq*dRAdDfM)*(st_dev - self.alpha()) - K*dV*self.I3/3
+                    dhddfM = matrix_double_contract(bij, ds2dDfM) - 1
 
-                    dhddfM = F*matrix_double_contract(bij, ds2dDfM) - 1
                     dDfM = self._h(s2, self._fM + DfM)/dhddfM
                     DfM -= dDfM
-                    print DfM, dDfM
+                    transformation_res.append(dDfM)
+                print "transformation func converged in ", len(transformation_res), "iteration with residuals", \
+                    transformation_res
                 # Calculating the tangent
                 s2_dev_tilde = s2_dev - self.alpha()
                 nij = 1.5*s2_dev_tilde/s2_eq
@@ -228,14 +226,13 @@ class TransformationMaterial:
                 s2[0:3] += (np.sum(st[0:3]) - K*dV*DfM)/3
 
                 A += (A1 + A2 + A3)
-
             if DfM > 0:
                 A4 = 2*G*RA*np.outer(nij, bij)
                 A5 = K*dV/3*np.outer(self.I3, bij)
                 A += A4 + A5
-            self._stress = st_dev - 2*G*DL*nij - DfM*(RA*nij + 1./3*dV*self.I3)
 
-            # self.D_alg = self.D_el
+            self._stress = st - 2*G*DL*nij - DfM*(2*G*RA*nij + 1./3*K*dV*self.I3)
+            print self.stress()
             # Calculating the tangent
             A *= 2
             A[0:3, 0:3] /= 2
