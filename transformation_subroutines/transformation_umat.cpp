@@ -15,13 +15,12 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         double *dtime, double *temp, double *dtemp, double *predef, double *dpred, char *cmname, int *ndi, int *nshr,
         int *ntens, int *nstatv, const double *props, int *nprops, double *coords, double *drot, double *pnewdt,
         double *celent, double *dfgrd0, double *dfgrd1, int *noel, int *npt, int *layer, int *kspt, int *kstep,
-        int *kinc, short cmname_len)
-{
+        int *kinc, short cmname_len){
     typedef Eigen::Matrix<double, 6, 6, Eigen::RowMajor> Matrix6x6;
     typedef Eigen::Matrix<double, 6, 1> Vector6;
     double E = props[0];
     double v = props[1];
-    // comment
+
     double G = E/2/(1+v);
     double K = E/3/(1-2*v);
 
