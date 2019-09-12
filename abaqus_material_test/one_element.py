@@ -16,7 +16,7 @@ import numpy as np
 package_directory = sys.argv[-1]
 if package_directory not in sys.path:
     sys.path.append(package_directory)
-
+print package_directory
 from materials.SS2506 import ElasticPlasticTransformMaterial       # noqa
 
 with open('parameter_pickle.pkl', 'r') as parameter_pickle:
