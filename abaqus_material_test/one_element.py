@@ -87,6 +87,9 @@ if umat_file is None:
     mat1.Plastic(hardening=COMBINED, dataType=PARAMETERS, numBackstresses=backstresses,
                  table=(hardening_table, ))
     mat1.plastic.CyclicHardening(parameters=ON, table=((material.sy0, material.Q, material.b), ))
+else:
+    mat1.UserMaterial(mechanicalConstants=material.umat_parameters())
+    mat1.Depvar(n=material.umat_depvar())
 
 
 # ===========================================================================

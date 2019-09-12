@@ -39,6 +39,13 @@ class ElasticPlasticTransformMaterial:
         self.k = 0.04
         self.s_lim = 485.
 
+    @staticmethod
+    def umat_depvar():
+        return 0
+
+    def umat_parameters(self):
+        return [self.E, self.v]
+
 
 test_material = ElasticPlasticTransformMaterial(E=200e3, v=0.3, sy0=500920., Q=180., b=100.,
                                                 Cm=np.array([135e3, 700e3, 50e3]),
