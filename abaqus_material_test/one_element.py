@@ -23,6 +23,7 @@ with open('parameter_pickle.pkl', 'r') as parameter_pickle:
     exx, eyy, ezz, pxx, pyy, pzz = pickle.load(parameter_pickle)
     material = pickle.load(parameter_pickle)            # type: ElasticPlasticTransformMaterial
     time_period = pickle.load(parameter_pickle)
+    umat_file = pickle.load(parameter_pickle)
 
 backwardCompatibility.setValues(includeDeprecated=True, reportDeprecated=False)
 
@@ -74,16 +75,19 @@ part.generateMesh()
 # ==========================================================================
 
 mat1 = model.Material(name='material')
-mat1.Elastic(table=((material.E, material.v),),
-             moduli=INSTANTANEOUS)
 
-hardening_table = [material.sy0]
-backstresses = len(material.gamma_m)
-for i in range(backstresses):
-    hardening_table += [material.Cm[i], material.gamma_m[i]]
-mat1.Plastic(hardening=COMBINED, dataType=PARAMETERS, numBackstresses=backstresses,
-             table=(hardening_table, ))
-mat1.plastic.CyclicHardening(parameters=ON, table=((material.sy0, material.Q, material.b), ))
+if umat_file is None:
+    mat1.Elastic(table=((material.E, material.v),),
+                 moduli=INSTANTANEOUS)
+
+    hardening_table = [material.sy0]
+    backstresses = len(material.gamma_m)
+    for i in range(backstresses):
+        hardening_table += [material.Cm[i], material.gamma_m[i]]
+    mat1.Plastic(hardening=COMBINED, dataType=PARAMETERS, numBackstresses=backstresses,
+                 table=(hardening_table, ))
+    mat1.plastic.CyclicHardening(parameters=ON, table=((material.sy0, material.Q, material.b), ))
+
 
 # ===========================================================================
 #                                Sections
