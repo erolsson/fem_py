@@ -27,7 +27,8 @@ def one_element_abaqus(material_parameters, exx=None, eyy=None, ezz=None, pxx=No
         pickle.dump(umat_file, parameter_pickle)
 
     # Running the abaqus simulation in an external script
-    abaqus_job = Popen('abq2018 cae noGUI=' + file_directory + '/one_element.py -- ' + package_directory, shell=True)
+    abaqus_job = Popen('abq2018 cae noGUI=' + file_directory + '/one_element.py -- ' + package_directory, shell=True,
+                       executable='/bin/csh/')
     abaqus_job.wait()
     os.chdir(run_directory)
 
