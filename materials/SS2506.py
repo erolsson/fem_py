@@ -41,7 +41,7 @@ class ElasticPlasticTransformMaterial:
 
     @staticmethod
     def umat_depvar():
-        return 0
+        return 1
 
     def umat_parameters(self):
         return [self.E, self.v]
