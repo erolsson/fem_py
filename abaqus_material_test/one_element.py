@@ -198,12 +198,11 @@ model.FieldOutputRequest(name='F-Output-1',
 # ==========================================================================
 #                                 Job
 # ==========================================================================
-
-job = mdb.Job(name='oneElement',
-              model=model,
-              numCpus=1,
-              numDomains=1,
-              multiprocessingMode=THREADS)
+if umat_file is None:
+    job = mdb.Job(name='oneElement', model=model, numCpus=1, numDomains=1, multiprocessingMode=THREADS)
+else:
+    job = mdb.Job(name='oneElement', model=model, numCpus=1, numDomains=1, multiprocessingMode=THREADS,
+                  userSubroutine=umat_file)
 
 if os.path.exists('oneElement.lck'):
     os.remove('oneElement.lck')
