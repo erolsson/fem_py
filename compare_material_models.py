@@ -11,7 +11,8 @@ from materials.SS2506 import test_material
 
 Simulation = namedtuple('Simulation', ['model', 'label', 'color', 'umat_file'])
 simulations = [Simulation(model=one_element_simulation, label='New', color='b', umat_file=None),
-               Simulation(model=one_element_abaqus, label='Abaqus', color='r', umat_file='transformation_umat.o')]
+               Simulation(model=one_element_abaqus, label='Abaqus', color='r',
+                          umat_file='transformation_subroutines/transformation_umat.o')]
 
 increments = 1000
 
