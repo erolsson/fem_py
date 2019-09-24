@@ -27,6 +27,7 @@ pressure_z[:, 1] = 3000*np.sin(np.pi*time)
 args = {'pzz': pressure_z, 'increments': increments, 'material_parameters': test_material}
 
 for simulation in simulations:
+    args['umat_file'] = simulation.umat_file
     e, s = simulation.model(**args)
     plt.figure(1)
     plt.plot(e[:, 2], s[:, 2], '-' + simulation.color, lw=2, label=simulation.label)
