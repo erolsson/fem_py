@@ -21,6 +21,7 @@ public:
         // Read all lines in the file
         auto line_count(1);
         while (getline(settings_file, data_string)) {
+            std::cout << "Reading line" << std::endl;
             auto del_position = data_string.find('=');
 
             // If format is not identifier=value, throw exception
