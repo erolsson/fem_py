@@ -13,7 +13,7 @@
 #include "simulation_parameters.h"
 #include "stress_functions.h"
 
-void GETOUTDIR(char*, int);
+extern "C" void getoutdir_(char*, int);
 
 #include <unistd.h>
 #include <stdio.h>
