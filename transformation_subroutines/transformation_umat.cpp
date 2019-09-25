@@ -42,7 +42,8 @@ extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* 
     printf("Current working dir: %s\n", cwd);
     if (*lop == 0) {
         std::cout << "Reading parameters" << std::endl;
-        props = new SimulationParameters("material_parameters.par");
+        props = new SimulationParameters("/scratch/users/erik/fem_py/"
+                                         "abaqus_material_test/one_element/material_parameters.par");
     }
     else if (*lop == 3) {
         std::cout << "Cleaning up parameters" << std::endl;
