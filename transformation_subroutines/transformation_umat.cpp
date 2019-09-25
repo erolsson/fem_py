@@ -13,7 +13,7 @@
 #include "simulation_parameters.h"
 #include "stress_functions.h"
 #include "omi_for_c.h"
-extern "C" void FOR_NAME(getoutdir,GETOUTDIR) (CHNAME(outdir), int& CHLEN(outdir));
+extern "C" void FOR_NAME(getoutdir_,GETOUTDIR) (CHNAME(outdir), int& CHLEN(outdir));
 
 #include <unistd.h>
 #include <stdio.h>
@@ -40,7 +40,7 @@ extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* 
                              const int* kstep, const int* kinc) {
     char out_dir[256];
     int len ;
-    getoutdir(out_dir, len, 256);
+    getoutdir_(out_dir, len, 256);
     std::cout << out_dir << std::endl;
     if (*lop == 0) {
         std::cout << "Reading parameters" << std::endl;
