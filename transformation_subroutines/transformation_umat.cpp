@@ -13,7 +13,7 @@
 #include "simulation_parameters.h"
 #include "stress_functions.h"
 
-extern "C" void getoutdir_(char*, int);
+extern "C" void getoutdir_(char*, int*);
 
 #include <unistd.h>
 #include <stdio.h>
@@ -38,8 +38,10 @@ double ms_stress(const Eigen::Matrix<double, 6, 1>& stress, double a1, double a2
 */
 extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* time, const double* dtime,
                              const int* kstep, const int* kinc) {
-    char out_dir[100];
-    getoutdir_(out_dir, 100);
+    char out_dir[256];
+    int n;
+    getoutdir_(out_dir, &n);
+    std::cout << out_dir << std::endl;
     if (*lop == 0) {
         std::cout << "Reading parameters" << std::endl;
         props = new SimulationParameters("./material_parameters.par");
