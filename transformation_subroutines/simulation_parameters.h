@@ -44,6 +44,11 @@ public:
             parameter_map.insert(std::pair<std::string, std::string>(key, data));
             ++line_count;
         }
+        std::cout << "The following parameters are defined:" << std::endl;
+        for (auto& [key, val]: parameter_map) {
+            std::cout << key << " = " << val << std::endl;
+        }
+
         E = std::stod(parameter_map["E"]);
         v = std::stod(parameter_map["v"]);
     }
