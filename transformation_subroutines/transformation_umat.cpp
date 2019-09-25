@@ -13,7 +13,8 @@
 #include "simulation_parameters.h"
 #include "stress_functions.h"
 
-
+#include <unistd.h>
+#include <stdio.h>
 const static SimulationParameters* props;
 /*
 double yield_function(const Eigen::Matrix<double, 6, 1>& stilde, double sigma_y) {
@@ -35,7 +36,10 @@ double ms_stress(const Eigen::Matrix<double, 6, 1>& stress, double a1, double a2
 */
 extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* time, const double* dtime,
                              const int* kstep, const int* kinc) {
-    std::cout << "Current path is: "  <<  std::filesystem::current_path() << std::endl;
+    char cwd[1024];
+    chdir("/path/to/change/directory/to");
+    getcwd(cwd, sizeof(cwd));
+    printf("Current working dir: %s\n", cwd);
     if (*lop == 0) {
         std::cout << "Reading parameters" << std::endl;
         props = new SimulationParameters("material_parameters.par");
