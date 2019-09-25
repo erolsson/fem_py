@@ -38,7 +38,7 @@ double ms_stress(const Eigen::Matrix<double, 6, 1>& stress, double a1, double a2
 */
 extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* time, const double* dtime,
                              const int* kstep, const int* kinc) {
-    char out_dir[256];
+    char* out_dir = nullptr;
     int n;
     getoutdir_(out_dir, &n);
     std::cout << out_dir << std::endl;
