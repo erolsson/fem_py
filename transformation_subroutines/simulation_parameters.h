@@ -16,6 +16,8 @@ public:
     explicit SimulationParameters(const std::string& parameter_file_name) {
         std::map<std::string, std::string> parameter_map;
         std::ifstream settings_file(parameter_file_name);
+
+        std::cout << "File exists:" << settings_file.good() << std::endl;
         std::string data_string;
 
         // Read all lines in the file
