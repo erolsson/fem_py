@@ -11,7 +11,9 @@ from materials.SS2506 import test_material
 def one_element_abaqus(material_parameters, exx=None, eyy=None, ezz=None, pxx=None, pyy=None, pzz=None, time_period=1.,
                        umat_file=None, **_):
     run_directory = os.getcwd()
+    print run_directory
     file_directory = os.path.dirname(os.path.abspath(__file__))
+    print file_directory
     simulation_directory = file_directory + '/one_element/'
     material = material_parameters
 
