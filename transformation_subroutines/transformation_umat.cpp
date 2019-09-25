@@ -4,6 +4,7 @@
 
 #include "transformation_umat.h"
 
+#include <filesystem>
 #include <iostream>
 #include <vector>
 
@@ -34,6 +35,7 @@ double ms_stress(const Eigen::Matrix<double, 6, 1>& stress, double a1, double a2
 */
 extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* time, const double* dtime,
                              const int* kstep, const int* kinc) {
+    std::cout << "Current path is: "  << std::filesystem::current_path() << std::endl;
     if (*lop == 0) {
         std::cout << "Reading parameters" << std::endl;
         props = new SimulationParameters("material_parameters.par");
