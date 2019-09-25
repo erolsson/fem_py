@@ -21,6 +21,7 @@ def one_element_abaqus(material_parameters, exx=None, eyy=None, ezz=None, pxx=No
         os.makedirs(simulation_directory)
 
     os.chdir(simulation_directory)
+    print simulation_directory
 
     with open('parameter_pickle.pkl', 'w') as parameter_pickle:
         pickle.dump((exx, eyy, ezz, pxx, pyy, pzz), parameter_pickle)
