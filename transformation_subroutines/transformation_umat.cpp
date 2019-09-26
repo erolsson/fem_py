@@ -53,6 +53,9 @@ extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* 
             std::abort();
         }
     }
+    else {
+        std::cout << "par file found" << std::endl;
+    }
 
     if (*lop == 0) {
         std::cout << "Reading parameters" << std::endl;
