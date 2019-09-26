@@ -7,6 +7,8 @@
 
 extern "C" void getoutdir_(char* outdir, int&, int);
 
+extern "C" void getjobname_(char* jobname, int&, int);
+
 extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *sse, double *spd, double *scd,
                       double *rpl, double *ddsddt, double *drplde, double *drpldt, double *stran, double *dstran,
                       double *time, double *dtime, double *temp, double *dtemp, double *predef, double *dpred,

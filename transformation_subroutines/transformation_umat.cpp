@@ -37,11 +37,23 @@ double ms_stress(const Eigen::Matrix<double, 6, 1>& stress, double a1, double a2
 extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* time, const double* dtime,
                              const int* kstep, const int* kinc) {
     char out_dir_char[256];
-    int out_dir_len ;
+    int out_dir_len;
     getoutdir_(out_dir_char, out_dir_len, 256);
-    std::cout << out_dir_char << "," << out_dir_len << std::endl;
     std::string out_dir(out_dir_char, out_dir_char+out_dir_len);
-    std::cout << out_dir << std::endl;
+    std::fstream outfile(out_dir + "/material_parameters.par");
+    if (!outfile.good()) {
+        char job_name_char[256];
+        int job_name_len;
+        getjobname_(job_name_char, job_name_len, 256);
+        std::string job_name(job_name_char, job_name_char + job_name_len);
+        outfile = std::fstream(out_dir + "/" + job_name + ".par");
+        if (!outfile.good()) {
+            std::cerr << "No material_parameters.par or " << job_name << ".par in the running directory" << std::endl;
+            std::cerr << "Exiting!" << std::endl;
+            std::abort();
+        }
+    }
+
     if (*lop == 0) {
         std::cout << "Reading parameters" << std::endl;
         props = new SimulationParameters("./material_parameters.par");
