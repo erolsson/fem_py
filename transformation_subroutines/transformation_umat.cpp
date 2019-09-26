@@ -47,6 +47,7 @@ extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* 
         getjobname_(job_name_char, job_name_len, 256);
         std::string job_name(job_name_char, job_name_char + job_name_len);
         outfile = std::fstream(out_dir + "/" + job_name + ".par");
+        std::cout << "job file par found " << std::endl;
         if (!outfile.good()) {
             std::cerr << "No material_parameters.par or " << job_name << ".par in the running directory" << std::endl;
             std::cerr << "Exiting!" << std::endl;
