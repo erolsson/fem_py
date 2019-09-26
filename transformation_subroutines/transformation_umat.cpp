@@ -40,7 +40,7 @@ extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* 
     int out_dir_len;
     getoutdir_(out_dir_char, out_dir_len, 256);
     std::string out_dir(out_dir_char, out_dir_char+out_dir_len);
-    std::fstream outfile(out_dir + "/material_parameters.par");
+    std::fstream outfile(out_dir + "/oneElement.par");
     if (!outfile.good()) {
         char job_name_char[256];
         int job_name_len;
@@ -49,7 +49,7 @@ extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* 
         outfile = std::fstream(out_dir + "/" + job_name + ".par");
         std::cout << "job file par found " << std::endl;
         if (!outfile.good()) {
-            std::cerr << "No material_parameters.par or " << job_name << ".par in the running directory" << std::endl;
+            std::cerr << "No oneElement.par or " << job_name << ".par in the running directory" << std::endl;
             std::cerr << "Exiting!" << std::endl;
             std::abort();
         }
@@ -60,7 +60,7 @@ extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* 
 
     if (*lop == 0) {
         std::cout << "Reading parameters" << std::endl;
-        props = new SimulationParameters("./material_parameters.par");
+        props = new SimulationParameters("./oneElement.par");
     }
     else if (*lop == 3) {
         std::cout << "Cleaning up parameters" << std::endl;
