@@ -40,7 +40,7 @@ extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* 
     int out_dir_len;
     getoutdir_(out_dir_char, out_dir_len, 256);
     std::string out_dir(out_dir_char, out_dir_char+out_dir_len);
-    std::fstream outfile(out_dir + "/oneElement.par");
+    std::fstream outfile(out_dir + "/material_parameters.par");
     if (!outfile.good()) {
         char job_name_char[256];
         int job_name_len;
