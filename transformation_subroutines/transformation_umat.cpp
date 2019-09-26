@@ -46,6 +46,7 @@ extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* 
         int job_name_len;
         getjobname_(job_name_char, job_name_len, 256);
         std::string job_name(job_name_char, job_name_char + job_name_len);
+        std::cout << "searching for file: " << out_dir + "/" + job_name + ".par" << std::endl;
         outfile = std::fstream(out_dir + "/" + job_name + ".par");
         std::cout << "job file par found " << std::endl;
         if (!outfile.good()) {
