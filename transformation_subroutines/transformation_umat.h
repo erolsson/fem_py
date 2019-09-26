@@ -5,6 +5,8 @@
 #ifndef FEM_PY_TRANSFORMATION_UMAT_H
 #define FEM_PY_TRANSFORMATION_UMAT_H
 
+extern "C" void getoutdir_(char* outdir, int&, int);
+
 extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *sse, double *spd, double *scd,
                       double *rpl, double *ddsddt, double *drplde, double *drpldt, double *stran, double *dstran, double *time,
                       double *dtime, double *temp, double *dtemp, double *predef, double *dpred, char *cmname, int *ndi, int *nshr,
