@@ -4,6 +4,7 @@
 
 #include "transformation_umat.h"
 
+#include <experimental/filesystem>
 #include <fstream>
 #include <iostream>
 #include <vector>
@@ -14,7 +15,7 @@
 #include "stress_functions.h"
 #include "transformation_umat.h"
 
-
+namespace fs = std::experimental::filesystem;
 const static SimulationParameters* props;
 /*
 double yield_function(const Eigen::Matrix<double, 6, 1>& stilde, double sigma_y) {
@@ -40,23 +41,9 @@ extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* 
     int out_dir_len;
     getoutdir_(out_dir_char, out_dir_len, 256);
     std::string out_dir(out_dir_char, out_dir_char+out_dir_len);
-    std::fstream outfile(out_dir + "/material_parameters.par");
-    if (!outfile.good()) {
-        char job_name_char[256];
-        int job_name_len;
-        getjobname_(job_name_char, job_name_len, 256);
-        std::string job_name(job_name_char, job_name_char + job_name_len);
-        std::cout << "searching for file: " << out_dir + "/" + job_name + ".par" << std::endl;
-        outfile = std::fstream(out_dir + "/" + job_name + ".par");
-        std::cout << "job file par found " << std::endl;
-        if (!outfile.good()) {
-            std::cerr << "No oneElement.par or " << job_name << ".par in the running directory" << std::endl;
-            std::cerr << "Exiting!" << std::endl;
-            std::abort();
-        }
-    }
-    else {
-        std::cout << "par file found" << std::endl;
+
+    for (auto& iter : fs::directory_iterator(out_dir)) {
+        std::cout << iter.path() << std::endl;
     }
 
     if (*lop == 0) {
