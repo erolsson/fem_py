@@ -15,11 +15,11 @@
 #include "transformation_umat.h"
 
 const static SimulationParameters* props;
-/*
+
 double yield_function(const Eigen::Matrix<double, 6, 1>& stilde, double sigma_y) {
     return double_contract(stilde, stilde) - sigma_y*sigma_y;
 }
-
+/*
 double transformation_function(const Eigen::Matrix<double, 6, 1>& stress, double fm, double k, double Ms, double Mss,
         double T, std::array<double, 3> a) {
     return 1 - exp(k*(Ms + ms_stress(stress, )))
@@ -79,7 +79,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     double K = props->E/3/(1-2*props->v);
     // Collecting state variables
     double R = statev[0];
-    // double sy = sy0 + R;
+
+    double sy0 = props->sy0;
+    double sy = sy0 + R;
     // Vector6 back_stress;
     // back_stress << statev[1], statev[2], statev[3], statev[4], statev[5], statev[6];
     Eigen::Map<Matrix6x6> D_alg(ddsdde);
@@ -87,10 +89,11 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     D_alg = Del;
 
     Eigen::Map<Vector6> stress_vec(stress);
-    Vector6 de = Eigen::Map<Vector6>(dstran);
-    stress_vec += Del*de;           // Trial stress
+    Eigen::Map<Vector6> de(dstran);
 
-    // Vector6  stilde = deviator(st) - back_stress;
-    // bool plastic = yield_function(stilde, sy) > 0;
+    Vector6  st = stress_vec + Del*de;  // Trial stress
 
+    Vector6 stilde = deviator(st);
+    bool plastic = yield_function(stilde, sy) > 0;
+    std::cout << "plastic:" << plastic << std::endl;
 }
