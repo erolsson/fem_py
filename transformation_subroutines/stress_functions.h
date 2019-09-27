@@ -48,7 +48,7 @@ template<typename T>
 T double_contract(const Eigen::Matrix<T, 6, 1>& a, const Eigen::Matrix<T, 6, 1>& b) {
     T val = 0;
     for (unsigned i = 0; i!= 6; ++i) {
-        val += a[i] + b[i];
+        val += a[i]*b[i];
     }
     val += a[3]*b[3] + a[4]*b[4] + a[5]*b[5];
     std::cout << a << std::endl;
