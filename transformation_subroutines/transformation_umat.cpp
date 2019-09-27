@@ -77,7 +77,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
     double G = props->E/2/(1+props->v);
     double K = props->E/3/(1-2*props->v);
-    std::cout << props->E << "  " << props->v << std::endl;
     // Collecting state variables
     double R = statev[0];
     // double sy = sy0 + R;
@@ -90,7 +89,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     Eigen::Map<Vector6> s2(stress);
     Vector6 de = Eigen::Map<Vector6>(dstran);
     s2 = Del*de;           // Trial stress
-
+    std::cout << s2 << std::endl;
     // Vector6  stilde = deviator(st) - back_stress;
     // bool plastic = yield_function(stilde, sy) > 0;
 
