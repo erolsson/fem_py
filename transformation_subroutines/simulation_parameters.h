@@ -44,7 +44,7 @@ public:
             parameter_map.insert(std::pair<std::string, std::string>(key, data));
             ++line_count;
         }
-        if (! validate_parameter(parameter_map, "E", E)){
+        if (!validate_parameter(parameter_map, "E", E)){
             throw std::invalid_argument("Parameter E must be defined in " + parameter_file_name);
         }
         if (!validate_parameter(parameter_map, "v", v)) {
@@ -80,7 +80,7 @@ private:
             return false;
         }
         parameter = std::stod(parameter_iter->second);
-        return false;
+        return true;
     }
 
 };
