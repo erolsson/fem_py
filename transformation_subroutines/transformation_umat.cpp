@@ -83,6 +83,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         Vector6 nij;
         double RA = 0;
         if (plastic) {
+            std::cout << "Plastic iteration" << std::endl;
             // Calculating the increment in effective plastic strain DL
             double DL = 0;
             double dDL = 1e99;
@@ -122,6 +123,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             stress_vec -= 2*G*DL*nij;
             D_alg = Del;
         }
-
+F
     }
 }
