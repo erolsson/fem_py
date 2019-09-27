@@ -14,7 +14,6 @@
 #include "stress_functions.h"
 #include "transformation_umat.h"
 
-namespace fs = std::filesystem;
 const static SimulationParameters* props;
 /*
 double yield_function(const Eigen::Matrix<double, 6, 1>& stilde, double sigma_y) {
