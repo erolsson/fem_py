@@ -41,6 +41,7 @@ Eigen::Matrix<T, 6, 1> deviator(const Eigen::Matrix<T, 6, 1>& tensor) {
     dev[0] -= hydrostatic;
     dev[1] -= hydrostatic;
     dev[2] -= hydrostatic;
+    std::cout << dev << std::endl;
     return dev;
 }
 

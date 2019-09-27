@@ -17,7 +17,7 @@
 const static SimulationParameters* props;
 
 double yield_function(const Eigen::Matrix<double, 6, 1>& stilde, double sigma_y) {
-    return double_contract(stilde, stilde) - sigma_y*sigma_y;
+    return 3*double_contract(stilde, stilde)/2 - sigma_y*sigma_y;
 }
 /*
 double transformation_function(const Eigen::Matrix<double, 6, 1>& stress, double fm, double k, double Ms, double Mss,
