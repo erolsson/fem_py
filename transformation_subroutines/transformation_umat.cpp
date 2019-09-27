@@ -107,11 +107,11 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     D += 3*G*RA*DfM;
                 }
 
-                nij = 1.5*st/D;
+                nij = 1.5*deviator(st)/D;
                 double f = 2./3*double_contract(nij, nij) - 1;
 
-                Vector6 dnDL = -nij*dDdDL/D;
-                double dfdDL = 4./3*double_contract(nij, dnDL);
+                Vector6 dndDL = -nij*dDdDL/D;
+                double dfdDL = 4./3*double_contract(nij, dndDL);
                 if (! phase_transformations) {
                     dDL = f/dfdDL;
                     DL -= dDL;
