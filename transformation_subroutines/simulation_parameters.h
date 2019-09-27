@@ -26,8 +26,9 @@ public:
     [[nodiscard]] const double& Q() const { return data_[3]; } ;           // Maximum size of yield surface
     [[nodiscard]] const double& b() const { return data_[4]; } ;           // Growth rate of yield surface
 
-    [[nodiscard]] const double& R1() const { return data_[6+ 2*back_stresses_]; } ;
-    [[nodiscard]] const double& R2() const { return data_[7+ 2*back_stresses_]; } ;
+    [[nodiscard]] const double& R1() const { return data_[6 + 2*back_stresses_]; } ;
+    [[nodiscard]] const double& R2() const { return data_[7 + 2*back_stresses_]; } ;
+    [[nodiscard]] const double& sy0_au() const { return data_[8 + 2*back_stresses_]; } ;
 
     [[nodiscard]] bool plastic() const { return sy0() > 0; }
     [[nodiscard]] bool isotropic_hardening() const { return Q() > 0; }

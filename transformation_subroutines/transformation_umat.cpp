@@ -36,7 +36,8 @@ class State {
 public:
     explicit State(double* data) : data_(data) {}
     double& ep_eff() { return data_ [0]; }
-    double& R() { return data_ [1]; }
+    double& fM() { return  data_[1]; }
+    double& R() { return data_ [2]; }
 
 private:
     double* data_;
@@ -73,25 +74,54 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     bool plastic = params.plastic() && yield_function(stilde, sy) > 0;
     bool phase_transformations = params.strain_transformation || params.stress_transformation;
     bool elastic = !plastic && !phase_transformations;
-
+    stress_vec = st;
     if (elastic) {     // Use the trial stress as the stress and the elastic stiffness matrix as the tangent
-        stress_vec = st;
         D_alg = Del;
     }
     else {
+        double DfM = 0;
+        Vector6 nij;
+        double RA = 0;
         if (plastic) {
             // Calculating the increment in effective plastic strain DL
             double DL = 0;
             double dDL = 1e99;
-            double sy2 = params.sy0();
-            while(abs(dDL) < 1e-15) {
 
-                double R = (state.R() + params.b()*params.Q()*DL)/(1 + params.b()*DL);
+            double dsydDL = 0;
+
+            double D = 0;
+            double sy2 = sy;
+            double R2 = 0;
+            while(abs(dDL) < 1e-15) {
+                double dDdDL = 3*G;
+                D += 3*G*DL;
                 if (params.isotropic_hardening()) {
-                    sy2 += R;
+                    R2 = (state.R() + params.b()*params.Q()*DL)/(1 + params.b()*DL);
+                    sy2 = params.sy0() + R2;
+                    D = sy2;
+                    dsydDL = params.b()*(params.Q() - state.R());
+                    dDdDL += (1 + params.R2()/params.sy0_au()*DfM)*dsydDL;
+                }
+                if (phase_transformations) {
+                    RA = params.R1() + params.R2()*sy2/params.sy0_au();
+                    D += 3*G*RA*DfM;
                 }
 
+                nij = 1.5*st/D;
+                double f = 2./3*double_contract(nij, nij) - 1;
+
+                Vector6 dnDL = -nij*dDdDL/D;
+                double dfdDL = 4./3*double_contract(nij, dnDL);
+                if (! phase_transformations) {
+                    dDL = f/dfdDL;
+                    DL -= dDL;
+                }
             }
+            state.ep_eff() += DL;
+            state.R() = R2;
+            stress_vec -= 2*G*DL*nij;
+            D_alg = Del;
         }
+
     }
 }
