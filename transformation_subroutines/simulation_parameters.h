@@ -49,7 +49,7 @@ public:
         }
 
         if (validate_parameter(parameter_map, "sy0", sy0)) {
-            elastic = false;
+            plastic = true;
             if (validate_parameter(parameter_map, "Q", Q) && validate_parameter(parameter_map, "b", b)) {
                 isotropic_hardening = true;
             }
@@ -63,7 +63,7 @@ public:
     double Q;
     double b;
 
-    bool elastic = true;
+    bool plastic = false;
     bool isotropic_hardening = false;
     bool kinematic_hardening = false;
     bool stress_transformation = false;

@@ -94,6 +94,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     Vector6  st = stress_vec + Del*de;  // Trial stress
 
     Vector6 stilde = deviator(st);
-    bool plastic = yield_function(stilde, sy) > 0;
+    bool plastic = yield_function(stilde, sy) > 0 && props->plastic;
     std::cout << "plastic:" << plastic << std::endl;
 }
