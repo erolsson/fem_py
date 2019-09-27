@@ -86,9 +86,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     Matrix6x6 Del = 2*G*J + K*E3;
     D_alg = Del;
 
-    Eigen::Map<Vector6> s1(stress);
+    Eigen::Map<Vector6> stress_vec(stress);
     Vector6 de = Eigen::Map<Vector6>(dstran);
-    s1 += Del*de;           // Trial stress
+    stress_vec += Del*de;           // Trial stress
 
     // Vector6  stilde = deviator(st) - back_stress;
     // bool plastic = yield_function(stilde, sy) > 0;
