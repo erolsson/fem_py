@@ -92,7 +92,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             double D = 0;
             double sy2 = sy;
             double R2 = 0;
-            while(abs(dDL) < 1e-15) {
+            while(abs(dDL) > 1e-15) {
                 double dDdDL = 3*G;
                 D += 3*G*DL;
                 if (params.isotropic_hardening()) {
