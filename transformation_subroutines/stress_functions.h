@@ -41,7 +41,6 @@ Eigen::Matrix<T, 6, 1> deviator(const Eigen::Matrix<T, 6, 1>& tensor) {
     dev[0] -= hydrostatic;
     dev[1] -= hydrostatic;
     dev[2] -= hydrostatic;
-    std::cout << dev << std::endl;
     return dev;
 }
 
@@ -52,6 +51,8 @@ T double_contract(const Eigen::Matrix<T, 6, 1>& a, const Eigen::Matrix<T, 6, 1>&
         val += a[i] + b[i];
     }
     val += a[3]*b[3] + a[4]*b[4] + a[5]*b[5];
+    std::cout << a << std::endl;
+    std::cout << "val" << val << std::endl;
     return val;
 }
 
