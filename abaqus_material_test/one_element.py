@@ -182,24 +182,19 @@ create_bc('y', eyy, pyy)
 create_bc('z', ezz, pzz)
 
 # ==========================================================================
-#                           Output Requests
-# ==========================================================================
-model.FieldOutputRequest(name='F-Output-1',
-                         createStepName='step',
-                         frequency=1,
-                         variables=('COORD',
-                                    'U',
-                                    'S',
-                                    'E',
-                                    'RF',
-                                    'SDV'))
-
-# ==========================================================================
 #                                 Job
 # ==========================================================================
 if umat_file is None:
+    model.FieldOutputRequest(name='F-Output-1',
+                             createStepName='step',
+                             frequency=1,
+                             variables=('COORD', 'U', 'S', 'E', 'RF'))
     job = mdb.Job(name='oneElement', model=model, numCpus=1, numDomains=1, multiprocessingMode=THREADS)
 else:
+    model.FieldOutputRequest(name='F-Output-1',
+                             createStepName='step',
+                             frequency=1,
+                             variables=('COORD', 'U', 'S', 'E', 'RF', 'SDV'))
     job = mdb.Job(name='oneElement', model=model, numCpus=1, numDomains=1, multiprocessingMode=THREADS,
                   userSubroutine=umat_file)
 

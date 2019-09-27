@@ -80,8 +80,10 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     }
     else {
         double DfM = 0;
-        Vector6 nij;
         double RA = 0;
+
+        Vector6 nij;
+        Vector6 st_dev = deviator(st);
         if (plastic) {
             // Calculating the increment in effective plastic strain DL
             double DL = 0;
@@ -90,26 +92,28 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             double dsydDL = 0;
 
             double D = 0;
-            double sy2 = sy;
             double R2 = 0;
             while(abs(dDL) > 1e-15) {
+                D = params.sy0() + 3*G*DL;
                 double dDdDL = 3*G;
                 if (params.isotropic_hardening()) {
                     R2 = (state.R() + params.b()*params.Q()*DL)/(1 + params.b()*DL);
-                    sy2 = params.sy0() + R2;
-                    D = sy2;
+                    sy = params.sy0() + R2;
+                    D += R2;
                     dsydDL = params.b()*(params.Q() - state.R());
                     dDdDL += (1 + params.R2()/params.sy0_au()*DfM)*dsydDL;
                 }
 
-                D += 3*G*DL;
+                if (params.kinematic_hardening()) {
+
+                }
 
                 if (phase_transformations) {
-                    RA = params.R1() + params.R2()*sy2/params.sy0_au();
+                    RA = params.R1() + params.R2()*sy/params.sy0_au();
                     D += 3*G*RA*DfM;
                 }
 
-                nij = 1.5*deviator(st)/D;
+                nij = 1.5*st_dev/D;
                 double f = 2./3*double_contract(nij, nij) - 1;
 
                 Vector6 dndDL = -nij*dDdDL/D;
