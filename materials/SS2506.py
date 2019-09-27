@@ -44,7 +44,7 @@ class ElasticPlasticTransformMaterial:
         return 1
 
     def umat_parameters(self):
-        return []
+        return [self.E, self.v, self.sy0, self.Q, self.b, self.gamma_m.shape[0]]
 
 
 test_material = ElasticPlasticTransformMaterial(E=200e3, v=0.3, sy0=500920., Q=180., b=100.,

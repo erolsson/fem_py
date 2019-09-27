@@ -14,8 +14,6 @@
 #include "stress_functions.h"
 #include "transformation_umat.h"
 
-const static SimulationParameters* props;
-
 double yield_function(const Eigen::Matrix<double, 6, 1>& stilde, double sigma_y) {
     return 3*double_contract(stilde, stilde)/2 - sigma_y*sigma_y;
 }
@@ -33,60 +31,38 @@ double ms_stress(const Eigen::Matrix<double, 6, 1>& stress, double a1, double a2
     return m_stress;
 }
 */
-extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* time, const double* dtime,
-                             const int* kstep, const int* kinc) {
-    char out_dir_char[256];
-    int out_dir_len;
-    getoutdir_(out_dir_char, out_dir_len, 256);
-    std::string out_dir(out_dir_char, out_dir_char+out_dir_len);
 
-    char job_name_char[256];
-    int job_name_len;
-    getjobname_(job_name_char, job_name_len, 256);
-    std::string job_name(job_name_char, job_name_char + job_name_len);
-    std::string matierial_file_name = out_dir + "/" + job_name + ".par";
-    std::fstream outfile(matierial_file_name);
+class State {
+public:
+    explicit State(double* data) : data_(data) {}
+    double& ep_eff() { return data_ [0]; }
+    double& R() { return data_ [1]; }
 
-    if (!outfile.good()) {
-        matierial_file_name = out_dir + "/material_parameters.par";
-        outfile = std::fstream(matierial_file_name);
-        if (!outfile.good()) {
-            std::cerr << "No material_parameters.par or " << job_name << ".par in the running directory" << std::endl;
-            std::cerr << "Exiting!" << std::endl;
-            std::abort();
-        }
-    }
-
-    if (*lop == 0) {
-        props = new SimulationParameters(matierial_file_name);
-    }
-    else if (*lop == 3) {
-        delete props;
-    }
-}
+private:
+    double* data_;
+};
 
 extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *sse, double *spd, double *scd,
         double *rpl, double *ddsddt, double *drplde, double *drpldt, double *stran, double *dstran, double *time,
         double *dtime, double *temp, double *dtemp, double *predef, double *dpred, char *cmname, int *ndi, int *nshr,
-        int *ntens, int *nstatv, const double*, int *nprops, double *coords, double *drot, double *pnewdt,
+        int *ntens, int *nstatv, const double* props, int *nprops, double *coords, double *drot, double *pnewdt,
         double *celent, double *dfgrd0, double *dfgrd1, int *noel, int *npt, int *layer, int *kspt, int *kstep,
         int *kinc, short cmname_len) {
 
     using Matrix6x6 = Eigen::Matrix<double, 6, 6, Eigen::RowMajor>;
     using Vector6 = Eigen::Matrix<double, 6, 1>;
 
-    double G = props->E/2/(1+props->v);
-    double K = props->E/3/(1-2*props->v);
+    TransformationMaterialParameters params(props);
+    double G = params.E()/2/(1+params.v());
+    double K = params.E()/3/(1-2*params.v());
     // Collecting state variables
-    double R = statev[0];
+    State state(statev);
 
-    double sy0 = props->sy0;
-    double sy = sy0 + R;
+    double sy = params.sy0() + state.R();
     // Vector6 back_stress;
-    // back_stress << statev[1], statev[2], statev[3], statev[4], statev[5], statev[6];
+
     Eigen::Map<Matrix6x6> D_alg(ddsdde);
     Matrix6x6 Del = 2*G*J + K*E3;
-    D_alg = Del;
 
     Eigen::Map<Vector6> stress_vec(stress);
     Eigen::Map<Vector6> de(dstran);
@@ -94,7 +70,28 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     Vector6  st = stress_vec + Del*de;  // Trial stress
 
     Vector6 stilde = deviator(st);
-    bool plastic = yield_function(stilde, sy) > 0 && props->plastic;
-    std::cout << "plastic yield fn:" << yield_function(stilde, sy) << std::endl;
-    stress_vec = st;
+    bool plastic = params.plastic() && yield_function(stilde, sy) > 0;
+    bool phase_transformations = params.strain_transformation || params.stress_transformation;
+    bool elastic = !plastic && !phase_transformations;
+
+    if (elastic) {     // Use the trial stress as the stress and the elastic stiffness matrix as the tangent
+        stress_vec = st;
+        D_alg = Del;
+    }
+    else {
+        if (plastic) {
+            // Calculating the increment in effective plastic strain DL
+            double DL = 0;
+            double dDL = 1e99;
+            double sy2 = params.sy0();
+            while(abs(dDL) < 1e-15) {
+
+                double R = (state.R() + params.b()*params.Q()*DL)/(1 + params.b()*DL);
+                if (params.isotropic_hardening()) {
+                    sy2 += R;
+                }
+
+            }
+        }
+    }
 }

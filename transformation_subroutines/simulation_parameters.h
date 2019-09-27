@@ -5,80 +5,35 @@
 #ifndef SIMULATION_PARAMETERS_H
 #define SIMULATION_PARAMETERS_H
 
-#include <map>
-#include <fstream>
-#include <sstream>
-#include <string>
+#include "Eigen/Dense"
 
-
-class SimulationParameters {
+class TransformationMaterialParameters {
+private:
+    const double* data_;
+    unsigned back_stresses_ = 0;
 public:
-    explicit SimulationParameters(const std::string& parameter_file_name) {
-        std::map<std::string, std::string> parameter_map;
-        std::ifstream settings_file(parameter_file_name);
-        std::string data_string;
+    explicit TransformationMaterialParameters(const double* data):
+            data_(data), back_stresses_(static_cast<int>(data[5])) {}
 
-        // Read all lines in the file
-        auto line_count(1);
-        while (getline(settings_file, data_string)) {
-            auto del_position = data_string.find('=');
+    // Elastic parameters
+    [[nodiscard]] const double& E() const { return data_[0]; }         // Young's modulus
+    [[nodiscard]] const double& v() const { return data_[1]; }         // Poisson's ratio
 
-            // If format is not identifier=value, throw exception
-            if (del_position > data_string.size()-1) {
-                std::stringstream error_ss;
-                error_ss << "Settings parameters on line " << line_count << "has to be on the form x=data";
-                throw std::invalid_argument(error_ss.str());
-            }
+    //Plasticity
+    [[nodiscard]] const double& sy0() const { return data_[2]; } ;     // Initial yield stress
 
-            // Split string in identifier, value pair
-            std::string key = data_string.substr(0, del_position);
-            std::string data = data_string.substr(del_position+1, data_string.size() - 1 - del_position);
+    // Parameters for isostropic hardnening
+    [[nodiscard]] const double& Q() const { return data_[3]; } ;           // Maximum size of yield surface
+    [[nodiscard]] const double& b() const { return data_[4]; } ;           // Growth rate of yield surface
 
-            // If the same identifier occurs twice, throw exception
-            if (parameter_map.count(key) != 0) {
-                std::stringstream error_ss;
-                error_ss << "Parameter " << key << " on line " << line_count << " is already defined";
-                throw std::invalid_argument(error_ss.str());
-            }
+    [[nodiscard]] const double& R1() const { return data_[6+ 2*back_stresses_]; } ;
+    [[nodiscard]] const double& R2() const { return data_[7+ 2*back_stresses_]; } ;
 
-            parameter_map.insert(std::pair<std::string, std::string>(key, data));
-            ++line_count;
-        }
-        if (! validate_parameter(parameter_map, "E", E) || !validate_parameter(parameter_map, "v", v)){
-            throw std::invalid_argument("Parameters E and v must be defined in " + parameter_file_name);
-        }
-
-        if (validate_parameter(parameter_map, "sy0", sy0)) {
-            plastic = true;
-            if (validate_parameter(parameter_map, "Q", Q) && validate_parameter(parameter_map, "b", b)) {
-                isotropic_hardening = true;
-            }
-        }
-
-
-    }
-    double E;
-    double v;
-    double sy0 = 0;
-    double Q;
-    double b;
-
-    bool plastic = false;
-    bool isotropic_hardening = false;
-    bool kinematic_hardening = false;
+    [[nodiscard]] bool plastic() const { return sy0() > 0; }
+    [[nodiscard]] bool isotropic_hardening() const { return Q() > 0; }
+    [[nodiscard]] bool kinematic_hardening() const { return back_stresses_ > 0; }
     bool stress_transformation = false;
     bool strain_transformation = false;
-private:
-    static bool validate_parameter(const std::map<std::string, std::string>& parameter_map, const std::string& name,
-                                   double& parameter) {
-        auto parameter_iter = parameter_map.find(name);
-        if (parameter_iter == parameter_map.end()) {
-            parameter = 0;
-            return false;
-        }
-        parameter = std::stod(parameter_iter->second);
-        return true;
-    }
 
 };
 
