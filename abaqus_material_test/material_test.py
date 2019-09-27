@@ -11,9 +11,7 @@ from materials.SS2506 import test_material
 def one_element_abaqus(material_parameters, exx=None, eyy=None, ezz=None, pxx=None, pyy=None, pzz=None, time_period=1.,
                        umat_file=None, **_):
     run_directory = os.getcwd()
-    print run_directory
     file_directory = os.path.dirname(os.path.abspath(__file__))
-    print file_directory
     simulation_directory = file_directory + '/one_element/'
     material = material_parameters
 
@@ -49,7 +47,6 @@ if __name__ == '__main__':
     strain_z[:, 0] = time
     strain_z[:, 1] = 0.02*np.sin(2*np.pi*time)
     e, s = one_element_abaqus(material_parameters=test_material, ezz=strain_z)
-    print e, s
     plt.plot(e[:, 2], s[:, 2])
     plt.figure()
     plt.plot(e[:, 2], e[:, 0])
