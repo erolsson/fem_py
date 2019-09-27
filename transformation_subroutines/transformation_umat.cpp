@@ -123,6 +123,5 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             stress_vec -= 2*G*DL*nij;
             D_alg = Del;
         }
-F
     }
 }
