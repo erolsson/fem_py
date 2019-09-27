@@ -77,7 +77,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
     double G = props->E/2/(1+props->v);
     double K = props->E/3/(1-2*props->v);
-
+    std::cout << props->E << "  " << props->v << std::endl;
     // Collecting state variables
     double R = statev[0];
     // double sy = sy0 + R;
