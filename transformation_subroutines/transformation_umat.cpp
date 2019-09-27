@@ -58,11 +58,9 @@ extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* 
     }
 
     if (*lop == 0) {
-        std::cout << "Reading parameters" << std::endl;
         props = new SimulationParameters(matierial_file_name);
     }
     else if (*lop == 3) {
-        std::cout << "Cleaning up parameters" << std::endl;
         delete props;
     }
 }
@@ -92,6 +90,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     Eigen::Map<Vector6> s2(stress);
     Vector6 de = Eigen::Map<Vector6>(dstran);
     s2 = Del*de;           // Trial stress
+
     // Vector6  stilde = deviator(st) - back_stress;
     // bool plastic = yield_function(stilde, sy) > 0;
 

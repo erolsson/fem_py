@@ -16,14 +16,11 @@ public:
     explicit SimulationParameters(const std::string& parameter_file_name) {
         std::map<std::string, std::string> parameter_map;
         std::ifstream settings_file(parameter_file_name);
-
-        std::cout << "File exists:" << settings_file.good() << std::endl;
         std::string data_string;
 
         // Read all lines in the file
         auto line_count(1);
         while (getline(settings_file, data_string)) {
-            std::cout << "Reading line" << std::endl;
             auto del_position = data_string.find('=');
 
             // If format is not identifier=value, throw exception
@@ -47,16 +44,41 @@ public:
             parameter_map.insert(std::pair<std::string, std::string>(key, data));
             ++line_count;
         }
-        std::cout << "The following parameters are defined:" << std::endl;
-        for (auto& [key, val]: parameter_map) {
-            std::cout << key << " = " << val << std::endl;
+        if (! validate_parameter(parameter_map, "E", E) || !validate_parameter(parameter_map, "v", v)){
+            std::cerr << "Parameters E and v must be defined in " << parameter_file_name << std::endl;
+        }
+        if (validate_parameter(parameter_map, "sy0", sy0)) {
+            elastic = false;
+            if (validate_parameter(parameter_map, "Q", Q) && validate_parameter(parameter_map, "b", b)) {
+                isotropic_hardening = true;
+            }
         }
 
-        E = std::stod(parameter_map["E"]);
-        v = std::stod(parameter_map["v"]);
+
     }
     double E;
     double v;
+    double sy0 = 0;
+    double Q;
+    double b;
+
+    bool elastic = true;
+    bool isotropic_hardening = false;
+    bool kinematic_hardening = false;
+    bool stress_transformation = false;
+    bool strain_transformation = false;
+private:
+    static bool validate_parameter(const std::map<std::string, std::string>& parameter_map, const std::string& name,
+                                   double& parameter) {
+        auto parameter_iter = parameter_map.find(name);
+        if (parameter_iter == parameter_map.end()) {
+            parameter = 0;
+            return false;
+        }
+        parameter = std::stod(parameter_iter->second);
+        return false;
+    }
+
 };
 
 
