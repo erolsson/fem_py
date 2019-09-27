@@ -33,6 +33,7 @@ for simulation in simulations:
     args['umat_file'] = simulation.umat_file
     e, s = simulation.model(**args)
     plt.figure(1)
+    print e
     plt.plot(e[:, 2], s[:, 2], '-' + simulation.color, lw=2, label=simulation.label)
     plt.figure(2)
     plt.plot(e[:, 2], e[:, 1], '-' + simulation.color, lw=2, label=simulation.label)
