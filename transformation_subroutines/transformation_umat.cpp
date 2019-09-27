@@ -4,7 +4,6 @@
 
 #include "transformation_umat.h"
 
-#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <vector>
@@ -42,13 +41,26 @@ extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* 
     getoutdir_(out_dir_char, out_dir_len, 256);
     std::string out_dir(out_dir_char, out_dir_char+out_dir_len);
 
-    for (auto& iter : fs::directory_iterator(out_dir)) {
-        std::cout << iter.path() << std::endl;
+    char job_name_char[256];
+    int job_name_len;
+    getjobname_(job_name_char, job_name_len, 256);
+    std::string job_name(job_name_char, job_name_char + job_name_len);
+    std::string matierial_file_name = out_dir + "/" + job_name + ".par";
+    std::fstream outfile(matierial_file_name);
+
+    if (!outfile.good()) {
+        matierial_file_name = out_dir + "/material_parameters.par";
+        outfile = std::fstream(matierial_file_name);
+        if (!outfile.good()) {
+            std::cerr << "No material_parameters.par or " << job_name << ".par in the running directory" << std::endl;
+            std::cerr << "Exiting!" << std::endl;
+            std::abort();
+        }
     }
 
     if (*lop == 0) {
         std::cout << "Reading parameters" << std::endl;
-        props = new SimulationParameters("./oneElement.par");
+        props = new SimulationParameters(matierial_file_name);
     }
     else if (*lop == 3) {
         std::cout << "Cleaning up parameters" << std::endl;

@@ -19,6 +19,9 @@
     <facet type="Python" name="Python facet">
       <configuration sdkName="Python 2.7" />
     </facet>
+    <facet type="Python" name="Python facet">
+      <configuration sdkName="Python 2.7" />
+    </facet>
   </component>
   <component name="TestRunnerService">
     <option name="PROJECT_TEST_RUNNER" value="Unittests" />
