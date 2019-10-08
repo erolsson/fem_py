@@ -130,7 +130,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     dDL = f/dfdDL;
                     DL -= dDL;
                 }
-                std::cout << "DL=" << DL << std::endl;
             }
 
             state.ep_eff() += DL;
