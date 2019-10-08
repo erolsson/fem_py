@@ -115,6 +115,10 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 }
 
                 if (params.kinematic_hardening()) {
+                    std::cout << params.back_stresses() << ", " << std::endl;
+                    for (unsigned i = 0; i != params.back_stresses(); ++i) {
+                        std::cout << "\t" << i << ", " << params.Cm(i) << ", " << params.gamma(i) << std::endl;
+                    }
 
                 }
 
