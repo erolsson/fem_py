@@ -114,13 +114,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     dsydDL = params.b()*(params.Q() - state.R());
                     dDdDL += (1 + params.R2()/params.sy0_au()*DfM)*dsydDL;
                 }
-                std::cout << "dDdDL=" << dDdDL << std::endl;
-                std::cout << "Back stresses " << params.back_stresses() << std::endl;
+                std::cout << "R2=" << params.R2() << " sy0_au=" << params.sy0_au() << " DfM=" << DfM
+                          << " dsydDL=" << dsydDL << std::endl;
                 if (params.kinematic_hardening()) {
-                    std::cout << params.back_stresses() << ", " << std::endl;
-                    for (unsigned i = 0; i != params.back_stresses(); ++i) {
-                        std::cout << "\t" << i << ", " << params.Cm(i) << ", " << params.gamma(i) << std::endl;
-                    }
 
                 }
 
@@ -129,17 +125,13 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     D += 3*G*RA*DfM;
                 }
                 nij = 1.5*st_dev/D;
-                std::cout << "nij=" << nij << std::endl;
                 double f = 2./3*double_contract(nij, nij) - 1;
                 Vector6 dndDL = -nij*dDdDL/D;
-                std::cout << "dndDL=" << dndDL << std::endl;
                 double dfdDL = 4./3*double_contract(nij, dndDL);
-                std::cout << "dfdDL=" << dfdDL << std::endl;
                 if (! phase_transformations) {
                     dDL = f/dfdDL;
                     DL -= dDL;
                 }
-                std::cout << "DL=" << DL << std::endl;
             }
 
             state.ep_eff() += DL;
