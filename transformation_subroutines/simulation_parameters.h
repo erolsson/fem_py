@@ -25,6 +25,9 @@ public:
     // Parameters for isostropic hardnening
     [[nodiscard]] const double& Q() const { return data_[3]; } ;           // Maximum size of yield surface
     [[nodiscard]] const double& b() const { return data_[4]; } ;           // Growth rate of yield surface
+    [[nodiscard]] unsigned back_stresses() const { return back_stresses_; }
+    [[nodiscard]] const double& Cm(unsigned n) const { return data_[6 + 2*n]; }
+    [[nodiscard]] const double& gamma(unsigned n) const { return data_[6 + 2*n+1]; }
 
     [[nodiscard]] const double& R1() const { return data_[6 + 2*back_stresses_]; } ;
     [[nodiscard]] const double& R2() const { return data_[7 + 2*back_stresses_]; } ;

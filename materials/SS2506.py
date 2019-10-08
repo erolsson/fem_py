@@ -40,13 +40,20 @@ class ElasticPlasticTransformMaterial:
         self.s_lim = 485.
 
     def umat_depvar(self):
-        return 3 + self.gamma_m.shape[0]*6
+        if self.gamma_m.shape[0] > 0:
+            return 3 + (self.gamma_m.shape[0]+1)*6
+        return 3
 
     def umat_parameters(self):
-        return [self.E, self.v, self.sy0, self.Q, self.b, self.gamma_m.shape[0]]
+        kinematic_hardening_params = []
+        for C, g in zip(self.Cm, self.gamma_m):
+            kinematic_hardening_params += [C, g]
+        return [self.E, self.v, self.sy0, self.Q, self.b, self.gamma_m.shape[0]] + kinematic_hardening_params
 
 
 test_material = ElasticPlasticTransformMaterial(E=200e3, v=0.3, sy0=920., Q=180., b=100.,
                                                 Cm=np.array([135e3, 700e3, 50e3]),
                                                 gamma_m=np.array([950., 500., 50.]), a=[0.056, 0.028, 0.])
 
+if __name__ == '__main__':
+    print test_material.umat_parameters()

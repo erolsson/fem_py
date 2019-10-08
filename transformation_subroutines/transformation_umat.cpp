@@ -34,13 +34,23 @@ double ms_stress(const Eigen::Matrix<double, 6, 1>& stress, double a1, double a2
 
 class State {
 public:
-    explicit State(double* data) : data_(data) {}
+    using Vector6 = Eigen::Matrix<double, 6, 1>;
+    explicit State(double* data, unsigned back_stresses) : data_(data), back_stresses_(back_stresses) {}
     double& ep_eff() { return data_ [0]; }
     double& fM() { return  data_[1]; }
     double& R() { return data_ [2]; }
 
+    Eigen::Map<Vector6> back_stress_vector(unsigned n) {
+        return Eigen::Map<Vector6>(data_ + 3 + (n-1)*6);
+    }
+
+    Eigen::Map<Vector6> total_back_stress(unsigned n) {
+        return Eigen::Map<Vector6>(data_ + 3 + back_stresses_*6);
+    }
+
 private:
     double* data_;
+    unsigned back_stresses_;
 };
 
 extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *sse, double *spd, double *scd,
@@ -57,7 +67,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     double G = params.E()/2/(1+params.v());
     double K = params.E()/3/(1-2*params.v());
     // Collecting state variables
-    State state(statev);
+    State state(statev, params.back_stresses());
 
     double sy = params.sy0() + state.R();
     // Vector6 back_stress;
