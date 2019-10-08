@@ -112,10 +112,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     sy = params.sy0() + R2;
                     D += R2;
                     dsydDL = params.b()*(params.Q() - state.R());
-                    dDdDL += (1 + params.R2()/params.sy0_au()*DfM)*dsydDL;
                 }
-                std::cout << "R2=" << params.R2() << " sy0_au=" << params.sy0_au() << " DfM=" << DfM
-                          << " dsydDL=" << dsydDL << std::endl;
+
                 if (params.kinematic_hardening()) {
 
                 }
@@ -123,6 +121,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 if (phase_transformations) {
                     RA = params.R1() + params.R2()*sy/params.sy0_au();
                     D += 3*G*RA*DfM;
+                    dDdDL += (1 + params.R2()/params.sy0_au()*DfM)*dsydDL;
                 }
                 nij = 1.5*st_dev/D;
                 double f = 2./3*double_contract(nij, nij) - 1;
