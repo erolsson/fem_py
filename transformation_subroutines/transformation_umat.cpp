@@ -126,12 +126,14 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     RA = params.R1() + params.R2()*sy/params.sy0_au();
                     D += 3*G*RA*DfM;
                 }
-
+                std::cout << "D" << D << std::endl;
                 nij = 1.5*st_dev/D;
                 double f = 2./3*double_contract(nij, nij) - 1;
-
+                std::cout << "f2=" << f << std::endl;
                 Vector6 dndDL = -nij*dDdDL/D;
+                std::cout << "dndDK=" << dndDL << std::endl;
                 double dfdDL = 4./3*double_contract(nij, dndDL);
+                std::cout << "dfdDL=" << dfdDL << std::endl;
                 if (! phase_transformations) {
                     dDL = f/dfdDL;
                     DL -= dDL;
