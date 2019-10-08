@@ -113,7 +113,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     dsydDL = params.b()*(params.Q() - state.R());
                     dDdDL += (1 + params.R2()/params.sy0_au()*DfM)*dsydDL;
                 }
-
+                std::cout << "Back stresses " << params.back_stresses() << std::endl;
                 if (params.kinematic_hardening()) {
                     std::cout << params.back_stresses() << ", " << std::endl;
                     for (unsigned i = 0; i != params.back_stresses(); ++i) {
@@ -137,7 +137,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     DL -= dDL;
                 }
             }
-            std::cout << "Plastic multiplier in increment is DL" << std::endl;
             state.ep_eff() += DL;
             state.R() = R2;
             stress_vec -= 2*G*DL*nij;
