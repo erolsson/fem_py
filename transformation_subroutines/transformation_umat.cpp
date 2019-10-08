@@ -106,7 +106,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             double R2 = 0;
             while(abs(dDL) > 1e-15) {
                 D = params.sy0() + 3*G*DL;
-                double dDdDL = 3*G;
+                double dDdDL = 3*G + dsydDL;
                 if (params.isotropic_hardening()) {
                     R2 = (state.R() + params.b()*params.Q()*DL)/(1 + params.b()*DL);
                     sy = params.sy0() + R2;
@@ -120,7 +120,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 if (phase_transformations) {
                     RA = params.R1() + params.R2()*sy/params.sy0_au();
                     D += 3*G*RA*DfM;
-                    dDdDL += (1 + params.R2()/params.sy0_au()*DfM)*dsydDL;
+                    dDdDL += params.R2()/params.sy0_au()*DfM*dsydDL;
                 }
                 nij = 1.5*st_dev/D;
                 double f = 2./3*double_contract(nij, nij) - 1;
