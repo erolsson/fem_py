@@ -104,25 +104,45 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
             double D = 0;
             double R2 = 0;
+            Eigen::VectorXd theta = Eigen::VectorXd::Zero(params.back_stresses());
+            Eigen::VectorXd Am = Eigen::VectorXd::Zero(params.back_stresses());
             while(abs(dDL) > 1e-15) {
+                Vector6 Cij = st;
                 D = params.sy0() + 3*G*DL;
+
+                Vector6 dCijdDL = Vector6::Zero();
                 double dDdDL = 3*G + dsydDL;
+
                 if (params.isotropic_hardening()) {
                     R2 = (state.R() + params.b()*params.Q()*DL)/(1 + params.b()*DL);
                     sy = params.sy0() + R2;
                     D += R2;
                     dsydDL = params.b()*(params.Q() - state.R());
                 }
-                if (params.kinematic_hardening()) {
 
+                if (params.kinematic_hardening()) {
+                    for (unsigned i=0; i != params.back_stresses(); ++i) {
+                        double Cm = params.Cm(i);
+                        double gm = params.gamma(i);
+
+                        theta[i] = 1./(1+gm*DL);
+                        Am[i] = gm/((1+gm*DL)*(1+gm*DL));
+
+                        Cij -= theta[i]*state.back_stress_vector(i);
+                        D += DL*theta[i]*Cm;
+
+                        dCijdDL += Am*state.back_stress_vector(i);
+                        dDdDL += theta*theta*Cm;
+                    }
                 }
 
+                nij = 1.5*Cij/D;
                 if (phase_transformations) {
                     RA = params.R1() + params.R2()*sy/params.sy0_au();
                     D += 3*G*RA*DfM;
                     dDdDL += params.R2()/params.sy0_au()*DfM*dsydDL;
                 }
-                nij = 1.5*st_dev/D;
+
                 double f = 2./3*double_contract(nij, nij) - 1;
                 Vector6 dndDL = -nij*dDdDL/D;
                 double dfdDL = 4./3*double_contract(nij, dndDL);
