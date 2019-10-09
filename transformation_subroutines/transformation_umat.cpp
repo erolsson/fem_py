@@ -132,7 +132,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                         D += DL*theta[i]*Cm;
 
                         dCijdDL += Am*state.back_stress_vector(i);
-                        dDdDL += theta*theta*Cm;
+                        dDdDL += theta[i]*theta[i]*Cm;
                     }
                 }
 
