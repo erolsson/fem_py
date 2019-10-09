@@ -41,7 +41,7 @@ public:
     double& R() { return data_ [2]; }
 
     Eigen::Map<Vector6> back_stress_vector(unsigned n) {
-        std::cout << "Reading back stress " << i << std::endl;
+        std::cout << "Reading back stress " << n << std::endl;
         return Eigen::Map<Vector6>(data_ + 3 + (n-1)*6);
     }
 
