@@ -44,7 +44,7 @@ public:
         return Eigen::Map<Vector6>(&data_[3 + n*6]);
     }
 
-    Eigen::Map<Vector6> total_back_stress(unsigned n) {
+    Eigen::Map<Vector6> total_back_stress() {
         return Eigen::Map<Vector6>(data_ + 3 + back_stresses_*6);
     }
 
@@ -81,6 +81,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     Vector6  st = stress_vec + Del*de;  // Trial stress
 
     Vector6 stilde = deviator(st);
+    if (params.kinematic_hardening()) {
+        stilde -= state.total_back_stress();
+    }
     bool plastic = params.plastic() && yield_function(stilde, sy) > 0;
     bool phase_transformations = params.strain_transformation || params.stress_transformation;
     phase_transformations = false;
