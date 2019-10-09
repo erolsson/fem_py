@@ -41,7 +41,6 @@ public:
     double& R() { return data_ [2]; }
 
     Eigen::Map<Vector6> back_stress_vector(unsigned n) {
-        std::cout << "Reading back stress " << n << std::endl;
         return Eigen::Map<Vector6>(data_ + 3 + (n-1)*6);
     }
 
@@ -130,6 +129,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                         Am[i] = gm/((1+gm*DL)*(1+gm*DL));
 
                         Cij -= theta[i]*state.back_stress_vector(i);
+                        std::cout << Cij << std::endl;
                         D += DL*theta[i]*Cm;
                         std::cout << "Cij=" << Cij << " D=" << D << std::endl;
                         dCijdDL += Am[i]*state.back_stress_vector(i);
