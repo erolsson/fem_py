@@ -158,6 +158,16 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             state.ep_eff() += DL;
             state.R() = R2;
             stress_vec -= 2*G*DL*nij;
+
+            // Updating back stresses
+            if (params.kinematic_hardening()) {
+                state.total_back_stress() *= 0;
+                for (unsigned i = 0; i != params.back_stresses(); ++i) {
+                    state.back_stress_vector(i) += 2./3*params.Cm(i)*DL*nij;
+                    state.back_stress_vector(i) /= (1 + params.gamma(i)*DL);
+                    state.total_back_stress() += state.back_stress_vector(i);
+                }
+            }
             D_alg = Del;
         }
     }
