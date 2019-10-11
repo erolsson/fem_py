@@ -110,7 +110,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             Eigen::VectorXd theta = Eigen::VectorXd::Zero(params.back_stresses());
             Eigen::VectorXd Am = Eigen::VectorXd::Zero(params.back_stresses());
             while(abs(dDL) > 1e-15) {
-                Vector6 Cij = st;
+                Vector6 Cij = st_dev;
                 D = params.sy0() + 3*G*DL;
 
                 Vector6 dCijdDL = Vector6::Zero();
