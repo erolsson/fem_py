@@ -45,7 +45,7 @@ public:
     }
 
     Eigen::Map<Vector6> total_back_stress() {
-        return Eigen::Map<Vector6>(data_ + 3 + back_stresses_*6);
+        return Eigen::Map<Vector6>(&data_[3 + back_stresses_*6]);
     }
 
 private:
@@ -163,7 +163,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             if (params.kinematic_hardening()) {
                 state.total_back_stress() *= 0;
                 for (unsigned i = 0; i != params.back_stresses(); ++i) {
-                    std::cout << "DL=" << DL << "  nij=" << nij << std::endl;
+                    std::cout << i << ", back_stress=" << state.back_stress_vector(i) << std::endl;
                     state.back_stress_vector(i) += 2./3*params.Cm(i)*DL*nij;
                     state.back_stress_vector(i) /= (1 + params.gamma(i)*DL);
                     state.total_back_stress() += state.back_stress_vector(i);
