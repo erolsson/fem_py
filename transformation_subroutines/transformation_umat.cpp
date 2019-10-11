@@ -131,7 +131,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                         theta[i] = 1./(1+gm*DL);
                         Am[i] = gm/((1+gm*DL)*(1+gm*DL));
                         Cij -= theta[i]*state.back_stress_vector(i);
-                        std::cout << st_dev[2] << ", " << Cij[2] << std::endl;
                         D += DL*theta[i]*Cm;
 
                         dCijdDL += Am[i]*state.back_stress_vector(i);
@@ -163,10 +162,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             if (params.kinematic_hardening()) {
                 state.total_back_stress() *= 0;
                 for (unsigned i = 0; i != params.back_stresses(); ++i) {
-                    std::cout << i << ", old back_stress=" << state.back_stress_vector(i) << std::endl;
                     state.back_stress_vector(i) += 2./3*params.Cm(i)*DL*nij;
                     state.back_stress_vector(i) /= (1 + params.gamma(i)*DL);
-                    std::cout << i << ", old back_stress=" << state.back_stress_vector(i) << std::endl;
                     state.total_back_stress() += state.back_stress_vector(i);
                 }
             }

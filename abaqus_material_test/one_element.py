@@ -111,7 +111,7 @@ comp = model.StaticStep(name='step',
                         initialInc=1E-5*time_period,
                         maxNumInc=10000000,
                         minInc=1E-12*time_period,
-                        maxInc=1E-3*time_period,
+                        # maxInc=1E-3*time_period,
                         nlgeom=OFF)
 
 comp.control.setValues(allowPropagation=OFF,
