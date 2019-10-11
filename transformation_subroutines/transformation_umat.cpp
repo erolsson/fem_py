@@ -130,8 +130,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
                         theta[i] = 1./(1+gm*DL);
                         Am[i] = gm/((1+gm*DL)*(1+gm*DL));
-
                         Cij -= theta[i]*state.back_stress_vector(i);
+                        std::cout << st_dev[2] << ", " << Cij[2] << std::endl;
                         D += DL*theta[i]*Cm;
 
                         dCijdDL += Am[i]*state.back_stress_vector(i);
