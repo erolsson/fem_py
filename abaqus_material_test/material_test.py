@@ -25,7 +25,7 @@ def one_element_abaqus(material_parameters, exx=None, eyy=None, ezz=None, pxx=No
         pickle.dump(material, parameter_pickle)
         pickle.dump(time_period, parameter_pickle)
         pickle.dump(umat_file, parameter_pickle)
-        pickle.dump(simulation_name)
+        pickle.dump(simulation_name, parameter_pickle)
 
     # Running the abaqus simulation in an external script
     abaqus_job = Popen('abaqus cae noGUI=' + file_directory + '/one_element.py -- ' + package_directory, shell=True)
