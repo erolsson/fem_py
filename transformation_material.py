@@ -195,7 +195,6 @@ class TransformationMaterial:
                         raise NotImplemented
                 # Updating effective plastic strain
                 self._ep_eff += DL
-                H = 0
 
                 # updating isostropic hardening
                 self._R = R
