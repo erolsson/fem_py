@@ -11,9 +11,9 @@ from one_element_test import one_element_simulation
 
 from materials.SS2506 import test_material
 
-Simulation = namedtuple('Simulation', ['model', 'label', 'color', 'umat_file'])
-simulations = [Simulation(model=one_element_abaqus, label='New', color='b', umat_file=None),
-               Simulation(model=one_element_abaqus, label='Abaqus', color='r',
+Simulation = namedtuple('Simulation', ['model', 'label', 'color', 'umat_file', 'name'])
+simulations = [Simulation(model=one_element_abaqus, label='New', color='b', umat_file=None, name='oneElementAbaqus'),
+               Simulation(model=one_element_abaqus, label='Abaqus', color='r', name='oneElementUmat',
                           umat_file=os.path.expanduser('~/fem_py/transformation_subroutines/'
                                                        'transformation_subroutine.o'))]
 
@@ -31,6 +31,7 @@ args = {'pzz': pressure_z, 'increments': increments, 'material_parameters': test
 
 for simulation in simulations:
     args['umat_file'] = simulation.umat_file
+    args['simulation_name'] = simulation.name
     e, s = simulation.model(**args)
     plt.figure(1)
     plt.plot(e[:, 2], s[:, 2], '-' + simulation.color, lw=2, label=simulation.label)

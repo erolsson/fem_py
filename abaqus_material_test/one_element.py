@@ -23,6 +23,7 @@ with open('parameter_pickle.pkl', 'r') as parameter_pickle:
     material = pickle.load(parameter_pickle)            # type: ElasticPlasticTransformMaterial
     time_period = pickle.load(parameter_pickle)
     umat_file = pickle.load(parameter_pickle)
+    simulation_name = pickle.load(parameter_pickle)
 
 backwardCompatibility.setValues(includeDeprecated=True, reportDeprecated=False)
 
@@ -189,17 +190,17 @@ if umat_file is None:
                              createStepName='step',
                              frequency=1,
                              variables=('COORD', 'U', 'S', 'E', 'RF'))
-    job = mdb.Job(name='oneElement', model=model, numCpus=1, numDomains=1, multiprocessingMode=THREADS)
+    job = mdb.Job(name=simulation_name, model=model, numCpus=1, numDomains=1, multiprocessingMode=THREADS)
 else:
     model.FieldOutputRequest(name='F-Output-1',
                              createStepName='step',
                              frequency=1,
                              variables=('COORD', 'U', 'S', 'E', 'RF', 'SDV'))
-    job = mdb.Job(name='oneElement', model=model, numCpus=1, numDomains=1, multiprocessingMode=THREADS,
+    job = mdb.Job(name=simulation_name, model=model, numCpus=1, numDomains=1, multiprocessingMode=THREADS,
                   userSubroutine=umat_file)
 
-if os.path.exists('oneElement.lck'):
-    os.remove('oneElement.lck')
+if os.path.exists(simulation_name + '.lck'):
+    os.remove(simulation_name + '.lck')
 
 job.submit()
 job.waitForCompletion()
@@ -207,7 +208,7 @@ job.waitForCompletion()
 #                           Output to file
 # ==========================================================================
 
-odb = visualization.openOdb('oneElement.odb')
+odb = visualization.openOdb(simulation_name + '.odb')
 frames_load = odb.steps['step'].frames
 
 data = np.zeros((len(frames_load), 13))
@@ -219,6 +220,6 @@ for i in range(0, len(frames_load)):
     data[i, 6:12] = E.data
     data[i, 12] = frame.frameValue
 
-with open('stressStrain.pkl', 'wb') as pickle_handle:
+with open('stressStrain' + simulation_name + '.pkl', 'wb') as pickle_handle:
     pickle.dump(data, pickle_handle)
 odb.close()
