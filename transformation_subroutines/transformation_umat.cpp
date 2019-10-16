@@ -176,7 +176,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     state.back_stress_vector(i) *= theta[i];
                     state.total_back_stress() += state.back_stress_vector(i);
                     Y += theta[i]*params.Cm(i)*DL;
-                    H += params.Cm(i) + double_contract(nij, state.back_stress_vector(i))*params.gamma(i);
+
+                    H += params.Cm(i) + double_contract(nij,
+                            static_cast<Vector6>(state.back_stress_vector(i)))*params.gamma(i);
                 }
             }
             std::cout << "H:" << H << std::endl;
