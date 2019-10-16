@@ -98,6 +98,10 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
         Vector6 nij;
         Vector6 st_dev = deviator(st);
+
+        Matrix6x6 A = I;   // Used to formulate the tangent matrix DDSDDE = A^-1 * Del
+
+
         if (plastic) {
             // Calculating the increment in effective plastic strain DL
             double DL = 0;
@@ -158,15 +162,31 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             state.R() = R2;
             stress_vec -= 2*G*DL*nij;
 
+            // Helpful quantity in the calculation of the tangent DDSDDE
+            double Y = sy;
+            double H = 0;
+            if (params.isotropic_hardening()) {
+                H += dsydDL;
+            }
             // Updating back stresses
             if (params.kinematic_hardening()) {
                 state.total_back_stress() *= 0;
                 for (unsigned i = 0; i != params.back_stresses(); ++i) {
                     state.back_stress_vector(i) += 2./3*params.Cm(i)*DL*nij;
-                    state.back_stress_vector(i) /= (1 + params.gamma(i)*DL);
+                    state.back_stress_vector(i) *= theta[i];
                     state.total_back_stress() += state.back_stress_vector(i);
+                    Y += theta[i]*params.Cm(i)*DL;
+                    H += params.Cm(i) + double_contract(nij, state.back_stress_vector(i))*params.gamma(i);
                 }
             }
+            std::cout << "H:" << H << std::endl;
+            // Calculating the tangent modulus
+            // Ideal plasticity, i. e no hardening is a special case as the derivation assumes H != 0
+            if (H != 0) {
+
+
+            }
+
             D_alg = Del;
         }
     }
