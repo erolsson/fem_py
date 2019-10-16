@@ -181,7 +181,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     Y += theta[i]*params.Cm(i)*DL;
                     sum_back_stress_gamma += state.back_stress_vector(i)*params.gamma(i);
                     Csum += params.Cm(i);
-                    thetaCsum += params.Cm(i)*theta;
+                    thetaCsum += params.Cm(i)*theta(i);
                 }
                 H += Csum - double_contract(nij, sum_back_stress_gamma);
             }
