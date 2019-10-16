@@ -181,7 +181,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     H -= double_contract(nij,  static_cast<Vector6>(state.back_stress_vector(i)))*params.gamma(i);
                     Csum += params.Cm(i);
                 }
-                H += Csum;
+                H += Csum*DL;
             }
             std::cout << "H:" << H << std::endl;
             // Calculating the tangent modulus
@@ -189,7 +189,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             Matrix6x6 nnt = nij*nij.transpose();
             if (H != 0) {
                 A += 3*G/Y*(DL+RA*DfM)*J;
-                A += 2*G*(1./H - (DL + RA*DfM)/Y*1./H*(Csum + dsydDL))*nnt;
+                A += 2*G*(1./H - (DL + RA*DfM)/Y/H*(Csum + dsydDL))*nnt;
                 if (params.kinematic_hardening()) {
                     Vector6 adjusted_back_stress = Vector6::Zero();
                     for (unsigned i = 0; i != params.back_stresses(); ++i) {

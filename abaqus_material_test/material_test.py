@@ -32,7 +32,7 @@ def one_element_abaqus(material_parameters, exx=None, eyy=None, ezz=None, pxx=No
     abaqus_job.wait()
     os.chdir(run_directory)
 
-    with open(simulation_directory + '/stressStrain.pkl', 'rb') as pickle_handle:
+    with open(simulation_directory + '/stressStrain' + simulation_name +  '.pkl', 'rb') as pickle_handle:
         data = pickle.load(pickle_handle)
     stresses = data[:, 0:6]
     strains = data[:, 6:12]
