@@ -40,4 +40,6 @@ for inc, lw in zip([1.], [1]):
         plt.plot(e[:, 2], s[:, 2], '-x' + simulation.color, lw=lw, label=simulation.label)
         plt.figure(2)
         plt.plot(e[:, 2], e[:, 1], '-x' + simulation.color, lw=lw, label=simulation.label)
+        plt.figure(3)
+        plt.plot(np.diff(s[:, 2]), '-x' + simulation.color, lw=lw, label=simulation.label)
 plt.show()
