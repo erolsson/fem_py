@@ -202,9 +202,10 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     A += 3*G/H/Y*(DL + RA*DfM)*adjusted_back_stress*nij.transpose();
                 }
             }
-
-        // D_alg = A.inverse()*Del;
-        D_alg = Del;
+            A *= 2;
+            A.block(0, 3, 0, 3) /=2;
+            D_alg = A.inverse()*Del;
+            // D_alg = Del;
         }
     }
 }
