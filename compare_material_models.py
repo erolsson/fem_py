@@ -29,7 +29,7 @@ pressure_z[:, 1] = 3000*np.sin(np.pi*time)
 
 args = {'pzz': pressure_z, 'increments': increments, 'material_parameters': test_material}
 
-for inc in [None, 1e-1, 1e-2, 1e-3]:
+for inc, lw in zip([1., 1e-1, 1e-2, 1e-3], [1, 2, 3, 4]):
     for simulation in simulations:
         args['umat_file'] = simulation.umat_file
         args['simulation_name'] = simulation.name
