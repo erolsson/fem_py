@@ -9,7 +9,7 @@ from materials.SS2506 import test_material
 
 
 def one_element_abaqus(material_parameters, exx=None, eyy=None, ezz=None, pxx=None, pyy=None, pzz=None, time_period=1.,
-                       umat_file=None, simulation_name='oneElement', **_):
+                       umat_file=None, max_time_increment=None, simulation_name='oneElement', **_):
     run_directory = os.getcwd()
     file_directory = os.path.dirname(os.path.abspath(__file__))
     simulation_directory = file_directory + '/one_element/'
@@ -26,6 +26,7 @@ def one_element_abaqus(material_parameters, exx=None, eyy=None, ezz=None, pxx=No
         pickle.dump(time_period, parameter_pickle)
         pickle.dump(umat_file, parameter_pickle)
         pickle.dump(simulation_name, parameter_pickle)
+        pickle.dump(max_time_increment, parameter_pickle)
 
     # Running the abaqus simulation in an external script
     abaqus_job = Popen('abaqus cae noGUI=' + file_directory + '/one_element.py -- ' + package_directory, shell=True)

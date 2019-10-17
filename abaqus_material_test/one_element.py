@@ -24,6 +24,7 @@ with open('parameter_pickle.pkl', 'r') as parameter_pickle:
     time_period = pickle.load(parameter_pickle)
     umat_file = pickle.load(parameter_pickle)
     simulation_name = pickle.load(parameter_pickle)
+    max_time_increment = pickle.load(parameter_pickle)
 
 backwardCompatibility.setValues(includeDeprecated=True, reportDeprecated=False)
 
@@ -112,7 +113,7 @@ comp = model.StaticStep(name='step',
                         initialInc=1E-5*time_period,
                         maxNumInc=10000000,
                         minInc=1E-12*time_period,
-                        # maxInc=1E-3*time_period,
+                        maxInc=max_time_increment,
                         nlgeom=OFF)
 
 comp.control.setValues(allowPropagation=OFF,

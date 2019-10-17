@@ -29,12 +29,14 @@ pressure_z[:, 1] = 3000*np.sin(np.pi*time)
 
 args = {'pzz': pressure_z, 'increments': increments, 'material_parameters': test_material}
 
-for simulation in simulations:
-    args['umat_file'] = simulation.umat_file
-    args['simulation_name'] = simulation.name
-    e, s = simulation.model(**args)
-    plt.figure(1)
-    plt.plot(e[:, 2], s[:, 2], '-' + simulation.color, lw=2, label=simulation.label)
-    plt.figure(2)
+for inc in [None, 1e-1, 1e-2, 1e-3]:
+    for simulation in simulations:
+        args['umat_file'] = simulation.umat_file
+        args['simulation_name'] = simulation.name
+        args['max_time_increment'] = inc
+        e, s = simulation.model(**args)
+        plt.figure(1)
+        plt.plot(e[:, 2], s[:, 2], '-' + simulation.color, lw=2, label=simulation.label)
+        plt.figure(2)
     plt.plot(e[:, 2], e[:, 1], '-' + simulation.color, lw=2, label=simulation.label)
 plt.show()
