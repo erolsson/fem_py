@@ -114,7 +114,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             double R2 = 0;
             Eigen::VectorXd theta = Eigen::VectorXd::Zero(params.back_stresses());
             Eigen::VectorXd Am = Eigen::VectorXd::Zero(params.back_stresses());
-            while(abs(dDL) > 1e-15) {
+            while(abs(dDL) > 1e-25) {
                 Vector6 Cij = st_dev;
                 D = params.sy0() + 3*G*DL;
 
@@ -186,7 +186,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 }
                 H += Csum - double_contract(nij, sum_back_stress_gamma);
             }
-
 
             // Calculating the tangent modulus
             // Ideal plasticity, i. e no hardening is a special case as the derivation assumes H != 0
