@@ -22,10 +22,10 @@ increments = 1000
 time = np.linspace(0., 1., increments)
 strain_z = np.zeros((increments, 2))
 strain_z[:, 0] = time
-strain_z[:, 1] = 0.02*np.sin(np.pi*time)
+strain_z[:, 1] = 0.02*np.sin(np.pi*time/2)
 
 pressure_z = np.copy(strain_z)
-pressure_z[:, 1] = 3000*np.sin(np.pi*time)
+pressure_z[:, 1] = 3000*np.sin(np.pi*time/2)
 
 args = {'pzz': pressure_z, 'increments': increments, 'material_parameters': test_material}
 
