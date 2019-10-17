@@ -203,7 +203,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 }
             }
             A *= 2;
-            A.block(0, 3, 0, 3) /=2;
+            A.block(0, 0, 3, 3) /=2;
             D_alg = A.inverse()*Del;
             // D_alg = Del;
         }
