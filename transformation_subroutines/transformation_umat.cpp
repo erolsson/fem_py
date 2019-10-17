@@ -176,7 +176,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 Vector6 sum_back_stress_gamma = Vector6::Zero();
                 for (unsigned i = 0; i != params.back_stresses(); ++i) {
                     state.back_stress_vector(i) += 2./3*params.Cm(i)*DL*nij;
-                    // state.back_stress_vector(i) *= theta[i];
+                    state.back_stress_vector(i) *= theta[i];
                     state.total_back_stress() += state.back_stress_vector(i);
                     Y += theta[i]*params.Cm(i)*DL;
                     sum_back_stress_gamma += state.back_stress_vector(i)*params.gamma(i);
