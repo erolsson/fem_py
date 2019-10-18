@@ -103,108 +103,115 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         Matrix6x6 A = I;   // Used to formulate the tangent matrix DDSDDE = A^-1 * Del
 
 
-        if (plastic) {
-            // Calculating the increment in effective plastic strain DL
-            double DL = 0;
-            double dDL = 1e99;
+        // Calculating the increment in effective plastic strain DL
+        double DL = 0;
+        double residual = 1e99;
 
-            double dsydDL = 0;
+        double ds2eqdDL = -3*G;
+        double dsydDL = 0;
 
-            double D = 0;
-            double R2 = 0;
-            Eigen::VectorXd theta = Eigen::VectorXd::Zero(params.back_stresses());
-            Eigen::VectorXd Am = Eigen::VectorXd::Zero(params.back_stresses());
-            while(abs(dDL) > 1e-25) {
-                Vector6 Cij = st_dev;
-                D = params.sy0() + 3*G*DL;
+        double D = 0;
+        double R2 = 0;
+        Eigen::VectorXd theta = Eigen::VectorXd::Zero(params.back_stresses());
+        Eigen::VectorXd Am = Eigen::VectorXd::Zero(params.back_stresses());
+        while(residual > 1e-15) {
+            Vector6 s_prime = st_dev;
 
-                Vector6 dCijdDL = Vector6::Zero();
-                double dDdDL = 3*G + dsydDL;
-
-                if (params.isotropic_hardening()) {
-                    R2 = (state.R() + params.b()*params.Q()*DL)/(1 + params.b()*DL);
-                    sy = params.sy0() + R2;
-                    D += R2;
-                    dsydDL = params.b()*(params.Q() - state.R());
-                }
-
-                if (params.kinematic_hardening()) {
-                    for (unsigned i=0; i != params.back_stresses(); ++i) {
-                        double Cm = params.Cm(i);
-                        double gm = params.gamma(i);
-
-                        theta[i] = 1./(1+gm*DL);
-                        Am[i] = gm/((1+gm*DL)*(1+gm*DL));
-                        Cij -= theta[i]*state.back_stress_vector(i);
-                        D += DL*theta[i]*Cm;
-
-                        dCijdDL += Am[i]*state.back_stress_vector(i);
-                        dDdDL += theta[i]*theta[i]*Cm;
-                    }
-                }
-
-                nij = 1.5*Cij/D;
-                if (phase_transformations) {
-                    RA = params.R1() + params.R2()*sy/params.sy0_au();
-                    D += 3*G*RA*DfM;
-                    dDdDL += params.R2()/params.sy0_au()*DfM*dsydDL;
-                }
-
-                double f = 2./3*double_contract(nij, nij) - 1;
-                Vector6 dndDL = -nij*dDdDL/D;
-                double dfdDL = 4./3*double_contract(nij, dndDL);
-                if (! phase_transformations) {
-                    dDL = f/dfdDL;
-                    DL -= dDL;
-                }
-            }
-
-            state.ep_eff() += DL;
-            state.R() = R2;
-            stress_vec -= 2*G*DL*nij;
-
-            // Helpful quantity in the calculation of the tangent DDSDDE
-            double Y = sy;
-            double H = 0;
-            double Csum = 0;
-            double thetaCsum = 0;
             if (params.isotropic_hardening()) {
-                H += dsydDL;
-            }
-            // Updating back stresses
-            if (params.kinematic_hardening()) {
-                state.total_back_stress() *= 0;
-                Vector6 sum_back_stress_gamma = Vector6::Zero();
-                for (unsigned i = 0; i != params.back_stresses(); ++i) {
-                    state.back_stress_vector(i) += 2./3*params.Cm(i)*DL*nij;
-                    state.back_stress_vector(i) *= theta[i];
-                    state.total_back_stress() += state.back_stress_vector(i);
-                    Y += theta[i]*params.Cm(i)*DL;
-                    sum_back_stress_gamma += state.back_stress_vector(i)*params.gamma(i);
-                    Csum += params.Cm(i);
-                    thetaCsum += params.Cm(i)*theta(i);
-                }
-                H += Csum - double_contract(nij, sum_back_stress_gamma);
+                R2 = (state.R() + params.b()*params.Q()*DL)/(1 + params.b()*DL);
+                sy = params.sy0() + R2;
+                D += R2;
+                dsydDL = params.b()*(params.Q() - state.R());
             }
 
-            // Calculating the tangent modulus
-            // Ideal plasticity, i. e no hardening is a special case as the derivation assumes H != 0
-            Matrix6x6 nnt = nij*nij.transpose();
-            if (H != 0) {
-                A += 3*G/Y*(DL+RA*DfM)*J;
-                A += 2*G*(1./H - (DL + RA*DfM)/Y/H*(thetaCsum + dsydDL))*nnt;
-                if (params.kinematic_hardening()) {
-                    Vector6 adjusted_back_stress = Vector6::Zero();
-                    for (unsigned i = 0; i != params.back_stresses(); ++i) {
-                        adjusted_back_stress += Am[i]/theta[i]*state.back_stress_vector(i);
-                    }
-                    A += 3*G/H/Y*(DL + RA*DfM)*adjusted_back_stress*nij.transpose();
+            double Cm_theta_m = 0;
+            if (params.kinematic_hardening()) {
+                for (unsigned i=0; i != params.back_stresses(); ++i) {
+                    double Cm = params.Cm(i);
+                    double gm = params.gamma(i);
+
+                    theta[i] = 1./(1+gm*DL);
+                    Am[i] = gm/((1+gm*DL)*(1+gm*DL));
+
+                    s_prime -= theta[i]*state.back_stress_vector(i);
+                    Cm_theta_m += theta[i]*Cm;
                 }
             }
-            A *= 2;
-            A.block(0, 0, 3, 3) /=2;
-            D_alg = A.inverse()*Del;
-            // D_alg = Del;
+
+            double s_eq_prime = sqrt(1.5*double_contract(s_prime, s_prime));
+            nij = 1.5*s_prime/s_eq_prime;
+
+            if (params.kinematic_hardening()) {
+                Vector6 ds_prime_dDL = Vector6::Zero();
+                for (unsigned i=0; i != params.back_stresses(); ++i) {
+                    ds_prime_dDL += Am[i]*state.back_stress_vector(i);
+                    ds2eqdDL -= theta[i]*theta[i]*params.Cm(i)*DL;
+                }
+                ds2eqdDL += double_contract(nij, ds_prime_dDL);
+            }
+            double s_eq_2 = (s_eq_prime - 3*G*(DL+R2*DfM) - Cm_theta_m);
+            if (phase_transformations) {
+                double numerator = (1+3*G*R2*DfM/params.sy0_au());
+                s_eq_2 /= numerator;
+                ds2eqdDL /= numerator;
+            }
+
+            double f = s_eq_2 - sy;
+
+            double dfdDL = ds2eqdDL - dsydDL;
+            if (! phase_transformations) {
+                double dDL = f/dfdDL;
+                DL -= dDL;
+                residual = abs(dDL);
+            }
         }
+
+        state.ep_eff() += DL;
+        state.R() = R2;
+        stress_vec -= 2*G*DL*nij;
+
+        // Helpful quantity in the calculation of the tangent DDSDDE
+        double Y = sy;
+        double H = 0;
+        double Csum = 0;
+        double thetaCsum = 0;
+        if (params.isotropic_hardening()) {
+            H += dsydDL;
+        }
+        // Updating back stresses
+        if (params.kinematic_hardening()) {
+            state.total_back_stress() *= 0;
+            Vector6 sum_back_stress_gamma = Vector6::Zero();
+            for (unsigned i = 0; i != params.back_stresses(); ++i) {
+                state.back_stress_vector(i) += 2./3*params.Cm(i)*DL*nij;
+                state.back_stress_vector(i) *= theta[i];
+                state.total_back_stress() += state.back_stress_vector(i);
+                Y += theta[i]*params.Cm(i)*DL;
+                sum_back_stress_gamma += state.back_stress_vector(i)*params.gamma(i);
+                Csum += params.Cm(i);
+                thetaCsum += params.Cm(i)*theta(i);
+            }
+            H += Csum - double_contract(nij, sum_back_stress_gamma);
+        }
+
+        // Calculating the tangent modulus
+        // Ideal plasticity, i. e no hardening is a special case as the derivation assumes H != 0
+        Matrix6x6 nnt = nij*nij.transpose();
+        if (H != 0) {
+            A += 3*G/Y*(DL+RA*DfM)*J;
+            A += 2*G*(1./H - (DL + RA*DfM)/Y/H*(thetaCsum + dsydDL))*nnt;
+            if (params.kinematic_hardening()) {
+                Vector6 adjusted_back_stress = Vector6::Zero();
+                for (unsigned i = 0; i != params.back_stresses(); ++i) {
+                    adjusted_back_stress += Am[i]/theta[i]*state.back_stress_vector(i);
+                }
+                A += 3*G/H/Y*(DL + RA*DfM)*adjusted_back_stress*nij.transpose();
+            }
+        }
+        A *= 2;
+        A.block(0, 0, 3, 3) /=2;
+        D_alg = A.inverse()*Del;
+        // D_alg = Del;
+
     }
 }
