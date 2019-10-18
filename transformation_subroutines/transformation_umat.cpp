@@ -164,6 +164,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 DL -= dDL;
                 residual = abs(dDL);
             }
+            std::cout << "DL=" << DL << "  s_eq_2=" << s_eq_2 << " s_eq_prime=" << s_eq_prime << std::endl;
         }
 
         state.ep_eff() += DL;
