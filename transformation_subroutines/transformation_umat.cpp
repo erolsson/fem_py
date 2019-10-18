@@ -145,7 +145,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 Vector6 ds_prime_dDL = Vector6::Zero();
                 for (unsigned i=0; i != params.back_stresses(); ++i) {
                     ds_prime_dDL += Am[i]*state.back_stress_vector(i);
-                    ds2eqdDL -= theta[i]*theta[i]*params.Cm(i)*DL;
+                    ds2eqdDL -= theta[i]*theta[i]*params.Cm(i);
                 }
                 ds2eqdDL += double_contract(nij, ds_prime_dDL);
             }
