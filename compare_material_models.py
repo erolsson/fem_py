@@ -36,6 +36,7 @@ for inc, lw in zip([1.], [1]):
         args['simulation_name'] = simulation.name
         args['max_time_increment'] = inc
         e, s = simulation.model(**args)
+        print s
         plt.figure(1)
         plt.plot(e[:, 2], s[:, 2], '-x' + simulation.color, lw=lw, label=simulation.label)
         plt.figure(2)
