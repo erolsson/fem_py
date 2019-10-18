@@ -149,9 +149,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 }
                 ds2eqdDL += double_contract(nij, ds_prime_dDL);
             }
-            double s_eq_2 = (s_eq_prime - 3*G*(DL+R2*DfM) - Cm_theta_m);
+            double s_eq_2 = s_eq_prime - 3*G*(DL+R2*DfM) - Cm_theta_m*DL;
             if (phase_transformations) {
-                double numerator = (1+3*G*R2*DfM/params.sy0_au());
+                double numerator = 1+3*G*R2*DfM/params.sy0_au();
                 s_eq_2 /= numerator;
                 ds2eqdDL /= numerator;
             }
