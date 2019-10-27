@@ -80,14 +80,14 @@ mat1 = model.Material(name='material')
 if umat_file is None:
     mat1.Elastic(table=((material.E, material.v),),
                  moduli=INSTANTANEOUS)
-
-    hardening_table = [material.sy0]
+    sy = material.sy0M*material.fM + material.sy0A*(1-material.fM)
+    hardening_table = [sy]
     backstresses = len(material.gamma_m)
     for i in range(backstresses):
         hardening_table += [material.Cm[i], material.gamma_m[i]]
     mat1.Plastic(hardening=COMBINED, dataType=PARAMETERS, numBackstresses=backstresses,
                  table=(hardening_table, ))
-    mat1.plastic.CyclicHardening(parameters=ON, table=((material.sy0, material.Q, material.b), ))
+    mat1.plastic.CyclicHardening(parameters=ON, table=((sy, material.Q, material.b), ))
 else:
     mat1.UserMaterial(mechanicalConstants=material.umat_parameters())
     mat1.Depvar(n=material.umat_depvar())

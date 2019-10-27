@@ -14,7 +14,7 @@ class ElasticPlasticTransformMaterial:
         # Initial yield stress of Martensite and Austenite
         self.sy0M = sy0M
         self.sy0A = sy0A
-
+        self.fM = 0.8
         # Parameters for isostropic hardening
         self.Q = Q
         self.b = b
