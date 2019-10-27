@@ -69,7 +69,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     // Collecting state variables
     State state(statev, params.back_stresses());
 
-    double sy = params.sy0() + state.R();
+    double sy = params.sy0M()*state.fM() + params.sy0A()*(1-state.fM()) + state.R();
     // Vector6 back_stress;
 
     Eigen::Map<Matrix6x6> D_alg(ddsdde);
