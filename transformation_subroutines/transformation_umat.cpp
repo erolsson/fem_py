@@ -97,10 +97,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     else {
         double DfM = 0;
         double DL = 0;
-
         double RA = 0;
-
-        Vector6 nij;
+        Vector6 nij2;
         Vector6 st_dev = deviator(st);
 
         Matrix6x6 A = I;   // Used to formulate the tangent matrix DDSDDE = A^-1 * Del
@@ -109,28 +107,34 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
         double residual = 1e99;
 
-        double ds2eqdDL = -3*G;
+        double ds_eq_2_dDL = -3G;
         double dsydDL = 0;
 
         double R2 = 0;
 
-        Eigen::VectorXd theta = Eigen::VectorXd::Zero(params.back_stresses());
-        Eigen::VectorXd Am = Eigen::VectorXd::Zero(params.back_stresses());
         Vector6 dsijdDL = Vector6::Zero();
-
+        double B = 1;
         while(residual > 1e-15) {
             double sy0 = params.sy0M()*(state.fM() + DfM) + params.sy0A()*(1-(state.fM() + DfM));
             double sy_2 = sy0 + (state.R() + params.b()*params.Q()*DL)/(1+params.b()*DL);
 
             Vector6 sij_prime = st_dev;
+            double back_stress_correction = 0;
             if (params.kinematic_hardening()) {
                 for (unsigned i = 0; i!= params.back_stresses(); ++i) {
-                    theta[i] = 1./(1+params.gamma(i)*DL);
-                    sij_prime -= theta[i]*state.back_stress_vector(i);
+                    double theta = 1./(1+params.gamma(i)*DL);
+                    sij_prime -= theta*state.back_stress_vector(i);
+                    back_stress_correction += theta*params.Cm(i)*DL;
+                    dsijdDL += params.gamma(i)/(theta*theta)*state.back_stress_vector(i);
+                    ds_eq_2_dDL -= theta*theta*params.Cm();
                 }
             }
 
-            double s_eq_2 = s_eq_prime - 3*G*(DL+params.R1()*DfM);
+            double s_eq_prime = sqrt(1.5*double_contract(sij_prime, sij_prime));
+            B += 3*G*params.R2()*DfM/params.sy0A();
+            double s_eq_2 = (s_eq_prime - 3*G*(DL+params.R1()*DfM) - back_stress_correction)/B;
+            nij2 = 1.5*sij_prime/s_eq_prime;
+            ds_eq_2_dDL += double_contract(sij_prime, dsijdDL);
 
             double f = s_eq_2 - sy_2;
             if (! phase_transformations) {
