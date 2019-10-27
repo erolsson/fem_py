@@ -19,21 +19,23 @@ public:
     [[nodiscard]] const double& E() const { return data_[0]; }         // Young's modulus
     [[nodiscard]] const double& v() const { return data_[1]; }         // Poisson's ratio
 
-    //Plasticity
-    [[nodiscard]] const double& sy0() const { return data_[2]; } ;     // Initial yield stress
+    // Initial yield stress of Martensite and Austenite
+    [[nodiscard]] const double& sy0M() const { return data_[2]; } ;     // Initial yield stress
+    [[nodiscard]] const double& sy0A() const { return data_[3]; } ;     // Initial yield stress
 
     // Parameters for isostropic hardnening
-    [[nodiscard]] const double& Q() const { return data_[3]; } ;           // Maximum size of yield surface
-    [[nodiscard]] const double& b() const { return data_[4]; } ;           // Growth rate of yield surface
+    [[nodiscard]] const double& Q() const { return data_[4]; } ;           // Maximum size of yield surface
+    [[nodiscard]] const double& b() const { return data_[5]; } ;           // Growth rate of yield surface
+
+    // Parameters for kinematic hardnening
     [[nodiscard]] unsigned back_stresses() const { return back_stresses_; }
-    [[nodiscard]] const double& Cm(unsigned n) const { return data_[6 + 2*n]; }
-    [[nodiscard]] const double& gamma(unsigned n) const { return data_[6 + 2*n+1]; }
+    [[nodiscard]] const double& Cm(unsigned n) const { return data_[7 + 2*n]; }
+    [[nodiscard]] const double& gamma(unsigned n) const { return data_[7 + 2*n+1]; }
 
-    [[nodiscard]] const double& R1() const { return data_[6 + 2*back_stresses_]; } ;
-    [[nodiscard]] const double& R2() const { return data_[7 + 2*back_stresses_]; } ;
-    [[nodiscard]] const double& sy0_au() const { return data_[8 + 2*back_stresses_]; } ;
+    [[nodiscard]] const double& R1() const { return data_[7 + 2*back_stresses_]; } ;
+    [[nodiscard]] const double& R2() const { return data_[8 + 2*back_stresses_]; } ;
 
-    [[nodiscard]] bool plastic() const { return sy0() > 0; }
+    [[nodiscard]] bool plastic() const { return sy0M() > 0 && sy0A() > 0; }
     [[nodiscard]] bool isotropic_hardening() const { return Q() > 0; }
     [[nodiscard]] bool kinematic_hardening() const { return back_stresses_ > 0; }
     bool stress_transformation = false;

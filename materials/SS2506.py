@@ -3,7 +3,7 @@ import numpy as np
 
 # noinspection PyPep8Naming
 class ElasticPlasticTransformMaterial:
-    def __init__(self, E, v, sy0, Q, b, Cm, gamma_m, a):
+    def __init__(self, E, v, sy0M, sy0A, Q, b, Cm, gamma_m, a):
         # Elastic parameters
         self.E = float(E)
         self.v = float(v)
@@ -11,8 +11,9 @@ class ElasticPlasticTransformMaterial:
         self.G = self.E/2/(1+self.v)
         self.K = self.E/3/(1-2*self.v)
 
-        # Initial yield stress
-        self.sy0 = sy0
+        # Initial yield stress of Martensite and Austenite
+        self.sy0M = sy0M
+        self.sy0A = sy0A
 
         # Parameters for isostropic hardening
         self.Q = Q
@@ -34,7 +35,6 @@ class ElasticPlasticTransformMaterial:
         self.R2 = 0.0
 
         self.dV = 0.037
-        self.sy0_au = 400
 
         self.k = 0.04
         self.s_lim = 485.
@@ -48,10 +48,11 @@ class ElasticPlasticTransformMaterial:
         kinematic_hardening_params = []
         for C, g in zip(self.Cm, self.gamma_m):
             kinematic_hardening_params += [C, g]
-        return [self.E, self.v, self.sy0, self.Q, self.b, self.gamma_m.shape[0]] + kinematic_hardening_params
+        return [self.E, self.v, self.sy0M, self.sy0M,  self.Q, self.b, self.gamma_m.shape[0]] + \
+            kinematic_hardening_params + [self.R1, self.R2]
 
 
-test_material = ElasticPlasticTransformMaterial(E=200e3, v=0.3, sy0=920., Q=0*180., b=100.,
+test_material = ElasticPlasticTransformMaterial(E=200e3, v=0.3, sy0M=1000., sy0A=485, Q=0*180., b=100.,
                                                 Cm=np.array([135e3, 700e3, 50e3]),
                                                 gamma_m=np.array([950., 500., 50.]), a=[0.056, 0.028, 0.])
 
