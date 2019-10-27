@@ -114,7 +114,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         double B = 1;
         while(residual > 1e-15) {
             double sy0 = params.sy0M()*(state.fM() + DfM) + params.sy0A()*(1-(state.fM() + DfM));
-            double R2 = (state.R() + params.b()*params.Q()*DL)/(1+params.b()*DL)
+            double R2 = (state.R() + params.b()*params.Q()*DL)/(1+params.b()*DL);
             double sy_2 = sy0 + R2;
 
             Vector6 sij_prime = st_dev;
@@ -125,7 +125,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     sij_prime -= theta*state.back_stress_vector(i);
                     back_stress_correction += theta*params.Cm(i)*DL;
                     dsijdDL += params.gamma(i)/(theta*theta)*state.back_stress_vector(i);
-                    ds_eq_2_dDL -= theta*theta*params.Cm();
+                    ds_eq_2_dDL -= theta*theta*params.Cm(i);
                 }
             }
 
@@ -134,7 +134,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             double s_eq_2 = (s_eq_prime - 3*G*(DL+params.R1()*DfM) - back_stress_correction)/B;
             nij2 = 1.5*sij_prime/s_eq_prime;
             ds_eq_2_dDL += double_contract(sij_prime, dsijdDL);
-            double dfdDL = ds_eq_2_dDL - params.b()/(1+params.b()*DL)*(params.Q - )
+            double dfdDL = ds_eq_2_dDL - params.b()/(1+params.b()*DL)*(params.Q() - R2);
 
             double f = s_eq_2 - sy_2;
             if (! phase_transformations) {
