@@ -126,6 +126,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     sij_prime -= theta*state.back_stress_vector(i);
                     back_stress_correction += theta*params.Cm(i)*DL;
                     dsijdDL += params.gamma(i)/(theta*theta)*state.back_stress_vector(i);
+                    std::cout << "theta=" << theta << "  Cm(i)=" << params.Cm(i) << std::endl;
                     ds_eq_2_dDL -= theta*theta*params.Cm(i);
                 }
             }
