@@ -121,8 +121,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             Vector6 sij_prime = sij_t;
             double back_stress_correction = 0;
             if (params.kinematic_hardening()) {
-                std::cout << "Back stresses: " << params.back_stresses() << std::endl;
-                std::abort();
                 for (unsigned i = 0; i!= params.back_stresses(); ++i) {
                     double theta = 1./(1+params.gamma(i)*DL);
                     sij_prime -= theta*state.back_stress_vector(i);
