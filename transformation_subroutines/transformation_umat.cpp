@@ -132,7 +132,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             B += 3*G*params.R2()*DfM/params.sy0A();
             double s_eq_2 = (s_eq_prime - 3*G*(DL+params.R1()*DfM) - back_stress_correction)/B;
             nij2 = 1.5*sij_prime/s_eq_prime;
-            ds_eq_2_dDL += double_contract(sij_prime, dsijdDL);
+            ds_eq_2_dDL += double_contract(nij2, dsijdDL);
             double dfdDL = ds_eq_2_dDL - params.b()/(1+params.b()*DL)*(params.Q() - R2);
             double f = s_eq_2 - sy_2;
             std::cout << "f=" << f << "  DL=" << DL << "  ds_eq_2_dDL=" << ds_eq_2_dDL << std::endl;
@@ -154,9 +154,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 state.back_stress_vector(i) += 2./3*params.Cm(i)*DL*nij2;
                 state.back_stress_vector(i) /= (1+params.gamma(i)*DL);
                 state.total_back_stress() += state.back_stress_vector(i);
-                std::cout << "am=" << state.back_stress_vector(i) << std::endl;
             }
-            std::cout << "a=" << state.total_back_stress() << std::endl;
         }
 
 
