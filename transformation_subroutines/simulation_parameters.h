@@ -13,7 +13,7 @@ private:
     unsigned back_stresses_ = 0;
 public:
     explicit TransformationMaterialParameters(const double* data):
-            data_(data), back_stresses_(static_cast<int>(data[5])) {}
+            data_(data), back_stresses_(static_cast<int>(data[6])) {}
 
     // Elastic parameters
     [[nodiscard]] const double& E() const { return data_[0]; }         // Young's modulus
