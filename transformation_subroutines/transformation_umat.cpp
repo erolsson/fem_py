@@ -80,7 +80,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
     Vector6  st = stress_vec + Del*de;  // Trial stress
 
-    Vector6 stilde = deviator(st);
+    Vector6 sij_t = deviator(st);
+    Vector6 stilde = sij_t;
     if (params.kinematic_hardening()) {
         stilde -= state.total_back_stress();
     }
@@ -117,7 +118,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             double R2 = (state.R() + params.b()*params.Q()*DL)/(1+params.b()*DL);
             double sy_2 = sy0 + R2;
 
-            Vector6 sij_prime = st_dev;
+            Vector6 sij_prime = sij_t;
             double back_stress_correction = 0;
             if (params.kinematic_hardening()) {
                 for (unsigned i = 0; i!= params.back_stresses(); ++i) {
@@ -135,8 +136,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             nij2 = 1.5*sij_prime/s_eq_prime;
             ds_eq_2_dDL += double_contract(sij_prime, dsijdDL);
             double dfdDL = ds_eq_2_dDL - params.b()/(1+params.b()*DL)*(params.Q() - R2);
-
             double f = s_eq_2 - sy_2;
+            std::cout << "f=" << f << std::endl;
             if (! phase_transformations) {
                 double dDL = f/dfdDL;
                 DL -= dDL;
