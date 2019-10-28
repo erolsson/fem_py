@@ -137,7 +137,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             ds_eq_2_dDL += double_contract(sij_prime, dsijdDL);
             double dfdDL = ds_eq_2_dDL - params.b()/(1+params.b()*DL)*(params.Q() - R2);
             double f = s_eq_2 - sy_2;
-            std::cout << "f=" << f << "  DL=" << DL << "  dfdDL=" << dfdDL << std::endl;
+            std::cout << "f=" << f << "  DL=" << DL << "  ds_eq_2_dDL=" << ds_eq_2_dDL << std::endl;
             if (! phase_transformations) {
                 double dDL = f/dfdDL;
                 DL -= dDL;
