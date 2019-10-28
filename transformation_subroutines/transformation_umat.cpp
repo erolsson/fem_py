@@ -117,7 +117,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             double sy0 = params.sy0M()*(state.fM() + DfM) + params.sy0A()*(1-(state.fM() + DfM));
             double R2 = (state.R() + params.b()*params.Q()*DL)/(1+params.b()*DL);
             double sy_2 = sy0 + R2;
-
+            std::cout << "ds_eq_2_dDL_1=" << ds_eq_2_dDL << std::endl;
             Vector6 sij_prime = sij_t;
             double back_stress_correction = 0;
             if (params.kinematic_hardening()) {
@@ -129,7 +129,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     ds_eq_2_dDL -= theta*theta*params.Cm(i);
                 }
             }
-
+            std::cout << "ds_eq_2_dDL_2=" << ds_eq_2_dDL << std::endl;
             double s_eq_prime = sqrt(1.5*double_contract(sij_prime, sij_prime));
             B += 3*G*params.R2()*DfM/params.sy0A();
             double s_eq_2 = (s_eq_prime - 3*G*(DL+params.R1()*DfM) - back_stress_correction)/B;
