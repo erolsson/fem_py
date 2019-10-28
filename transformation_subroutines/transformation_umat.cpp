@@ -90,7 +90,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     phase_transformations = false;
     bool elastic = !plastic && !phase_transformations;
     stress_vec = st;
-    std::cout << "elastic:" << elastic << std::endl;
     if (elastic) {     // Use the trial stress as the stress and the elastic stiffness matrix as the tangent
         D_alg = Del;
     }
