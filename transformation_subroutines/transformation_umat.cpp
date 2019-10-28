@@ -63,7 +63,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     using Matrix6x6 = Eigen::Matrix<double, 6, 6, Eigen::RowMajor>;
     using Vector6 = Eigen::Matrix<double, 6, 1>;
 
-    TransformationMaterialParameters params(props);
+    const TransformationMaterialParameters params(props);
     double G = params.E()/2/(1+params.v());
     double K = params.E()/3/(1-2*params.v());
     // Collecting state variables
