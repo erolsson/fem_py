@@ -106,7 +106,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
         double residual = 1e99;
 
-        double ds_eq_2_dDL = -3*G;
+        double ds_eq_2_dDL = 0;
         double dsydDL = 0;
 
         double R2 = 0;
@@ -114,6 +114,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         Vector6 dsijdDL = Vector6::Zero();
         double B = 1;
         while(residual > 1e-15) {
+            ds_eq_2_dDL = -3*G;
             double sy0 = params.sy0M()*(state.fM() + DfM) + params.sy0A()*(1-(state.fM() + DfM));
             double R2 = (state.R() + params.b()*params.Q()*DL)/(1+params.b()*DL);
             double sy_2 = sy0 + R2;
@@ -126,7 +127,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     sij_prime -= theta*state.back_stress_vector(i);
                     back_stress_correction += theta*params.Cm(i)*DL;
                     dsijdDL += params.gamma(i)/(theta*theta)*state.back_stress_vector(i);
-                    std::cout << "theta=" << theta << "  Cm(i)=" << params.Cm(i) << std::endl;
                     ds_eq_2_dDL -= theta*theta*params.Cm(i);
                 }
             }
