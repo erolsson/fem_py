@@ -112,10 +112,11 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
         Vector6 dsijdDL = Vector6::Zero();
         double B = 1;
+
         while(residual > 1e-15) {
             ds_eq_2_dDL = -3*G;
             double sy0 = params.sy0M()*(state.fM() + DfM) + params.sy0A()*(1-(state.fM() + DfM));
-            double R2 = (state.R() + params.b()*params.Q()*DL)/(1+params.b()*DL);
+            R2 = (state.R() + params.b()*params.Q()*DL)/(1+params.b()*DL);
             double sy_2 = sy0 + R2;
             Vector6 sij_prime = sij_t;
             double back_stress_correction = 0;
