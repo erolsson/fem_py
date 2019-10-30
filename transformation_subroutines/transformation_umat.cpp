@@ -98,10 +98,10 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         double DfM = 0;
         double DL = 0;
         double RA = 0;
+        double s_eq_prime = 0;
+
         Vector6 nij2;
         Vector6 st_dev = deviator(st);
-
-        Matrix6x6 A = I;   // Used to formulate the tangent matrix DDSDDE = A^-1 * Del
 
         double residual = 1e99;
 
@@ -129,7 +129,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     ds_eq_2_dDL -= theta*theta*params.Cm(i);
                 }
             }
-            double s_eq_prime = sqrt(1.5*double_contract(sij_prime, sij_prime));
+            s_eq_prime = sqrt(1.5*double_contract(sij_prime, sij_prime));
             B += 3*G*params.R2()*DfM/params.sy0A();
             double s_eq_2 = (s_eq_prime - 3*G*(DL+params.R1()*DfM) - back_stress_correction)/B;
             nij2 = 1.5*sij_prime/s_eq_prime;
@@ -158,8 +158,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             }
         }
 
-
-        D_alg = Del;
-
+        if (DL > 0) {
+            double A = - ds_eq_2_dDL;
+            D_alg = Del - 4*G*G*nij2*nij2.transpose()/A - 6*G*G*DL/s_eq_prime*(J-2./3*nij2*nij2.transpose());
+        }
     }
 }
