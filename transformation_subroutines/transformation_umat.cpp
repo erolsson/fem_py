@@ -159,7 +159,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             double A = - ds_eq_2_dDL;
             Matrix6x6 A_ijkl = J - 2./3*nij2*nij2.transpose();
             D_alg = Del - 4*G*G*nij2*nij2.transpose()/A - 6*G*G*DL/s_eq_prime*(A_ijkl -
-                    1./A*double_contract(A_ijkl, dsijdDL)*nij2);
+                    1./A*double_contract(A_ijkl, dsijdDL)*nij2.transpose());
         }
     }
 }
