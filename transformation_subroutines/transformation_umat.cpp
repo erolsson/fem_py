@@ -123,7 +123,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     sij_prime -= theta*state.back_stress_vector(i);
                     back_stress_correction += theta*params.Cm(i)*DL;
                     dsijdDL += params.gamma(i)*theta*theta*state.back_stress_vector(i);
-                    ds_eq_2_dDL += theta*theta*params.Cm(i);
+                    ds_eq_2_dDL -= theta*theta*params.Cm(i);
                 }
             }
             s_eq_prime = sqrt(1.5*double_contract(sij_prime, sij_prime));
@@ -134,6 +134,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             double dfdDL = ds_eq_2_dDL - params.b()/(1+params.b()*DL)*(params.Q() - R2);
             double f = s_eq_2 - sy_2;
             std::cout << "f=" << f << "  DL=" << DL << "  ds_eq_2_dDL=" << ds_eq_2_dDL << std::endl;
+            std::cout << "double_contract(nij2, dsijdDL): " << double_contract(nij2, dsijdDL) << std::endl;
             if (! phase_transformations) {
                 double dDL = f/dfdDL;
                 DL -= dDL;
