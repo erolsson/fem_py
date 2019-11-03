@@ -57,7 +57,8 @@ T double_contract(const Eigen::Matrix<T, 6, 1>& a, const Eigen::Matrix<T, 6, 1>&
 
 // Double contraction for the operation A_ijkl b_kl
 template<typename T>
-Eigen::Matrix<T, 6, 1> double_contract(const Eigen::Matrix<T, 6, 6>& A, const Eigen::Matrix<T, 6, 1>& b) {
+Eigen::Matrix<T, 6, 1> double_contract(const Eigen::Matrix<T, 6, 6, Eigen::RowMajor>& A,
+        const Eigen::Matrix<T, 6, 1>& b) {
     Eigen::Matrix<T, 6, 1> result = A*b;
     for (unsigned i = 0; i!= 3; ++i) {
         for (unsigned j = 3; j != 6; ++j) {
