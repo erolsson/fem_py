@@ -4,15 +4,12 @@
 
 #include "transformation_umat.h"
 
-#include <fstream>
 #include <iostream>
-#include <vector>
 
 #include "Eigen/Dense"
 
 #include "simulation_parameters.h"
 #include "stress_functions.h"
-#include "transformation_umat.h"
 
 double yield_function(const Eigen::Matrix<double, 6, 1>& stilde, double sigma_y) {
     return 3*double_contract(stilde, stilde)/2 - sigma_y*sigma_y;
@@ -55,10 +52,10 @@ private:
 
 extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *sse, double *spd, double *scd,
         double *rpl, double *ddsddt, double *drplde, double *drpldt, double *stran, double *dstran, double *time,
-        double *dtime, double *temp, double *dtemp, double *predef, double *dpred, char *cmname, int *ndi, int *nshr,
-        int *ntens, int *nstatv, const double* props, int *nprops, double *coords, double *drot, double *pnewdt,
-        double *celent, double *dfgrd0, double *dfgrd1, int *noel, int *npt, int *layer, int *kspt, int *kstep,
-        int *kinc, short cmname_len) {
+        double *dtime, double *temp, double *dtemp, double *predef, double *dpred, char *cmname, const int *ndi,
+        const int *nshr, const int *ntens, const int *nstatv, const double* props, const int *nprops, double *coords,
+        double *drot, double *pnewdt, double *celent, double *dfgrd0, double *dfgrd1, const int *noel, const int *npt,
+        const int *layer, const int *kspt, const int *kstep, const int *kinc, short cmname_len) {
 
     using Matrix6x6 = Eigen::Matrix<double, 6, 6, Eigen::RowMajor>;
     using Vector6 = Eigen::Matrix<double, 6, 1>;
@@ -66,6 +63,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     const TransformationMaterialParameters params(props);
     double G = params.E()/2/(1+params.v());
     double K = params.E()/3/(1-2*params.v());
+
     // Collecting state variables
     State state(statev, params.back_stresses());
 
@@ -76,7 +74,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     Matrix6x6 Del = 2*G*J + K*E3;
 
     Eigen::Map<Vector6> stress_vec(stress);
-    Eigen::Map<Vector6> de(dstran);
+    const Eigen::Map<Vector6> de(dstran);
 
     Vector6  st = stress_vec + Del*de;  // Trial stress
 
@@ -93,8 +91,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     if (elastic) {     // Use the trial stress as the stress and the elastic stiffness matrix as the tangent
         D_alg = Del;
     }
-
-    else {
+    else {  // Inelastic deformations
         double DfM = 0;
         double DL = 0;
         double RA = 0;
@@ -160,7 +157,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
         if (DL > 0) {
             double A = - ds_eq_2_dDL;
-            D_alg = Del - 4*G*G*nij2*nij2.transpose()/A - 6*G*G*DL/s_eq_prime*(J-2./3*nij2*nij2.transpose());
+            Matrix6x6 A_ijkl = J - 2./3*nij2*nij2.transpose();
+            D_alg = Del - 4*G*G*nij2*nij2.transpose()/A - 6*G*G*DL/s_eq_prime*(A_ijkl -
+                    1./A*double_contract(A_ijkl, dsijdDL)*nij2);
         }
     }
 }

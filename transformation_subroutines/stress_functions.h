@@ -44,6 +44,7 @@ Eigen::Matrix<T, 6, 1> deviator(const Eigen::Matrix<T, 6, 1>& tensor) {
     return dev;
 }
 
+// Double contraction for the operation a_ij b_ij
 template<typename T>
 T double_contract(const Eigen::Matrix<T, 6, 1>& a, const Eigen::Matrix<T, 6, 1>& b) {
     T val = 0;
@@ -53,6 +54,24 @@ T double_contract(const Eigen::Matrix<T, 6, 1>& a, const Eigen::Matrix<T, 6, 1>&
     val += a[3]*b[3] + a[4]*b[4] + a[5]*b[5];
     return val;
 }
+
+// Double contraction for the operation A_ijkl b_kl
+template<typename T>
+Eigen::Matrix<T, 6, 1> double_contract(const Eigen::Matrix<T, 6, 6>& A, const Eigen::Matrix<T, 6, 1>& b) {
+    Eigen::Matrix<T, 6, 1> result = A*b;
+    for (unsigned i = 0; i!= 3; ++i) {
+        for (unsigned j = 3; j != 6; ++j) {
+            result[i] += A[i][j]*b[j];
+        }
+    }
+    for (unsigned i = 3; i!= 6; ++i) {
+        for (unsigned j = 0; j != 6; ++j) {
+            result[i] += A[i][j]*b[j];
+        }
+    }
+    return result;
+}
+
 
 template<typename T>
 T von_Mises(const Eigen::Matrix<T, 6, 1>& s) {
