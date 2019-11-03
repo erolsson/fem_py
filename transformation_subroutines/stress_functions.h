@@ -62,12 +62,12 @@ Eigen::Matrix<T, 6, 1> double_contract(const Eigen::Matrix<T, 6, 6, Eigen::RowMa
     Eigen::Matrix<T, 6, 1> result = A*b;
     for (unsigned i = 0; i!= 3; ++i) {
         for (unsigned j = 3; j != 6; ++j) {
-            result[i] += A[i][j]*b[j];
+            result[i] += A(i, j)*b[j];
         }
     }
     for (unsigned i = 3; i!= 6; ++i) {
         for (unsigned j = 0; j != 6; ++j) {
-            result[i] += A[i][j]*b[j];
+            result[i] += A(i, j)*b[j];
         }
     }
     return result;
