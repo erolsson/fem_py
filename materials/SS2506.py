@@ -54,7 +54,7 @@ class ElasticPlasticTransformMaterial:
 
 test_material = ElasticPlasticTransformMaterial(E=200e3, v=0.3, sy0M=1000., sy0A=485, Q=0*180., b=100.,
                                                 Cm=np.array([135e3, 700e3, 50e3]),
-                                                gamma_m=0*np.array([950., 500., 50.]), a=[0.056, 0.028, 0.])
+                                                gamma_m=np.array([950., 500., 50.]), a=[0.056, 0.028, 0.])
 
 if __name__ == '__main__':
     print test_material.umat_parameters()
