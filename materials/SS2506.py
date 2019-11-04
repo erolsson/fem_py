@@ -38,9 +38,27 @@ class ElasticPlasticTransformMaterial:
 
         self.k = 0.04
         self.s_lim = 485.
+        self.back_stresses = Cm.shape[0]
+        self.name = 'SS2506'
+
+    def abaqus_material_string(self):
+        material_string = ['\t*Elastic',
+                           '\t\t' + str(self.E) + ', ' + str(self.v)]
+        sy0 = self.fM*self.sy0M + (1-self.fM)*self.sy0A
+        if self.back_stresses > 0:
+            material_string.append('\t*Plastic, hardening=COMBINED, datatype=PARAMETERS, number backstresses='
+                                   + str(self.back_stresses))
+            back_stress_string = '\t\t' + str(sy0)
+            for i in range(self.back_stresses):
+                back_stress_string += ', ' + self.Cm[i] + ', ' + self.gamma_m[i]
+            material_string.append(back_stress_string)
+        if self.Q > 0:
+            material_string.append('\t*Cyclic Hardening, parameters')
+            material_string.append('\t\t' + str(sy0) + ', ' + str(self.Q) + ',' + str(self.b))
+        return material_string
 
     def umat_depvar(self):
-        if self.gamma_m.shape[0] > 0:
+        if self.back_stresses > 0:
             return 3 + (self.gamma_m.shape[0]+1)*6
         return 3
 

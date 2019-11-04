@@ -8,9 +8,6 @@
 #include "Eigen/Dense"
 
 class TransformationMaterialParameters {
-private:
-    const double* data_;
-    unsigned back_stresses_ = 0;
 public:
     explicit TransformationMaterialParameters(const double* data):
             data_(data), back_stresses_(static_cast<int>(data[6])) {}
@@ -36,11 +33,12 @@ public:
     [[nodiscard]] const double& R2() const { return data_[8 + 2*back_stresses_]; } ;
 
     [[nodiscard]] bool plastic() const { return sy0M() > 0 && sy0A() > 0; }
-    [[nodiscard]] bool isotropic_hardening() const { return Q() > 0; }
     [[nodiscard]] bool kinematic_hardening() const { return back_stresses_ > 0; }
     bool stress_transformation = false;
     bool strain_transformation = false;
-
+private:
+    const double* data_;
+    unsigned back_stresses_ = 0;
 };
 
 

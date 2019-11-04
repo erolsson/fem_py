@@ -118,14 +118,12 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             double sy_2 = sy0 + R2;
             Vector6 sij_prime = sij_t;
             double back_stress_correction = 0;
-            if (params.kinematic_hardening()) {
-                for (unsigned i = 0; i!= params.back_stresses(); ++i) {
-                    double theta = 1./(1+params.gamma(i)*DL);
-                    sij_prime -= theta*state.back_stress_vector(i);
-                    back_stress_correction += theta*params.Cm(i)*DL;
-                    dsijdDL += params.gamma(i)*theta*theta*state.back_stress_vector(i);
-                    ds_eq_2_dDL -= theta*theta*params.Cm(i);
-                }
+            for (unsigned i = 0; i!= params.back_stresses(); ++i) {
+                double theta = 1./(1+params.gamma(i)*DL);
+                sij_prime -= theta*state.back_stress_vector(i);
+                back_stress_correction += theta*params.Cm(i)*DL;
+                dsijdDL += params.gamma(i)*theta*theta*state.back_stress_vector(i);
+                ds_eq_2_dDL -= theta*theta*params.Cm(i);
             }
             s_eq_prime = sqrt(1.5*double_contract(sij_prime, sij_prime));
             B += 3*G*params.R2()*DfM/params.sy0A();
@@ -134,8 +132,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             ds_eq_2_dDL += double_contract(nij2, dsijdDL);
             double dfdDL = ds_eq_2_dDL - params.b()/(1+params.b()*DL)*(params.Q() - R2);
             double f = s_eq_2 - sy_2;
-            std::cout << "f=" << f << "  DL=" << DL << "  ds_eq_2_dDL=" << ds_eq_2_dDL << std::endl;
-            std::cout << "double_contract(nij2, dsijdDL): " << double_contract(nij2, dsijdDL) << std::endl;
             if (! phase_transformations) {
                 double dDL = f/dfdDL;
                 DL -= dDL;
