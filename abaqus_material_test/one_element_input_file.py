@@ -62,12 +62,12 @@ def write_input_file(filename, material, boundary_conditions, element_size=1., e
         file_lines.append('\t*User Material, constants=' + str(len(umat_parameters)))
         parameter_str = ''
         for i, par in enumerate(umat_parameters):
-            parameter_str += str(par)
             if (i % 8 == 0 and i != 0) or i == len(umat_parameters) - 1:
                 file_lines.append('\t\t' + parameter_str)
                 parameter_str = ''
-            else:
+            elif i != 0:
                 parameter_str += ', '
+            parameter_str += str(par)
     else:
         file_lines += material.abaqus_material_string()
 
