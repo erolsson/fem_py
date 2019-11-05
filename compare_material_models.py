@@ -34,7 +34,7 @@ args = {'boundary_conditions': boundary_conditions, 'simulation_directory': 'aba
 
 for inc, lw in zip([1.], [1]):
     for simulation in simulations:
-        args['umat_file'] = simulation.umat_file
+        args['user_subroutine'] = simulation.umat_file
         args['simulation_name'] = simulation.name
         args['max_time_increment'] = inc
         e, s = simulation.model(**args)
