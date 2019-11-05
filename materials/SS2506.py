@@ -50,7 +50,7 @@ class ElasticPlasticTransformMaterial:
                                    + str(self.back_stresses))
             back_stress_string = '\t\t' + str(sy0)
             for i in range(self.back_stresses):
-                back_stress_string += ', ' + self.Cm[i] + ', ' + self.gamma_m[i]
+                back_stress_string += ', ' + str(self.Cm[i]) + ', ' + str(self.gamma_m[i])
             material_string.append(back_stress_string)
         if self.Q > 0:
             material_string.append('\t*Cyclic Hardening, parameters')
