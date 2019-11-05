@@ -34,8 +34,13 @@ def one_element_abaqus(simulation_directory, material, boundary_conditions, simu
     abaqus_job = Popen(job_string, shell=True)
     abaqus_job.wait()
     os.chdir(file_directory)
+    odb_path = os.path.abspath(simulation_directory + '/' + simulation_name + '.odb')
+    odb_abs_dir = os.path.dirname(odb_path)
+    print odb_abs_dir
+
     abaqus_post_processing_job = Popen('abaqus python one_element_post_processing.py ' +
-                                       simulation_directory + ' ' + simulation_name, shell=True)
+                                       odb_abs_dir + ' ' + simulation_name, shell=True)
+
     abaqus_post_processing_job.wait()
 
     os.chdir(run_directory)
