@@ -151,6 +151,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             for (unsigned i = 0; i != params.back_stresses(); ++i) {
                 state.back_stress_vector(i) += 2./3*params.Cm(i)*DL*nij2;
                 state.back_stress_vector(i) /= (1+params.gamma(i)*DL);
+                std::cout << "da=" << 2./3*params.Cm(i)*DL*nij2[2] << " a=" << state.back_stress_vector(i)[2] << std::endl;
                 state.total_back_stress() += state.back_stress_vector(i);
             }
         }
