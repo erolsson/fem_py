@@ -137,6 +137,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 DL -= dDL;
                 residual = abs(dDL);
             }
+            std::cout << "DL=" << DL << std::endl;
         }
 
         // Updating state variables
