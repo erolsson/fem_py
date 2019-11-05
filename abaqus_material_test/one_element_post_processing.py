@@ -3,6 +3,7 @@ import sys
 
 import odbAccess
 
+simulation_directory = sys.argv[-2]
 simulation_name = sys.argv[-1]
 
 odb = odbAccess.openOdb(simulation_name + '.odb')

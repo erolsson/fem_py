@@ -32,12 +32,13 @@ def one_element_abaqus(simulation_directory, material, boundary_conditions, simu
     print job_string
     abaqus_job = Popen(job_string, shell=True)
     abaqus_job.wait()
-    abaqus_post_processing_job = Popen('abaqus python one_element_post_processing.py ' + simulation_name, shell=True)
+    os.chdir(run_directory)
+    abaqus_post_processing_job = Popen('abaqus python one_element_post_processing.py ' +
+                                       simulation_directory + ' ' + simulation_name, shell=True)
     abaqus_post_processing_job.wait()
 
     with open(simulation_directory + '/stressStrain' + simulation_name + '.pkl', 'rb') as pickle_handle:
         data = pickle.load(pickle_handle)
     stresses = data[:, 0:6]
     strains = data[:, 6:12]
-    os.chdir(run_directory)
     return strains, stresses
