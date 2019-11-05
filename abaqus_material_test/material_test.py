@@ -27,7 +27,7 @@ def one_element_abaqus(simulation_directory, material, boundary_conditions, simu
         env_file.write('ask_delete = OFF\n')
 
     # Running the abaqus simulation in an external script
-    job_string = 'abaqus j=' + simulation_name + ' interactive'
+    job_string = 'abq2018 j=' + simulation_name + ' interactive'
     if user_subroutine:
         job_string += ' user=' + user_subroutine
     print job_string
@@ -39,7 +39,7 @@ def one_element_abaqus(simulation_directory, material, boundary_conditions, simu
     odb_abs_dir = os.path.dirname(odb_path)
     print odb_abs_dir
     os.chdir(file_directory)
-    abaqus_post_processing_job = Popen('abaqus python one_element_post_processing.py ' +
+    abaqus_post_processing_job = Popen('abq2018 python one_element_post_processing.py ' +
                                        odb_abs_dir + ' ' + simulation_name, shell=True)
 
     abaqus_post_processing_job.wait()
