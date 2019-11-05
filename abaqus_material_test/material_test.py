@@ -26,7 +26,7 @@ def one_element_abaqus(simulation_directory, material, boundary_conditions, simu
     with open('abaqus_v6.env', 'w') as env_file:
         env_file.write('ask_delete = OFF\n')
     # Running the abaqus simulation in an external script
-    job_string = 'abaqus j=' + simulation_name + 'interactive'
+    job_string = 'abaqus j=' + simulation_name + ' interactive'
     if user_subroutine:
         job_string += ' user=' + user_subroutine
     print job_string
