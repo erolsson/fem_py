@@ -29,6 +29,7 @@ def one_element_abaqus(simulation_directory, material, boundary_conditions, simu
     job_string = 'abaqus j=' + simulation_name + 'interactive'
     if user_subroutine:
         job_string += ' user=' + user_subroutine
+    print job_string
     abaqus_job = Popen(job_string, shell=True)
     abaqus_job.wait()
     abaqus_post_processing_job = Popen('abaqus python one_element_post_processing.py ' + simulation_name, shell=True)
