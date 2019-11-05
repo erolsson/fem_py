@@ -13,7 +13,7 @@ def one_element_abaqus(simulation_directory, material, boundary_conditions, simu
                        element_size=1., element_type='C3D8', user_subroutine=None,
                        time_period=1., max_increment=1., **_):
     run_directory = os.getcwd()
-
+    file_directory = os.path.dirname(os.path.abspath(__file__))
     if not os.path.isdir(simulation_directory):
         os.makedirs(simulation_directory)
 
@@ -25,6 +25,7 @@ def one_element_abaqus(simulation_directory, material, boundary_conditions, simu
 
     with open('abaqus_v6.env', 'w') as env_file:
         env_file.write('ask_delete = OFF\n')
+
     # Running the abaqus simulation in an external script
     job_string = 'abaqus j=' + simulation_name + ' interactive'
     if user_subroutine:
@@ -32,13 +33,15 @@ def one_element_abaqus(simulation_directory, material, boundary_conditions, simu
     print job_string
     abaqus_job = Popen(job_string, shell=True)
     abaqus_job.wait()
-    os.chdir(run_directory)
+    os.chdir(file_directory)
     abaqus_post_processing_job = Popen('abaqus python one_element_post_processing.py ' +
                                        simulation_directory + ' ' + simulation_name, shell=True)
     abaqus_post_processing_job.wait()
 
+    os.chdir(run_directory)
     with open(simulation_directory + '/stressStrain' + simulation_name + '.pkl', 'rb') as pickle_handle:
         data = pickle.load(pickle_handle)
     stresses = data[:, 0:6]
     strains = data[:, 6:12]
+
     return strains, stresses

@@ -1,6 +1,8 @@
 import pickle
 import sys
 
+import numpy as np
+
 import odbAccess
 
 simulation_directory = sys.argv[-2]
