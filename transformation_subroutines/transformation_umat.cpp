@@ -119,7 +119,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             Vector6 sij_prime = sij_t;
             double back_stress_correction = 0;
             for (unsigned i = 0; i!= params.back_stresses(); ++i) {
-                std::cout << params.Cm(i) << ", " << params.gamma(i) << ", " << state.back_stress_vector(i) << std::endl;
+                std::cout << params.Cm(i) << ", " << params.gamma(i) << ", " << state.back_stress_vector(i)[2] << std::endl;
                 double theta = 1./(1+params.gamma(i)*DL);
                 sij_prime -= theta*state.back_stress_vector(i);
                 back_stress_correction += theta*params.Cm(i)*DL;
