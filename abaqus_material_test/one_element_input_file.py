@@ -94,6 +94,8 @@ def write_input_file(filename, material, boundary_conditions, temperature=None, 
         file_lines.append('*Amplitude, name=temp_amp')
         for t, temp in temperature:
             file_lines.append('\t' + str(t) + ', ' + str(temp))
+        file_lines.append('*Initial Conditions, type=Temperature')
+        file_lines.append('\tall_nodes, ' + temperature[0, 1])
 
     if martensite_fraction:
         initial_values = [0., martensite_fraction]
