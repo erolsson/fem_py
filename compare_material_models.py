@@ -38,6 +38,7 @@ for inc, lw in zip([1.], [1]):
         args['user_subroutine'] = simulation.umat_file
         args['simulation_name'] = simulation.name
         args['max_time_increment'] = inc
+        args['martensite_fraction'] = simulation.fm
         e, s = simulation.model(**args)
         plt.figure(1)
         plt.plot(e[:, 2], s[:, 2], '-x' + simulation.color, lw=lw, label=simulation.label)
