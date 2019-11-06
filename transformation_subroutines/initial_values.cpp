@@ -10,6 +10,7 @@
 #include <tuple>
 #include <vector>
 
+typedef std::string string;
 std::vector<std::tuple<unsigned, unsigned, double> > austenite;
 /*
 extern "C" void sdvini_(double* statev, const double* coords, const int* nstatev, const int* ncrds, const int* noel,
@@ -28,8 +29,9 @@ extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* 
         std::string data_line;
         std::ifstream austenite_file("austenite.dat");
         while (getline(austenite_file, data_line)) {
+            std::cout << "reading austine data" << std::endl;
             std::stringstream line(data_line);
-            std::string val;
+            string val;
             while (getline(line, val, ',')) {
                 line_data.push_back(val);
             }
