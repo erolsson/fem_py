@@ -36,6 +36,7 @@ extern "C" void sdvini_(double* statev, const double* coords, const int* nstatev
     {
         std::lock_guard<std::mutex> lock(part_info_mutex);
         std::cout << "lock assigned" << std::endl;
+        std::cout << *noel << std::endl;
         getpartinfo_(noel, 1, part_name_ptr, &user_elem_number, &error);
         std::cout << "getpartinfo_ read" << std::endl;
     }
