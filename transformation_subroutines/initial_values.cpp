@@ -14,7 +14,7 @@
 #include <vector>
 
 extern "C" void getoutdir_(char* outdir, int&, int);
-extern "C" void getpartinfo_(const int* intnum, const int* jtype, char* cpname, int* locnum, int* jrcd);
+extern "C" void getpartinfo_(const int* intnum, const int* jtype, char* cpname, int&, int* locnum, int* jrcd);
 
 struct PairHash {
 public:
@@ -32,13 +32,13 @@ extern "C" void sdvini_(double* statev, const double* coords, const int* nstatev
     std::cout << "Running sdvini_" << std::endl;
     int user_elem_number = 0;
     char part_name_ptr[256];
+    int part_name_len = 0;
     int error = 0;
-    int jtype = 1;
+    const int jtype = 1;
     {
         std::lock_guard<std::mutex> lock(part_info_mutex);
         std::cout << "lock assigned" << std::endl;
-        std::cout << *noel << std::endl;
-        getpartinfo_(noel, &jtype, part_name_ptr, &user_elem_number, &error);
+        getpartinfo_(noel, &jtype, part_name_ptr, part_name_len, &user_elem_number, &error);
         std::cout << "getpartinfo_ read" << std::endl;
     }
     std::string part_name(part_name_ptr);
