@@ -89,8 +89,20 @@ def write_input_file(filename, material, boundary_conditions, element_size=1., e
         file_lines.append('*Amplitude, name=' + bc.direction + '_amp')
         for t, val in bc.amplitude:
             file_lines.append('\t' + str(t) + ', ' + str(val))
+
     if martensite_fraction:
-        file_lines.append('*Initial Conditions, type=Solution, variable=2')
+        initial_values = [0., martensite_fraction]
+        # These are the back stress components and the isostropic hardnening
+        initial_values += [0.]*(material.umat_depvar() - 2)
+        file_lines.append('*Initial Conditions, type=Solution')
+        value_str = '\tall_elements'
+        for idx, ini_val in enumerate(initial_values, start=1):
+            if idx % 8 == 0:
+                file_lines.append(value_str)
+                value_str = ''
+            else:
+                value_str += ',\t'
+            value_str += str(ini_val)
         file_lines.append('\tall_elements, ' + str(martensite_fraction))
 
     file_lines.append('*Step, name=step, nlgeom=NO, inc=10000000')
