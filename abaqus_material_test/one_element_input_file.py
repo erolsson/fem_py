@@ -103,6 +103,7 @@ def write_input_file(filename, material, boundary_conditions, element_size=1., e
             else:
                 value_str += ',\t'
             value_str += str(ini_val)
+        file_lines.append(value_str)
 
     file_lines.append('*Step, name=step, nlgeom=NO, inc=10000000')
     file_lines.append('\t*Static')
