@@ -67,6 +67,5 @@ extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* 
         for (auto line: austenite) {
             std::cout << line.first.first << ", " << line.first.second << ", " << line.second << std::endl;
         }
-        std::abort();
     }
 }
