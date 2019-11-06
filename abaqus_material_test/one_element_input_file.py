@@ -97,13 +97,12 @@ def write_input_file(filename, material, boundary_conditions, element_size=1., e
         file_lines.append('*Initial Conditions, type=Solution')
         value_str = '\tall_elements'
         for idx, ini_val in enumerate(initial_values, start=1):
-            if idx % 8 == 0:
+            if idx % 8 == 0 or idx == len(initial_values) - 1:
                 file_lines.append(value_str)
                 value_str = '\t'
             else:
                 value_str += ',\t'
             value_str += str(ini_val)
-        file_lines.append(value_str)
 
     file_lines.append('*Step, name=step, nlgeom=NO, inc=10000000')
     file_lines.append('\t*Static')
