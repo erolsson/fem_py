@@ -13,7 +13,15 @@
 
 extern "C" void getoutdir_(char* outdir, int&, int);
 
-std::unordered_map<std::pair<unsigned, unsigned>, double> austenite;
+struct PairHash {
+public:
+    template <typename T, typename U>
+    std::size_t operator()(const std::pair<T, U> &x) const {
+        return std::hash<T>()(x.first) ^ std::hash<U>()(x.second);
+    }
+};
+
+std::unordered_map<std::pair<unsigned, unsigned>, double, PairHash> austenite;
 /*
 extern "C" void sdvini_(double* statev, const double* coords, const int* nstatev, const int* ncrds, const int* noel,
         const int* npt, const int* layer, const int* kspt) {
