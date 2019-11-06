@@ -43,7 +43,7 @@ extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* 
             while (getline(line, val, ',')) {
                 line_data.push_back(val);
             }
-            austenite.emplace_back(stoi(line_data[0]), stoi(line_data[0]), stod(line_data[0]));
+            austenite.emplace_back(stoi(line_data[0]), stoi(line_data[1]), stod(line_data[2]));
         }
         for (auto line: austenite) {
             auto [elem, gp, val] = line;
