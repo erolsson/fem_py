@@ -103,7 +103,6 @@ def write_input_file(filename, material, boundary_conditions, element_size=1., e
             else:
                 value_str += ',\t'
             value_str += str(ini_val)
-        file_lines.append('\tall_elements, ' + str(martensite_fraction))
 
     file_lines.append('*Step, name=step, nlgeom=NO, inc=10000000')
     file_lines.append('\t*Static')
