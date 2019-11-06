@@ -6,7 +6,6 @@ import numpy as np
 
 import odbAccess
 
-print sys.argv
 simulation_directory = sys.argv[-2]
 simulation_name = sys.argv[-1]
 
