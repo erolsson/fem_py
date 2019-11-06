@@ -30,9 +30,9 @@ std::mutex part_info_mutex;
 extern "C" void sdvini_(double* statev, const double* coords, const int* nstatev, const int* ncrds, const int* noel,
         const int* npt, const int* layer, const int* kspt) {
     std::cout << "Running sdvini_" << std::endl;
-    int user_elem_number;
+    int user_elem_number = 0;
     char part_name_ptr[256];
-    int error;
+    int error = 0;
     {
         std::lock_guard<std::mutex> lock(part_info_mutex);
         std::cout << "lock assigned" << std::endl;
