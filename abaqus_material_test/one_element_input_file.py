@@ -90,7 +90,7 @@ def write_input_file(filename, material, boundary_conditions, temperature=None, 
         for t, val in bc.amplitude:
             file_lines.append('\t' + str(t) + ', ' + str(val))
 
-    if temperature:
+    if temperature is not None:
         file_lines.append('*Amplitude, name=temp_amp')
         for t, temp in temperature:
             file_lines.append('\t' + str(t) + ', ' + str(temp))
@@ -104,9 +104,11 @@ def write_input_file(filename, material, boundary_conditions, temperature=None, 
     file_lines.append('*Step, name=step, nlgeom=NO, inc=10000000')
     file_lines.append('\t*Static')
     file_lines.append('\t\t1e-05, ' + str(time_period) + ', 1e-12,  ' + str(max_increment))
-    if temperature:
+
+    if temperature is not None:
         file_lines.append('\t*Temperature, amplitude=temp_amp')
         file_lines.append('\t\tall_nodes, 1.')
+
     # Defining the boundary conditions
     dir_dict = {'x': '1', 'y': '2', 'z': '3'}
     for bc in boundary_conditions:
