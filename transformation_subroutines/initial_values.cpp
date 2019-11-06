@@ -31,7 +31,7 @@ extern "C" void sdvini_(double* statev, const double* coords, const int* nstatev
         const int* npt, const int* layer, const int* kspt) {
     std::cout << "Running sdvini_" << std::endl;
     int* user_elem_number_ptr;
-    char* part_name_ptr;
+    char part_name_ptr[256];
     int* error;
     {
         std::lock_guard<std::mutex> lock(part_info_mutex);
