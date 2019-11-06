@@ -32,12 +32,11 @@ extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* 
         const int* kstep, const int* kinc) {
     if (*lop == 0) {
         // Beginning of analysis
-        std::vector<std::string> line_data;
         std::string data_line;
         std::ifstream austenite_file(get_run_directory() + "/austenite.dat");
 
         while (getline(austenite_file, data_line)) {
-            std::cout << "reading austine data" << std::endl;
+            std::vector<std::string> line_data;
             std::stringstream line(data_line);
             std::string val;
             while (getline(line, val, ',')) {
