@@ -5,13 +5,16 @@
 #include <algorithm>
 #include <fstream>
 #include <iostream>
+#include <mutex>
 #include <string>
 #include <sstream>
 #include <tuple>
+#include <thread>
 #include <unordered_map>
 #include <vector>
 
 extern "C" void getoutdir_(char* outdir, int&, int);
+extern "C" void getpartinfo_(const int* intnum, int jtype, char* cpname, int* locnum, int* jrcd);
 
 struct PairHash {
 public:
@@ -22,12 +25,20 @@ public:
 };
 
 std::unordered_map<std::pair<unsigned, unsigned>, double, PairHash> austenite;
-/*
+std::mutex part_info_mutex;
+
 extern "C" void sdvini_(double* statev, const double* coords, const int* nstatev, const int* ncrds, const int* noel,
         const int* npt, const int* layer, const int* kspt) {
-
+    int* user_elem_number_ptr;
+    char* part_name;
+    int* error;
+    {
+        std::lock_guard<std::mutex> lock(part_info_mutex);
+        getpartinfo_(noel, 1, part_name, user_elem_number_ptr, error);
+    }
+    std::cout << part_name << ", " << user_elem_number_ptr << " " << error << std::endl;
 }
-*/
+
 
 std::string get_run_directory() {
     char out_dir_char[256];
