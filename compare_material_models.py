@@ -12,11 +12,12 @@ from abaqus_material_test.one_element_input_file import BC
 
 from materials.SS2506 import test_material
 
-Simulation = namedtuple('Simulation', ['model', 'label', 'color', 'umat_file', 'name'])
-simulations = [Simulation(model=one_element_abaqus, label='New', color='b', umat_file=None, name='oneElementAbaqus'),
+Simulation = namedtuple('Simulation', ['model', 'label', 'color', 'umat_file', 'name', 'fm'])
+simulations = [Simulation(model=one_element_abaqus, label='New', color='b', umat_file=None, name='oneElementAbaqus',
+                          fm=None),
                Simulation(model=one_element_abaqus, label='Abaqus', color='r', name='oneElementUmat',
                           umat_file=os.path.expanduser('~/fem_py/transformation_subroutines/'
-                                                       'transformation_subroutine.o'))]
+                                                       'transformation_subroutine.o'), fm=0.8)]
 
 increments = 100
 
