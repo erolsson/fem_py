@@ -76,8 +76,5 @@ extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* 
             }
             austenite.emplace(std::make_pair(stoi(line_data[0]), stoi(line_data[1])), stod(line_data[2]));
         }
-        for (auto line: austenite) {
-            std::cout << line.first.first << ", " << line.first.second << ", " << line.second << std::endl;
-        }
     }
 }

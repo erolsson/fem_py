@@ -11,7 +11,7 @@ from materials.SS2506 import test_material
 
 def one_element_abaqus(simulation_directory, material, boundary_conditions, simulation_name='oneElement',
                        element_size=1., element_type='C3D8', user_subroutine=None,
-                       time_period=1., max_increment=1., martensite_fraction=None, **_):
+                       time_period=1., max_increment=1., martensite_fraction=None, temperature=None, **_):
     run_directory = os.getcwd()
     file_directory = os.path.dirname(os.path.abspath(__file__))
     if not os.path.isdir(simulation_directory):
@@ -21,7 +21,8 @@ def one_element_abaqus(simulation_directory, material, boundary_conditions, simu
 
     write_input_file(filename=simulation_name + '.inp', material=material, boundary_conditions=boundary_conditions,
                      element_size=element_size, element_type=element_type, umat_file=user_subroutine,
-                     time_period=time_period, max_increment=max_increment, martensite_fraction=martensite_fraction)
+                     time_period=time_period, max_increment=max_increment, martensite_fraction=martensite_fraction,
+                     temperature=temperature)
 
     with open('abaqus_v6.env', 'w') as env_file:
         env_file.write('ask_delete = OFF\n')

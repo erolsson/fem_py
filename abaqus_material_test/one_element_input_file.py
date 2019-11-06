@@ -7,8 +7,8 @@ from materials.SS2506 import test_material
 BC = namedtuple('BC', ['amplitude', 'direction', 'mode'])
 
 
-def write_input_file(filename, material, boundary_conditions, element_size=1., element_type='C3D8', umat_file=None,
-                     time_period=1., max_increment=1., martensite_fraction=None):
+def write_input_file(filename, material, boundary_conditions, temperature=None, element_size=1., element_type='C3D8',
+                     umat_file=None, time_period=1., max_increment=1., martensite_fraction=None):
     try:
         material_name = material.name
     except AttributeError:
@@ -90,6 +90,11 @@ def write_input_file(filename, material, boundary_conditions, element_size=1., e
         for t, val in bc.amplitude:
             file_lines.append('\t' + str(t) + ', ' + str(val))
 
+    if temperature:
+        file_lines.append('*Amplitude, name=temp_amp')
+        for t, temp in temperature:
+            file_lines.append('\t' + str(t) + ', ' + str(temp))
+
     if martensite_fraction:
         initial_values = [0., martensite_fraction]
         # These are the back stress components and the isostropic hardnening
@@ -99,7 +104,9 @@ def write_input_file(filename, material, boundary_conditions, element_size=1., e
     file_lines.append('*Step, name=step, nlgeom=NO, inc=10000000')
     file_lines.append('\t*Static')
     file_lines.append('\t\t1e-05, ' + str(time_period) + ', 1e-12,  ' + str(max_increment))
-
+    if temperature:
+        file_lines.append('\t*Temperature, amplitude=temp_amp')
+        file_lines.append('\t\tall_nodes, 1.')
     # Defining the boundary conditions
     dir_dict = {'x': '1', 'y': '2', 'z': '3'}
     for bc in boundary_conditions:

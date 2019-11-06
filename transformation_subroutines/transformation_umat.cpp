@@ -14,20 +14,24 @@
 double yield_function(const Eigen::Matrix<double, 6, 1>& stilde, double sigma_y) {
     return 3*double_contract(stilde, stilde)/2 - sigma_y*sigma_y;
 }
-/*
-double transformation_function(const Eigen::Matrix<double, 6, 1>& stress, double fm, double k, double Ms, double Mss,
-        double T, std::array<double, 3> a) {
-    return 1 - exp(k*(Ms + ms_stress(stress, )))
-}
 
-double ms_stress(const Eigen::Matrix<double, 6, 1>& stress, double a1, double a2, double a3) {
+double ms_stress(const Eigen::Matrix<double, 6, 1>& stress, const TransformationMaterialParameters& params) {
     Eigen::Matrix<double, 6, 1> s_dev = deviator(stress);
-    double m_stress = a1*(stress[0] + stress[1] + stress[2]);       // Contribution from hydrostic stress
-    m_stress += a2*von_Mises(stress);
-    m_stress += a3*vector_det(s_dev);
+    double m_stress = params.a1()*(stress[0] + stress[1] + stress[2]);   // Contribution from hydrostatic stress
+    m_stress += params.a2()*von_Mises(stress);
+    m_stress += params.a3()*vector_det(stress);
     return m_stress;
 }
-*/
+
+double ms_strain(double epl, const TransformationMaterialParameters& params) {
+    return 0.;
+}
+
+double transformation_function(const Eigen::Matrix<double, 6, 1>& stress, double epl, double T,
+                               const TransformationMaterialParameters& params) {
+    return 1 - exp(params.k()*(params.Ms() + ms_stress(stress, params) +
+                ms_strain(epl, params) + params.Mss()) - T);
+}
 
 class State {
 public:
@@ -51,15 +55,15 @@ private:
 };
 
 extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *sse, double *spd, double *scd,
-        double *rpl, double *ddsddt, double *drplde, double *drpldt, double *stran, double *dstran, double *time,
-        double *dtime, double *temp, double *dtemp, double *predef, double *dpred, char *cmname, const int *ndi,
-        const int *nshr, const int *ntens, const int *nstatv, const double* props, const int *nprops, double *coords,
-        double *drot, double *pnewdt, double *celent, double *dfgrd0, double *dfgrd1, const int *noel, const int *npt,
-        const int *layer, const int *kspt, const int *kstep, const int *kinc, short cmname_len) {
+        double *rpl, double *ddsddt, double *drplde, double *drpldt, double *stran, double *dstran, double* time,
+        double& dtime, double& temp, double& dtemp, double *predef, double *dpred, char *cmname, const int& ndi,
+        const int& nshr, const int& ntens, const int& nstatv, const double* props, const int& nprops, double *coords,
+        double* drot, double *pnewdt, double& celent, double* dfgrd0, double* dfgrd1, const int& noel, const int& npt,
+        const int& layer, const int& kspt, const int& kstep, const int& kinc, short cmname_len) {
 
     using Matrix6x6 = Eigen::Matrix<double, 6, 6, Eigen::RowMajor>;
     using Vector6 = Eigen::Matrix<double, 6, 1>;
-
+    std::cout << temp << std::endl;
     const TransformationMaterialParameters params(props);
     double G = params.E()/2/(1+params.v());
     double K = params.E()/3/(1-2*params.v());
@@ -84,8 +88,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         stilde -= state.total_back_stress();
     }
     bool plastic = params.plastic() && yield_function(stilde, sy) > 0;
-    bool phase_transformations = params.strain_transformation || params.stress_transformation;
-    phase_transformations = false;
+    bool phase_transformations = transformation_function(st, 0, temp, params) - state.fM() > 0;
+
     bool elastic = !plastic && !phase_transformations;
     stress_vec = st;
     if (elastic) {     // Use the trial stress as the stress and the elastic stiffness matrix as the tangent
@@ -119,7 +123,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             Vector6 sij_prime = sij_t;
             double back_stress_correction = 0;
             for (unsigned i = 0; i!= params.back_stresses(); ++i) {
-                std::cout << params.Cm(i) << ", " << params.gamma(i) << ", " << state.back_stress_vector(i)[2] << std::endl;
                 double theta = 1./(1+params.gamma(i)*DL);
                 sij_prime -= theta*state.back_stress_vector(i);
                 back_stress_correction += theta*params.Cm(i)*DL;
@@ -138,7 +141,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 DL -= dDL;
                 residual = abs(dDL);
             }
-            std::cout << "DL=" << DL << std::endl;
+
         }
 
         // Updating state variables
@@ -151,8 +154,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             for (unsigned i = 0; i != params.back_stresses(); ++i) {
                 state.back_stress_vector(i) += 2./3*params.Cm(i)*DL*nij2;
                 state.back_stress_vector(i) /= (1+params.gamma(i)*DL);
-                std::cout << "da=" << 2./3*params.Cm(i)*DL*nij2[2] << " div=" << (1+params.gamma(i)*DL)
-                          << " a=" << state.back_stress_vector(i)[2] << std::endl;
                 state.total_back_stress() += state.back_stress_vector(i);
             }
         }
