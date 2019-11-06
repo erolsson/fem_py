@@ -8,14 +8,12 @@
 #include <mutex>
 #include <string>
 #include <sstream>
-#include <tuple>
 #include <thread>
 #include <unordered_map>
 #include <vector>
 
 extern "C" void getoutdir_(char* outdir, int&, int);
-extern "C" void getpartinfoc_(char* name, int& name_len, const int* num, const int* jtype, int* user_num, int* error);
-// extern  "C" void getelemnumber_(const int*, const int*, int*, int*);
+extern "C" void getpartinfoc_(char* name, int& name_len, const int& num, const int& jtype, int& user_num, int& error);
 
 struct PairHash {
 public:
@@ -28,8 +26,8 @@ public:
 std::unordered_map<std::pair<unsigned, unsigned>, double, PairHash> austenite;
 std::mutex part_info_mutex;
 
-extern "C" void sdvini_(double* statev, const double* coords, const int* nstatev, const int* ncrds, const int* noel,
-        const int* npt, const int* layer, const int* kspt) {
+extern "C" void sdvini_(double* statev, const double* coords, const int& nstatev, const int& ncrds, const int& noel,
+        const int& npt, const int& layer, const int& kspt) {
     int user_elem_number = 0;
     char part_name_char[80];
     int part_name_len = 0;
@@ -37,12 +35,20 @@ extern "C" void sdvini_(double* statev, const double* coords, const int* nstatev
     const int jtype = 1;
     {
         std::lock_guard<std::mutex> lock(part_info_mutex);
-        std::cout << "lock assigned" << std::endl;
-        getpartinfoc_(part_name_char, part_name_len, noel, &jtype, &user_elem_number, &error);
-        std::cout << "getpartinfo_ read" << std::endl;
+        getpartinfoc_(part_name_char, part_name_len, noel, jtype, user_elem_number, error);
     }
     std::string part_name(part_name_char, part_name_char+part_name_len);
-    std::cout << part_name << ", " << user_elem_number << " " << error << std::endl;
+    std::pair<unsigned, unsigned> point_key(user_elem_number, npt);
+    double martensite = 1 - austenite[point_key];
+    for (unsigned i = 0; i != nstatev; ++i) {
+        if (i == 1)  {
+            // Martensite state var
+            statev[i] = martensite;
+        }
+        else {
+            statev[i] = 0;
+        }
+    }
 }
 
 
