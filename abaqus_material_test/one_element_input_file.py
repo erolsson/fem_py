@@ -99,7 +99,7 @@ def write_input_file(filename, material, boundary_conditions, element_size=1., e
         for idx, ini_val in enumerate(initial_values, start=1):
             if idx % 8 == 0:
                 file_lines.append(value_str)
-                value_str = ''
+                value_str = '\t'
             else:
                 value_str += ',\t'
             value_str += str(ini_val)
