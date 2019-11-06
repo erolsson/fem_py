@@ -37,6 +37,6 @@ extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* 
             auto [elem, gp, val] = line;
             std::cout << elem << ", " << gp << ", " << val << std::endl;
         }
-        std::abort()
+        std::abort();
     }
 }
