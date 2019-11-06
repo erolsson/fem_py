@@ -20,20 +20,22 @@ extern "C" void sdvini_(double* statev, const double* coords, const int* nstatev
 }
 */
 
+std::string get_run_directory() {
+    char out_dir_char[256];
+    int out_dir_len = 0;
+    getoutdir_(out_dir_char, out_dir_len, 256);
+    std::string out_dir(out_dir_char, out_dir_char+out_dir_len);
+    return out_dir;
+}
+
 extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* time, const double* dtime,
         const int* kstep, const int* kinc) {
-    std::cout << "Calling uexternaldb" << std::endl;
     if (*lop == 0) {
-        std::cout << "start, lop == 0" << std::endl;
         // Beginning of analysis
         std::vector<std::string> line_data;
         std::string data_line;
-        std::ifstream austenite_file("austenite.dat");
-        char out_dir_char[256];
-        int out_dir_len = 0;
-        getoutdir_(out_dir_char, out_dir_len, 256);
-        std::string out_dir(out_dir_char, out_dir_char+out_dir_len);
-        std::cout << out_dir << std::endl;
+        std::ifstream austenite_file(get_run_directory() + "/austenite.dat");
+
         while (getline(austenite_file, data_line)) {
             std::cout << "reading austine data" << std::endl;
             std::stringstream line(data_line);
