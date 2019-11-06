@@ -8,11 +8,12 @@
 #include <string>
 #include <sstream>
 #include <tuple>
+#include <unordered_map>
 #include <vector>
 
 extern "C" void getoutdir_(char* outdir, int&, int);
 
-std::vector<std::tuple<unsigned, unsigned, double> > austenite;
+std::unordered_map<std::pair<unsigned, unsigned>, double> austenite;
 /*
 extern "C" void sdvini_(double* statev, const double* coords, const int* nstatev, const int* ncrds, const int* noel,
         const int* npt, const int* layer, const int* kspt) {
@@ -42,7 +43,7 @@ extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* 
             while (getline(line, val, ',')) {
                 line_data.push_back(val);
             }
-            austenite.emplace_back(stoi(line_data[0]), stoi(line_data[1]), stod(line_data[2]));
+            austenite.emplace(std::make_pair(stoi(line_data[0]), stoi(line_data[1])), stod(line_data[2]));
         }
         for (auto line: austenite) {
             auto [elem, gp, val] = line;
