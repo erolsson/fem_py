@@ -20,7 +20,9 @@ extern "C" void sdvini_(double* statev, const double* coords, const int* nstatev
 
 extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* time, const double* dtime,
         const int* kstep, const int* kinc) {
+    std::cout << "Calling uexternaldb" << std::endl;
     if (*lop == 0) {
+        std::cout << "start, lop == 0" << std::endl;
         // Beginning of analysis
         std::vector<std::string> line_data;
         std::string data_line;

@@ -11,6 +11,8 @@
 #include "simulation_parameters.h"
 #include "stress_functions.h"
 
+#include "initial_values.cpp"
+
 double yield_function(const Eigen::Matrix<double, 6, 1>& stilde, double sigma_y) {
     return 3*double_contract(stilde, stilde)/2 - sigma_y*sigma_y;
 }
