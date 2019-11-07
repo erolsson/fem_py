@@ -63,7 +63,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
     using Matrix6x6 = Eigen::Matrix<double, 6, 6, Eigen::RowMajor>;
     using Vector6 = Eigen::Matrix<double, 6, 1>;
-    std::cout << temp << std::endl;
     const TransformationMaterialParameters params(props);
     double G = params.E()/2/(1+params.v());
     double K = params.E()/3/(1-2*params.v());
@@ -88,7 +87,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         stilde -= state.total_back_stress();
     }
     bool plastic = params.plastic() && yield_function(stilde, sy) > 0;
-    // bool phase_transformations = transformation_function(st, 0, temp, params) - state.fM() > 0;
+    std::cout << transformation_function(st, 0, temp, params) - state.fM() << std::endl;
     bool phase_transformations = false;
     bool elastic = !plastic && !phase_transformations;
     stress_vec = st;
