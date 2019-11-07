@@ -35,16 +35,16 @@ public:
     // Martensite start temperature
     [[nodiscard]] const double& Ms() const { return data_[9 + 2*back_stresses_]; } ;
 
+    // Stabilisation temperature due to tempering
+    [[nodiscard]] const double& Mss() const { return data_[10 + 2*back_stresses_]; } ;
+
     // Koistinen-Marburger parameter
-    [[nodiscard]] const double& k() const { return data_[10 + 2*back_stresses_]; } ;
+    [[nodiscard]] const double& k() const { return data_[11 + 2*back_stresses_]; } ;
 
     // Material parameters for stress induced phase transformations
-    [[nodiscard]] const double& a1() const { return data_[11 + 2*back_stresses_]; } ;
-    [[nodiscard]] const double& a2() const { return data_[12 + 2*back_stresses_]; } ;
-    [[nodiscard]] const double& a3() const { return data_[13 + 2*back_stresses_]; } ;
-
-    // Stabilisation temperature due to tempering
-    [[nodiscard]] const double& Mss() const { return data_[14 + 2*back_stresses_]; } ;
+    [[nodiscard]] const double& a1() const { return data_[12 + 2*back_stresses_]; } ;
+    [[nodiscard]] const double& a2() const { return data_[13 + 2*back_stresses_]; } ;
+    [[nodiscard]] const double& a3() const { return data_[14 + 2*back_stresses_]; } ;
 
     [[nodiscard]] bool plastic() const { return sy0M() > 0 && sy0A() > 0; }
     [[nodiscard]] bool kinematic_hardening() const { return back_stresses_ > 0; }
