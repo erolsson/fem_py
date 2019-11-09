@@ -29,8 +29,8 @@ double ms_strain(double epl, const TransformationMaterialParameters& params) {
 
 double transformation_function(const Eigen::Matrix<double, 6, 1>& stress, double epl, double T,
                                const TransformationMaterialParameters& params) {
-    return 1 - exp(params.k()*(params.Ms() + ms_stress(stress, params) +
-                ms_strain(epl, params) + params.Mss()) - T);
+    return 1 - exp(-params.k()*(params.Ms() + ms_stress(stress, params) +
+                ms_strain(epl, params) + params.Mss() - T));
 }
 
 class State {
