@@ -71,7 +71,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     State state(statev, params.back_stresses());
 
     double sy = params.sy0M()*state.fM() + params.sy0A()*(1-state.fM()) + state.R();
-    // Vector6 back_stress;
 
     Eigen::Map<Matrix6x6> D_alg(ddsdde);
     Matrix6x6 Del = 2*G*J + K*E3;
@@ -79,18 +78,18 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     Eigen::Map<Vector6> stress_vec(stress);
     const Eigen::Map<Vector6> de(dstran);
 
-    Vector6  st = stress_vec + Del*de;  // Trial stress
+    Vector6  s2 = stress_vec + Del*de;  // Trial stress
 
-    Vector6 sij_t = deviator(st);
+    Vector6 sij_t = deviator(s2);
     Vector6 stilde = sij_t;
     if (params.kinematic_hardening()) {
         stilde -= state.total_back_stress();
     }
     bool plastic = params.plastic() && yield_function(stilde, sy) > 0;
-    std::cout << transformation_function(st, 0, temp, params) - state.fM() << std::endl;
+    std::cout << transformation_function(s2, 0, temp, params) - state.fM() << std::endl;
     bool phase_transformations = false;
     bool elastic = !plastic && !phase_transformations;
-    stress_vec = st;
+    stress_vec = s2;
     if (elastic) {     // Use the trial stress as the stress and the elastic stiffness matrix as the tangent
         D_alg = Del;
     }
@@ -100,9 +99,10 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         double RA = 0;
         double s_eq_prime = 0;
 
-        Vector6 nij2;
-        Vector6 st_dev = deviator(st);
+        double s_eq_2 = sqrt(1.5*double_contract(stilde, stilde));
 
+        Vector6 nij2 = 1.5*stilde/s_eq_2;
+        Vector6 bij = Vector6::Zero();
         double residual = 1e99;
 
         double ds_eq_2_dDL = 0;
@@ -114,27 +114,48 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         double B = 1;
 
         while(residual > 1e-15) {
-            dsijdDL = Vector6::Zero();
-            ds_eq_2_dDL = -3*G;
-            double sy0 = params.sy0M()*(state.fM() + DfM) + params.sy0A()*(1-(state.fM() + DfM));
-            R2 = (state.R() + params.b()*params.Q()*DL)/(1+params.b()*DL);
-            double sy_2 = sy0 + R2;
-            Vector6 sij_prime = sij_t;
-            double back_stress_correction = 0;
-            for (unsigned i = 0; i!= params.back_stresses(); ++i) {
-                double theta = 1./(1+params.gamma(i)*DL);
-                sij_prime -= theta*state.back_stress_vector(i);
-                back_stress_correction += theta*params.Cm(i)*DL;
-                dsijdDL += params.gamma(i)*theta*theta*state.back_stress_vector(i);
-                ds_eq_2_dDL -= theta*theta*params.Cm(i);
+            double f = 0;
+            double h = 0;
+
+            double dfdDL = 0;
+            double dfdfM = 0;
+            double dhdDL = 0;
+            double dhdfM = 0;
+
+            if (plastic) {
+                dsijdDL = Vector6::Zero();
+                ds_eq_2_dDL = -3*G;
+                double sy0 = params.sy0M()*(state.fM() + DfM) + params.sy0A()*(1 - (state.fM() + DfM));
+                R2 = (state.R() + params.b()*params.Q()*DL)/(1 + params.b()*DL);
+                double sy_2 = sy0 + R2;
+                Vector6 sij_prime = sij_t;
+                double back_stress_correction = 0;
+                for (unsigned i = 0; i != params.back_stresses(); ++i) {
+                    double theta = 1./(1 + params.gamma(i)*DL);
+                    sij_prime -= theta*state.back_stress_vector(i);
+                    back_stress_correction += theta*params.Cm(i)*DL;
+                    dsijdDL += params.gamma(i)*theta*theta*state.back_stress_vector(i);
+                    ds_eq_2_dDL -= theta*theta*params.Cm(i);
+                }
+                s_eq_prime = sqrt(1.5*double_contract(sij_prime, sij_prime));
+                B += 3*G*params.R2()*DfM/params.sy0A();
+                s_eq_2 = (s_eq_prime - 3*G*(DL + params.R1()*DfM) - back_stress_correction)/B;
+                nij2 = 1.5*sij_prime/s_eq_prime;
+                ds_eq_2_dDL += double_contract(nij2, dsijdDL);
+                dfdDL = ds_eq_2_dDL - params.b()/(1 + params.b()*DL)*(params.Q() - R2);
+                f = s_eq_2 - sy_2;
+                s2 -= 2*G*DL*nij2;
             }
-            s_eq_prime = sqrt(1.5*double_contract(sij_prime, sij_prime));
-            B += 3*G*params.R2()*DfM/params.sy0A();
-            double s_eq_2 = (s_eq_prime - 3*G*(DL+params.R1()*DfM) - back_stress_correction)/B;
-            nij2 = 1.5*sij_prime/s_eq_prime;
-            ds_eq_2_dDL += double_contract(nij2, dsijdDL);
-            double dfdDL = ds_eq_2_dDL - params.b()/(1+params.b()*DL)*(params.Q() - R2);
-            double f = s_eq_2 - sy_2;
+            if (phase_transformations) {
+                s2 -= (2*G*RA*nij2 + K*params.dV()/3*delta_ij)*DfM;
+                h = transformation_function(s2, state.ep_eff()+DL, temp, params) - (state.fM() + DfM);
+                double dhdMsigma = params.k()*(-params.k()*(params.Ms() + ms_stress(s2, params) +
+                                                 ms_strain(state.ep_eff() + DL, params) + params.Mss() - temp));
+
+                // a1*self.I3 + a2*3./2*s2_dev/s2_eq +
+                //                             a3*(matrix_contract(s2_dev, s2_dev) - 2./9*s2_eq**2*self.I3))
+                bij = dhdMsigma*(params.a1()*delta_ij + 1.5*params.a2()*deviator(s2));
+            }
             if (! phase_transformations) {
                 double dDL = f/dfdDL;
                 DL -= dDL;
@@ -145,8 +166,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
         // Updating state variables
         state.ep_eff() += DL;
+        state.fM() += DfM;
         state.R() = R2;
-        stress_vec -= 2*G*DL*nij2;
+        stress_vec = s2;
 
         if (params.kinematic_hardening()) {
             state.total_back_stress() = Vector6::Zero();

@@ -70,8 +70,8 @@ class ElasticPlasticTransformMaterial:
         kinematic_hardening_params = []
         for C, g in zip(self.Cm, self.gamma_m):
             kinematic_hardening_params += [C, g]
-        return parameters + kinematic_hardening_params + [self.R1, self.R2] + [self.Ms, self.Mss, self.k,
-                                                                               self.a1, self.a2, self.a3]
+        return parameters + kinematic_hardening_params + [self.R1, self.R2, self.dV, self.Ms, self.Mss, self.k,
+                                                          self.a1, self.a2, self.a3]
 
 
 test_material = ElasticPlasticTransformMaterial(E=200e3, v=0.3, sy0M=1000., sy0A=485, Q=0*180., b=100.,
