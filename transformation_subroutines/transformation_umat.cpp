@@ -94,6 +94,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     bool elastic = !plastic && !phase_transformations;
     if (elastic) {     // Use the trial stress as the stress and the elastic stiffness matrix as the tangent
         D_alg = Del;
+        stress_vec = sigma_t;
     }
     else {  // Inelastic deformations
         // Increment in plastic strain and martensitic phase fraction
