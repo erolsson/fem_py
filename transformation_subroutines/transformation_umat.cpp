@@ -158,7 +158,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 nij2 = 1.5*sij_prime/s_eq_prime;
                 ds_eq_2_dDL += double_contract(nij2, dsij_prime_dDL);
                 ds_eq_2_dDL /= B;
-                dR2dDL = params.b()/(1 + params.b()*DL)*(params.Q() - R2)
+                dR2dDL = params.b()/(1 + params.b()*DL)*(params.Q() - R2);
                 dfdDL = ds_eq_2_dDL - dR2dDL;
                 f = s_eq_2 - sy_2;
                 sigma_2 -= 2*G*DL*nij2;
