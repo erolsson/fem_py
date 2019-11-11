@@ -218,4 +218,5 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                                                                                1./A*double_contract(A_ijkl, dsij_prime_dDL)*nij2.transpose());
         }
     }
+    std::cout << stress_vec << std::endl;
 }
