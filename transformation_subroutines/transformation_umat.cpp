@@ -188,6 +188,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                         - 2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
                 dhdDL = double_contract(bij, dsigmaijdDL) + F*dMepdDL;
                 double detJ = dfdDL*dhdDfM - dfdDfM*dhdDL;
+                std::cout << "h:" << h << "  dhdDfM:" << dhdDfM <<  std::endl;
                 dDL = (dhdDfM*f - dfdDfM*h)/detJ;
                 dDfM = (-dhdDL*f + dfdDL*h)/detJ;
             }
