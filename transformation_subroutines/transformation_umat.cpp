@@ -219,7 +219,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             }
         }
         D_alg = Del;
-        double A = dR2dDL - ds_eq_2_dDL;
+        double A = dR2dDL - F*dMepdDL*dfdDfM -  ds_eq_2_dDL;
         if (DL > 0) {
             D_alg -= 4*G*G/A/B*nnt - 6*G*G*(DL + RA*DfM)/s_eq_prime*(Aijkl -
                     1/A/B*double_contract(Aijkl, dsij_prime_dDL)*nij2.transpose());
@@ -233,8 +233,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                                        + RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2*bij.transpose()
                  + 3*G*(DL + RA*DfM)/s_eq_prime/A*dfdDfM*double_contract(Aijkl, dsij_prime_dDL)*bij.transpose()
                  + K/3*params.dV()*(1+F*dMepdDL/A*dfdDfM)*delta_ij*bij.transpose();
-            // D_alg = Bijkl.inverse()*D_alg;
-            std::cout << "D_alg: " << D_alg.format(CleanFmt) << std::endl;
+            std::cout << "Bijkl: " << std::endl << Bijkl.format(CleanFmt) << std::endl << std::endl;
+            D_alg = Bijkl.inverse()*D_alg;
+            std::cout << "D_alg: " << std::endl << D_alg.format(CleanFmt) << std::endl<< std::endl;
         }
     }
 }
