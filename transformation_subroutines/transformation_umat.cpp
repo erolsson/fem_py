@@ -81,8 +81,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     // Yield stress at start of increment
     double sy = params.sy0M()*state.fM() + params.sy0A()*(1-state.fM()) + state.R();
 
-    Vector6  sigma_2 = stress_vec + Del*de;  // Trial stress
-    Vector6 sij_t = deviator(sigma_2);
+    Vector6 sigma_t = stress_vec + Del*de;  // Trial stress
+    Vector6 sij_t = deviator(sigma_t);
 
     Vector6 stilde = sij_t;
     if (params.kinematic_hardening()) {
@@ -90,14 +90,15 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     }
 
     bool plastic = params.plastic() && yield_function(stilde, sy) > 0;
-    bool phase_transformations = transformation_function(sigma_2, 0, temp, params) - state.fM() > 0;
+    bool phase_transformations = transformation_function(sigma_t, 0, temp, params) - state.fM() > 0;
     bool elastic = !plastic && !phase_transformations;
-    stress_vec = sigma_2;
     if (elastic) {     // Use the trial stress as the stress and the elastic stiffness matrix as the tangent
         D_alg = Del;
     }
     else {  // Inelastic deformations
         // Increment in plastic strain and martensitic phase fraction
+        Vector6 sigma_2 = sigma_t;
+
         double DL = 0;
         double DfM = 0;
 
@@ -121,6 +122,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         double B = 1;
         double residual = 1e99;
         while(residual > 1e-15) {
+            sigma_2 = sigma_2;
             double f = 0;
             double h = 0;
 
