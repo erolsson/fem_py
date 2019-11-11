@@ -79,12 +79,14 @@ Matrix<T, 6, 1> double_contract(const Matrix<T, 6, 6, Eigen::RowMajor>& A,  cons
 // contraction for the operation a_ij b_jk
 template<typename T>
 Matrix<T, 6, 1> contract(const Matrix<T, 6, 1> a, const Matrix<T, 6, 1>& b) {
-    return Matrix<T, 6, 1>() << a[0]*b[0] + a[3]*b[3] + a[4]*b[4],
-                                a[1]*b[1] + a[3]*b[3] + a[5]*b[5],
-                                a[2]*b[2] + a[4]*b[4] + a[5]*b[5],
-                                a[0]*b[3] + a[3]*b[1] + a[4]*b[5],
-                                a[0]*b[4] + a[3]*b[5] + a[4]*b[2],
-                                a[3]*b[4] + a[1]*b[5] + a[5]*b[2];
+    Matrix<T, 6, 1> result = Matrix<T, 6, 1>::Zero();
+    result[0] = a[0]*b[0] + a[3]*b[3] + a[4]*b[4];
+    result[1] = a[1]*b[1] + a[3]*b[3] + a[5]*b[5];
+    result[2] = a[2]*b[2] + a[4]*b[4] + a[5]*b[5];
+    result[3] = a[0]*b[3] + a[3]*b[1] + a[4]*b[5];
+    result[4] = a[0]*b[4] + a[3]*b[5] + a[4]*b[2];
+    result[5] = a[3]*b[4] + a[1]*b[5] + a[5]*b[2];
+    return result;
 }
 
 template<typename T>
