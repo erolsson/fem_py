@@ -233,7 +233,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                                        + RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2*bij.transpose()
                  + 3*G*(DL + RA*DfM)/s_eq_prime/A*dfdDfM*double_contract(Aijkl, dsij_prime_dDL)*bij.transpose()
                  + K/3*params.dV()*(1+F*dMepdDL/A*dfdDfM)*delta_ij*bij.transpose();
-            D_alg = Bijkl.inverse()*D_alg;
+            // D_alg = Bijkl.inverse()*D_alg;
             std::cout << "D_alg: " << D_alg.format(CleanFmt) << std::endl;
         }
     }
