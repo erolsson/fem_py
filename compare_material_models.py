@@ -14,8 +14,8 @@ from materials.SS2506 import test_material
 from materials.SS2506 import neu_sehitoglu
 
 Simulation = namedtuple('Simulation', ['model', 'label', 'color', 'umat_file', 'name', 'fm'])
-simulations = [  # Simulation(model=one_element_abaqus, label='New', color='b', umat_file=None, name='oneElementAbaqus',
-                 #           fm=None),
+simulations = [Simulation(model=one_element_abaqus, label='New', color='b', umat_file=None, name='oneElementAbaqus',
+                          fm=None),
                Simulation(model=one_element_abaqus, label='Abaqus', color='r', name='oneElementUmat',
                           umat_file=os.path.expanduser('~/fem_py/transformation_subroutines/'
                                                        'transformation_subroutine.o'), fm=0.8)]

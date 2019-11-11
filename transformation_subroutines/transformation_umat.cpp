@@ -110,6 +110,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
         double dMepdDL = 0;
 
+        double dR2dDL = 0;
         double RA = 0;
         double s_eq_prime = 0;
         Matrix6x6 nnt = Matrix6x6::Zero();
@@ -157,7 +158,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 nij2 = 1.5*sij_prime/s_eq_prime;
                 ds_eq_2_dDL += double_contract(nij2, dsij_prime_dDL);
                 ds_eq_2_dDL /= B;
-                dfdDL = ds_eq_2_dDL - params.b()/(1 + params.b()*DL)*(params.Q() - R2);
+                dR2dDL = params.b()/(1 + params.b()*DL)*(params.Q() - R2)
+                dfdDL = ds_eq_2_dDL - dR2dDL;
                 f = s_eq_2 - sy_2;
                 sigma_2 -= 2*G*DL*nij2;
             }
@@ -215,7 +217,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         }
 
         if (DL > 0) {
-            double A = params.b()/(1 + params.b()*DL)*(params.Q() - R2)- ds_eq_2_dDL;
+            double A = dR2dDL - ds_eq_2_dDL;
             Matrix6x6 A_ijkl = J - 2./3*nij2*nij2.transpose();
             D_alg = Del - 4*G*G*nij2*nij2.transpose()/A - 6*G*G*DL/s_eq_prime*(A_ijkl -
                                                                                1./A*double_contract(A_ijkl, dsij_prime_dDL)*nij2.transpose());
