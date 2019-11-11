@@ -63,17 +63,27 @@ T double_contract(const Matrix<T, 6, 1>& a, const Matrix<T, 6, 1>& b) {
 template<typename T>
 Matrix<T, 6, 1> double_contract(const Matrix<T, 6, 6, Eigen::RowMajor>& A,  const Matrix<T, 6, 1>& b) {
     Matrix<T, 6, 1> result = A*b;
-    for (unsigned i = 0; i!= 3; ++i) {
+    for (unsigned i = 0; i!= 6; ++i) {
         for (unsigned j = 3; j != 6; ++j) {
             result[i] += A(i, j)*b[j];
         }
     }
-    for (unsigned i = 3; i!= 6; ++i) {
+    return result;
+}
+
+// Double contraction for the operation A_ijkl B_klmn
+template<typename T>
+Matrix<T, 6, 6, Eigen::RowMajor> double_contract(const Matrix<T, 6, 6, Eigen::RowMajor>& A,
+                                                 const Matrix<T, 6, 6, Eigen::RowMajor>& B) {
+    Matrix<T, 6, 6, Eigen::RowMajor> res = A*B;
+    for (unsigned i = 0; i != 6; ++i) {
         for (unsigned j = 0; j != 6; ++j) {
-            result[i] += A(i, j)*b[j];
+            for (unsigned k = 3; k != 6; ++k) {
+                res(i, j) += A(i, k)*B(k, j);
+            }
         }
     }
-    return result;
+    return res;
 }
 
 // contraction for the operation a_ij b_jk

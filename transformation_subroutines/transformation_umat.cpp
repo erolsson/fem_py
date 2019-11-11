@@ -103,6 +103,14 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         double DL = 0;
         double DfM = 0;
 
+        double f = 0;
+        double h = 0;
+
+        double dfdDL = 0;
+        double dfdDfM = 0;
+        double dhdDL = 0;
+        double dhdDfM = 0;
+
         // Effective stress and its derivatives
         double s_eq_2 = sqrt(1.5*double_contract(stilde, stilde));
         double ds_eq_2_dDL = 0;
@@ -126,13 +134,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         double residual = 1e99;
         while(residual > 1e-15) {
             sigma_2 = sigma_t;
-            double f = 0;
-            double h = 0;
-
-            double dfdDL = 0;
-            double dfdfM = 0;
-            double dhdDL = 0;
-            double dhdfM = 0;
 
             double dDL = 0;
             double dDfM = 0;
@@ -176,25 +177,25 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 bij = F*(params.a1()*delta_ij + 1.5*params.a2()*s + params.a3()*(contract(s, s) - 2./3*J2*delta_ij));
                 ds_eq_2_dfM = -3*G/B*RA;
                 Vector6 dsifdfM = -2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2 - K/3*params.dV()*delta_ij;
-                dhdfM = double_contract(bij, dsifdfM) - 1;
+                dhdDfM = double_contract(bij, dsifdfM) - 1;
             }
 
             nnt = nij2*nij2.transpose();
             Aijkl = J - 2./3*nnt;
             if (plastic && phase_transformations) {
-                dfdfM = -3*G*RA/B - (params.sy0M() - params.sy0A());
+                dfdDfM = -3*G*RA/B - (params.sy0M() - params.sy0A());
                 Vector6 dsigmaijdDL = -3*G*double_contract(Aijkl, dsij_prime_dDL)
                         - 2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
                 dhdDL = double_contract(bij, dsigmaijdDL) + F*dMepdDL;
-                double detJ = dfdDL*dhdfM - dfdfM*dhdDL;
-                dDL = (dhdfM*f - dfdfM*h)/detJ;
+                double detJ = dfdDL*dhdDfM - dfdDfM*dhdDL;
+                dDL = (dhdDfM*f - dfdDfM*h)/detJ;
                 dDfM = (-dhdDL*f + dfdDL*h)/detJ;
             }
             else if (plastic) {
                 dDL = f/dfdDL;
             }
             else {  // Only phase transformations
-                dDfM = h/dhdfM;
+                dDfM = h/dhdDfM;
             }
 
             DL -= dDL;
@@ -226,6 +227,14 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         if (DfM > 0) {
             D_alg -= 4*G*G/B*(RA*F*dMepdDL/A +
                     DfM*params.R2()/params.sy0A()*(1 + 1/A*(ds_eq_2_dDL + ds_eq_2_dfM*F*dMepdDL)))*nnt;
+            D_alg -= K/3*params.dV()*2*G/A/B*F*dMepdDL*delta_ij*nij2.transpose();
+            Matrix6x6 Bijkl = I + 2*G*(dfdDfM/A*(1 + F*dMepdDL
+                                                 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL + ds_eq_2_dfM*F*dMepdDL)
+                                       + RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2*bij.transpose()
+                 + 3*G*(DL + RA*DfM)/s_eq_prime/A*dfdDfM*double_contract(Aijkl, dsij_prime_dDL)*bij.transpose()
+                 + K/3*params.dV()*(1+F*dMepdDL/A*dfdDfM)*delta_ij*bij.transpose();
+            D_alg = Bijkl.inverse()*D_alg;
+
         }
     }
 }
