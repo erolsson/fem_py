@@ -11,6 +11,7 @@ from one_element_test import one_element_simulation
 from abaqus_material_test.one_element_input_file import BC
 
 from materials.SS2506 import test_material
+from materials.SS2506 import neu_sehitoglu
 
 Simulation = namedtuple('Simulation', ['model', 'label', 'color', 'umat_file', 'name', 'fm'])
 simulations = [  # Simulation(model=one_element_abaqus, label='New', color='b', umat_file=None, name='oneElementAbaqus',
@@ -31,7 +32,7 @@ pressure_z[:, 1] = 3000*np.sin(np.pi*time/2)
 temperature = np.array([[0, 22.], [time[-1], 22.]])
 boundary_conditions = [BC(amplitude=pressure_z, direction='z', mode='stress')]
 args = {'boundary_conditions': boundary_conditions, 'simulation_directory': 'abaqus_material_test/one_element',
-        'material': test_material, 'temperature': temperature}
+        'material': neu_sehitoglu, 'temperature': temperature}
 
 for inc, lw in zip([1.], [1]):
     for simulation in simulations:
