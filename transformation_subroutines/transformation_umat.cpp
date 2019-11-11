@@ -123,7 +123,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         double B = 1;
         double residual = 1e99;
         while(residual > 1e-15) {
-            sigma_2 = sigma_2;
+            sigma_2 = sigma_t;
             double f = 0;
             double h = 0;
 
