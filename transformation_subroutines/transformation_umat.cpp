@@ -233,7 +233,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
             }
             std::cout << "A: " << A << std::endl;
-            D_alg = Bijkl.inverse()*D_alg;
+            D_alg = double_contract(static_cast<Matrix6x6>(Bijkl.inverse()), static_cast<Matrix6x6>(D_alg));
             std::cout << "D_alg: " << std::endl << D_alg.format(CleanFmt) << std::endl<< std::endl;
         }
     }
