@@ -203,7 +203,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             residual = abs(dDL) + abs(dDfM);
         }
 
-        std::cout << "DL: " << DL << " DfM: " << DfM << "  szz " << sigma_2 << std::endl;
+        std::cout << "DL: " << DL << " DfM: " << DfM << "  szz " << sigma_2.format(CleanFmt) << std::endl;
         // Updating state variables
         state.ep_eff() += DL;
         state.fM() += DfM;
@@ -234,7 +234,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                  + 3*G*(DL + RA*DfM)/s_eq_prime/A*dfdDfM*double_contract(Aijkl, dsij_prime_dDL)*bij.transpose()
                  + K/3*params.dV()*(1+F*dMepdDL/A*dfdDfM)*delta_ij*bij.transpose();
             D_alg = Bijkl.inverse()*D_alg;
-
+            std::cout << "D_alg: " << D_alg.format(CleanFmt) << std::endl;
         }
     }
 }

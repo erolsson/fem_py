@@ -7,6 +7,8 @@
 
 #include "Eigen/Dense"
 
+Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "[", "]");
+
 using Eigen::Matrix;
 // Unit forth order tensor in matrix form
 const static Matrix<double, 6, 6> I((Matrix<double, 6, 6, Eigen::RowMajor>() <<
