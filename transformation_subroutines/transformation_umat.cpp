@@ -177,7 +177,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 bij = F*(params.a1()*delta_ij + 1.5*params.a2()*s + params.a3()*(contract(s, s) - 2./3*J2*delta_ij));
                 ds_eq_2_dfM = -3*G/B*RA;
                 Vector6 dsijdDfM = -2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2 - K/3*params.dV()*delta_ij;
-                std::cout << "bij: " << bij[2] << " dsijdDfM: " << dsijdDfM << std::endl;
                 dhdDfM = double_contract(bij, dsijdDfM) - 1;
             }
 
@@ -189,7 +188,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                         - 2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
                 dhdDL = double_contract(bij, dsigmaijdDL) + F*dMepdDL;
                 double detJ = dfdDL*dhdDfM - dfdDfM*dhdDL;
-                std::cout << "h:" << h << "  dhdDfM:" << dhdDfM <<  std::endl;
                 dDL = (dhdDfM*f - dfdDfM*h)/detJ;
                 dDfM = (-dhdDL*f + dfdDL*h)/detJ;
             }
