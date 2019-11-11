@@ -114,6 +114,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         double RA = 0;
         double s_eq_prime = 0;
         Matrix6x6 nnt = Matrix6x6::Zero();
+        Matrix6x6 Aijkl = Matrix6x6::Zero();
         Vector6 nij2 = 1.5*stilde/s_eq_2;
         double F = 0;
         Vector6 bij = Vector6::Zero();
@@ -177,24 +178,25 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 Vector6 dsifdfM = -2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2 - K/3*params.dV()*delta_ij;
                 dhdfM = double_contract(bij, dsifdfM) - 1;
             }
+
             nnt = nij2*nij2.transpose();
+            Aijkl = J - 2./3*nnt;
             if (plastic && phase_transformations) {
                 dfdfM = -3*G*RA/B - (params.sy0M() - params.sy0A());
-                Vector6 dsigmaijdDL = -3*G*double_contract(static_cast<Matrix6x6>(J - 2./3*nnt), dsij_prime_dDL)
+                Vector6 dsigmaijdDL = -3*G*double_contract(Aijkl, dsij_prime_dDL)
                         - 2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
                 dhdDL = double_contract(bij, dsigmaijdDL) + F*dMepdDL;
                 double detJ = dfdDL*dhdfM - dfdfM*dhdDL;
                 dDL = (dhdfM*f - dfdfM*h)/detJ;
                 dDfM = (-dhdDL*f + dfdDL*h)/detJ;
             }
-
             else if (plastic) {
                 dDL = f/dfdDL;
             }
-
             else {  // Only phase transformations
                 dDfM = h/dhdfM;
             }
+
             DL -= dDL;
             DfM -= dDfM;
             std::cout << "dDL:" << -dDL << " DL:" << DL << std::endl;
@@ -215,12 +217,13 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 state.total_back_stress() += state.back_stress_vector(i);
             }
         }
-
+        D_alg = Del;
         if (DL > 0) {
             double A = dR2dDL - ds_eq_2_dDL;
-            Matrix6x6 A_ijkl = J - 2./3*nij2*nij2.transpose();
-            D_alg = Del - 4*G*G*nij2*nij2.transpose()/A - 6*G*G*DL/s_eq_prime*(A_ijkl -
-                                                                               1./A*double_contract(A_ijkl, dsij_prime_dDL)*nij2.transpose());
+            D_alg -= 4*G*G/B*(1/A*(1 + RA*F*dMepdDL
+                    + DfM*params.R2()/params.sy0A()*(ds_eq_2_dDL + ds_eq_2_dfM*F*dMepdDL))
+                     + DfM*params.R2()/params.sy0A())*nnt;
+            D_alg -= 6*G*G/s_eq_prime*(Aijkl - 1/A/B*double_contract(Aijkl, dsij_prime_dDL)*nij2.transpose());
         }
     }
 }
