@@ -39,7 +39,7 @@ class ElasticPlasticTransformMaterial:
         self.k = 0.04
         self.s_lim = 485.
         self.back_stresses = Cm.shape[0]
-        self.name = 'name'
+        self.name = name
 
         self.Mss = (-1./self.k*np.log(1-uniaxial_data[0]) - self.Ms - uniaxial_data[2]*(self.a1 + self.a2 + 2*self.a3/27) +
                     uniaxial_data[1])
