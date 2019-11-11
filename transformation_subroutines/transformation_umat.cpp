@@ -201,6 +201,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             DL -= dDL;
             DfM -= dDfM;
             std::cout << "dDL:" << -dDL << " DL:" << DL << std::endl;
+            std::cout << "dDfM:" << -dDfM << " DfM:" << DfM << std::endl;
             residual = abs(dDL) + abs(dDfM);
         }
 
