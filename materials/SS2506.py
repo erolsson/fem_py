@@ -74,7 +74,7 @@ class ElasticPlasticTransformMaterial:
                                                           self.a1, self.a2, self.a3]
 
 
-test_material = ElasticPlasticTransformMaterial(E=200e3, v=0.3, sy0M=1000., sy0A=485, Q=0*180., b=100.,
+test_material = ElasticPlasticTransformMaterial(E=200e3, v=0.3, sy0M=1000000., sy0A=485, Q=0*180., b=100.,
                                                 Cm=np.array([135e3, 700e3, 50e3]),
                                                 gamma_m=np.array([950., 500., 50.]), a=[0.056, 0.028, 0.],
                                                 Ms=169, name='testMaterial', uniaxial_data=[0.8, 22., 485], fM=0.8)
