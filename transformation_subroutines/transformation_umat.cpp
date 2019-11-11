@@ -200,11 +200,10 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
             DL -= dDL;
             DfM -= dDfM;
-            std::cout << "dDL:" << -dDL << " DL:" << DL << std::endl;
-            std::cout << "dDfM:" << -dDfM << " DfM:" << DfM << std::endl;
             residual = abs(dDL) + abs(dDfM);
         }
 
+        std::cout << "DL: " << DL << " DfM: " << DfM << "  szz " << sigma_2 << std::endl;
         // Updating state variables
         state.ep_eff() += DL;
         state.fM() += DfM;
