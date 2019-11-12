@@ -168,6 +168,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             if (phase_transformations) {
                 RA = params.R1() + params.R2()*s_eq_2/params.sy0A();
                 sigma_2 -= (2*G*RA*nij2 + K*params.dV()/3*delta_ij)*DfM;
+                std::cout << "2*G*RA*nij2: " << std::endl << (2*G*RA*nij2).format(CleanFmt) <<std::endl << std::endl;
                 h = transformation_function(sigma_2, state.ep_eff() + DL, temp, params) - (state.fM() + DfM);
                 F = params.k()*exp(-params.k()*(params.Ms() + ms_stress(sigma_2, params)
                                 + ms_strain(state.ep_eff() + DL, params) + params.Mss() - temp));
@@ -203,7 +204,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             residual = abs(dDL) + abs(dDfM);
         }
 
-        std::cout << "DL: " << DL << " DfM: " << DfM << "  szz " << sigma_2.format(CleanFmt) << std::endl;
         // Updating state variables
         state.ep_eff() += DL;
         state.fM() += DfM;
@@ -225,18 +225,13 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     - 6*G*G*DL/s_eq_prime*(Aijkl - 1./A/B*double_contract(Aijkl, dsij_prime_dDL)*nij2.transpose());
         }
         if (DfM > 0) {
-            std::cout << "D_alg: " << std::endl << D_alg.format(CleanFmt) << std::endl<< std::endl;
             D_alg -= 4*G*G/B*DfM*params.R2()/params.sy0A()*nnt - 6*G*G*RA*DfM/s_eq_prime*Aijkl;
-            std::cout << "s_eq_prime: " << s_eq_prime << std::endl;
             Matrix6x6 Bijkl = I + K/3*params.dV()*delta_ij*bij.transpose()
                                 + 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2*bij.transpose();
             if (DL > 0) {
                 std::abort();
             }
-            std::cout << "A: " << A << " B: " << B << " DL: " << DL << " DfM: " << DfM << std::endl;
             D_alg = double_contract(static_cast<Matrix6x6>(Bijkl.inverse()), static_cast<Matrix6x6>(D_alg));
-            std::cout << "B_ijkl: " << std::endl << Bijkl.format(CleanFmt) << std::endl<< std::endl;
-            std::cout << "D_alg: " << std::endl << D_alg.format(CleanFmt) << std::endl<< std::endl;
         }
     }
 }
