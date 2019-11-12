@@ -226,8 +226,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     - 6*G*G*DL/s_eq_prime*(Aijkl - 1./A/B*double_contract(Aijkl, dsij_prime_dDL)*nij2.transpose());
         }
         if (DfM > 0) {
-            /*
-            D_alg -= 4*G*G/B*DfM*params.R2()/params.sy0A()*nnt - 6*G*G*RA*DfM/s_eq_prime*Aijkl;
+
+            // D_alg -= 4*G*G/B*DfM*params.R2()/params.sy0A()*nnt - 6*G*G*RA*DfM/s_eq_prime*Aijkl;
+
             Matrix6x6 Bijkl = I + K/3*params.dV()*delta_ij*bij.transpose()
                                 + 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2*bij.transpose();
             if (DL > 0) {
