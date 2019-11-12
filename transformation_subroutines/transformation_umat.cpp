@@ -139,7 +139,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             double dDfM = 0;
 
             B = 1 + 3*G*params.R2()*DfM/params.sy0A();
-
+            s_eq_2 = (s_eq_prime - 3*G*(DL + params.R1()*DfM))/B;
             if (plastic) {
                 dsij_prime_dDL = Vector6::Zero();
                 ds_eq_2_dDL = -3*G;
@@ -156,7 +156,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     ds_eq_2_dDL -= theta*theta*params.Cm(i);
                 }
                 s_eq_prime = sqrt(1.5*double_contract(sij_prime, sij_prime));
-                s_eq_2 = (s_eq_prime - 3*G*(DL + params.R1()*DfM) - back_stress_correction)/B;
+                s_eq_2 -= back_stress_correction/B;
                 nij2 = 1.5*sij_prime/s_eq_prime;
                 ds_eq_2_dDL += double_contract(nij2, dsij_prime_dDL);
                 ds_eq_2_dDL /= B;
@@ -174,7 +174,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
                 Vector6 s = deviator(sigma_2);
                 double J2 = 0.5*double_contract(s, s);
-                bij = F*(params.a1()*delta_ij + 1.5*params.a2()*s + params.a3()*(contract(s, s) - 2./3*J2*delta_ij));
+                bij = F*(params.a1()*delta_ij + 1.5*params.a2()*s/s_eq_2 + params.a3()*(contract(s, s) - 2./3*J2*delta_ij));
                 ds_eq_2_dfM = -3*G/B*RA;
                 Vector6 dsijdDfM = -2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2 - K/3*params.dV()*delta_ij;
                 dhdDfM = double_contract(bij, dsijdDfM) - 1;
