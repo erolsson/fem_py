@@ -227,7 +227,10 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         if (DfM > 0) {
             std::cout << "D_alg: " << std::endl << D_alg.format(CleanFmt) << std::endl<< std::endl;
             D_alg -= 4*G*G/B*DfM*params.R2()/params.sy0A()*nnt - 6*G*G*RA*DfM/s_eq_prime*Aijkl;
-            std::cout << "D_alg: " << std::endl << D_alg.format(CleanFmt) << std::endl<< std::endl;
+            auto A1 =  4*G*G/B*DfM*params.R2()/params.sy0A()*nnt;
+            auto A2 = 6*G*G*RA*DfM/s_eq_prime*Aijkl;
+            std::cout << "A1: " << std::endl << A1.format(CleanFmt) << std::endl<< std::endl;
+            std::cout << "A2: " << std::endl << A2.format(CleanFmt) << std::endl<< std::endl;
             Matrix6x6 Bijkl = I + K/3*params.dV()*delta_ij*bij.transpose()
                                 + 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2*bij.transpose();
             if (DL > 0) {
