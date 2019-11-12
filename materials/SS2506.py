@@ -31,8 +31,8 @@ class ElasticPlasticTransformMaterial:
         self.a2 = a[1]
         self.a3 = a[2]
 
-        self.R1 = 0.02*0
-        self.R2 = 0.02*0
+        self.R1 = 0.02
+        self.R2 = 0.02
 
         self.dV = 0.037
 
@@ -66,7 +66,7 @@ class ElasticPlasticTransformMaterial:
         return 3
 
     def umat_parameters(self):
-        parameters = [self.E, self.v, self.sy0M, self.sy0M,  self.Q, self.b, self.gamma_m.shape[0]]
+        parameters = [self.E, self.v, self.sy0M, self.sy0A,  self.Q, self.b, self.gamma_m.shape[0]]
         kinematic_hardening_params = []
         for C, g in zip(self.Cm, self.gamma_m):
             kinematic_hardening_params += [C, g]
