@@ -140,6 +140,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
             B = 1 + 3*G*params.R2()*DfM/params.sy0A();
             s_eq_2 = (s_eq_prime - 3*G*(DL + params.R1()*DfM))/B;
+            std::cout << "B:" << B << "s_eq_'" << s_eq_prime << std::endl;
             if (plastic) {
                 dsij_prime_dDL = Vector6::Zero();
                 ds_eq_2_dDL = -3*G;
