@@ -232,7 +232,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             if (DL > 0) {
                 std::abort();
             }
-            std::cout << "A: " << A << " B: " << B <<  " DfM: " << DfM << std::endl;
+            std::cout << "A: " << A << " B: " << B << " DL: " << DL << " DfM: " << DfM << std::endl;
             D_alg = double_contract(static_cast<Matrix6x6>(Bijkl.inverse()), static_cast<Matrix6x6>(D_alg));
             std::cout << "B_ijkl: " << std::endl << Bijkl.format(CleanFmt) << std::endl<< std::endl;
             std::cout << "D_alg: " << std::endl << D_alg.format(CleanFmt) << std::endl<< std::endl;
