@@ -36,7 +36,7 @@ class ElasticPlasticTransformMaterial:
 
         self.dV = 0.037
 
-        self.k = 0.04
+        self.k = 0.017
         self.s_lim = 485.
         self.back_stresses = Cm.shape[0]
         self.name = name
