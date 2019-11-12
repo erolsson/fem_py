@@ -238,6 +238,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 Bijkl(i, i) *= 2;
             }
             std::cout << 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM) << std::endl;
+            std::cout << "J" << std::endl << (J).format(CleanFmt) << std::endl << std::endl;
+            std::cout << "nnt" << std::endl << (nnt).format(CleanFmt) << std::endl << std::endl;
             std::cout << "Aijkl" << std::endl << (Aijkl).format(CleanFmt) << std::endl << std::endl;
             std::cout << "A1" << std::endl << (delta_ij*bij.transpose()).format(CleanFmt) << std::endl << std::endl;
             std::cout << "A2" << std::endl << (nij2*bij.transpose()).format(CleanFmt) << std::endl << std::endl;
