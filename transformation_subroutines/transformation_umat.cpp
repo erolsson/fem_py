@@ -235,7 +235,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 std::abort();
             }
             D_alg = double_contract(static_cast<Matrix6x6>(Bijkl.inverse()), static_cast<Matrix6x6>(D_alg));
-             */
         }
     }
 }
