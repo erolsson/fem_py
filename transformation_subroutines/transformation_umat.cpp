@@ -222,7 +222,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         double A = dR2dDL - F*dMepdDL*dfdDfM -  ds_eq_2_dDL;
         if (DL > 0) {
             D_alg -= 4*G*G/A/B*nnt
-                    - 6*G*G*DL/s_eq_prime*(Aijkl - 1./A/B*double_contract(Aijkl, dsij_prime_dDL)-nij2.transpose());
+                    - 6*G*G*DL/s_eq_prime*(Aijkl - 1./A/B*double_contract(Aijkl, dsij_prime_dDL)*nij2.transpose());
         }
         if (DfM > 0) {
             D_alg -= 4*G*G/B*DfM*params.R2()/params.sy0A()*nnt - 6*G*G*RA*DfM/s_eq_prime*Aijkl;
