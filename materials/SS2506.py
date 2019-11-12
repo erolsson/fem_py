@@ -31,7 +31,7 @@ class ElasticPlasticTransformMaterial:
         self.a2 = a[1]
         self.a3 = a[2]
 
-        self.R1 = 0.012
+        self.R1 = 0.02
         self.R2 = 0.02*0
 
         self.dV = 0.037
@@ -81,7 +81,7 @@ test_material = ElasticPlasticTransformMaterial(E=200e3, v=0.3, sy0M=1000000., s
 
 neu_sehitoglu = ElasticPlasticTransformMaterial(E=200e3, v=0.3, sy0M=10000000., sy0A=420, Q=580., b=100.,
                                                 Cm=np.array([15432, 281622, 470894]),
-                                                gamma_m=np.array([5., 236., 2301.]), a=np.array([0.056, 0*0.028, 0.]),
+                                                gamma_m=np.array([5., 236., 2301.]), a=np.array([0.056, 0.028, 0.]),
                                                 Ms=169, name='NeuSehitoglu', uniaxial_data=[0.65, 22., 485], fM=0.65)
 
 if __name__ == '__main__':
