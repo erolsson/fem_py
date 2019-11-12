@@ -120,7 +120,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
         double dR2dDL = 0;
         double RA = 0;
-        double s_eq_prime = 0;
+        double s_eq_prime = s_eq_2;
         Matrix6x6 nnt = Matrix6x6::Zero();
         Matrix6x6 Aijkl = Matrix6x6::Zero();
         Vector6 nij2 = 1.5*stilde/s_eq_2;
