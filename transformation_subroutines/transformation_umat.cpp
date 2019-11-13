@@ -204,9 +204,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             DL -= dDL;
             DfM -= dDfM;
             residual = abs(dDL) + abs(dDfM);
-            std::cout << "Residual: " << residual << std::endl;
         }
-        std::cout << "converged with " << iter << " iterations" << std::endl;
         // Updating state variables
         state.ep_eff() += DL;
         state.fM() += DfM;
@@ -223,35 +221,23 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         }
         D_alg = Del;
         double A = dR2dDL - F*dMepdDL*dfdDfM -  ds_eq_2_dDL;
+        D_alg -=  6*G*G*(DL + RA*DfM)/s_eq_prime*Aijkl;
         if (DL > 0) {
             D_alg -= 4*G*G/A/B*nnt
-                    - 6*G*G*DL/s_eq_prime*(Aijkl - 1./A/B*double_contract(Aijkl, dsij_prime_dDL)*nij2.transpose());
+                    + 6*G*G*(DL + RA*DfM)/s_eq_prime*(1./A/B*double_contract(Aijkl, dsij_prime_dDL)*nij2.transpose());
+            D_alg -= 4*G*G*(DfM*params.R2()/B/params.sy0A()*(ds_eq_2_dDL + ds_eq_2_dfM*F*dMepdDL))*nnt;
         }
         if (DfM > 0) {
 
-            D_alg -= 4*G*G/B*DfM*params.R2()/params.sy0A()*nnt - 6*G*G*RA*DfM/s_eq_prime*Aijkl;
+            D_alg -= 4*G*G/B*DfM*params.R2()/params.sy0A()*nnt;
 
             Matrix6x6 Bijkl = I + K/3*params.dV()*delta_ij*bij.transpose()
                                 + 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2*bij.transpose();
-            if (DL > 0) {
-                std::abort();
-            }
+
             for (unsigned i = 3; i != 6; ++i) {
                 Bijkl(i, i) *= 2;
             }
-
-            std::cout << "J" << std::endl << (J).format(CleanFmt) << std::endl << std::endl;
-            std::cout << "nnt" << std::endl << (nnt).format(CleanFmt) << std::endl << std::endl;
-            std::cout << "Aijkl" << std::endl << (Aijkl).format(CleanFmt) << std::endl << std::endl;
-            std::cout << "A1" << std::endl << (delta_ij*bij.transpose()).format(CleanFmt) << std::endl << std::endl;
-            std::cout << "A2" << std::endl << (nij2*bij.transpose()).format(CleanFmt) << std::endl << std::endl;
-            std::cout << "D_alg1:" << std::endl << (D_alg).format(CleanFmt) << std::endl << std::endl;
-            std::cout << "B:" << std::endl << (Bijkl).format(CleanFmt) << std::endl << std::endl;
-            std::cout << "B-1:" << std::endl << (Bijkl.inverse()).format(CleanFmt) << std::endl << std::endl;
             D_alg = Bijkl.inverse()*D_alg;
-            std::cout << "I" << std::endl << (Bijkl.inverse()*Bijkl).format(CleanFmt) << std::endl << std::endl;
-            std::cout << "D_alg2:" << std::endl << (D_alg).format(CleanFmt) << std::endl << std::endl;
-
         }
     }
 }
