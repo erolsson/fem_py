@@ -59,7 +59,7 @@ def write_input_file(filename, material, boundary_conditions, temperature=None, 
         file_lines.append('\t*Depvar')
         file_lines.append('\t\t' + str(material.umat_depvar()))
         umat_parameters = material.umat_parameters()
-        file_lines.append('\t*User Material, constants=' + str(len(umat_parameters)))
+        file_lines.append('\t*User Material, constants=' + str(len(umat_parameters)) + 'unsymm')
         parameter_str = ''
         for i, par in enumerate(umat_parameters):
             if (i % 8 == 0 and i != 0) or i == len(umat_parameters) - 1:
