@@ -198,7 +198,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 double detJ = dfdDL*dhdDfM - dfdDfM*dhdDL;
                 dDL = (dhdDfM*-f - dfdDfM*-h)/detJ;
                 dDfM = (-dhdDL*-f + dfdDL*-h)/detJ;
-                // std::cout << "J = " << std::endl << dfdDL << ", " << dfdDfM << std::endl << dhdDL << ", " << dhdDfM << std::endl;
+                std::cout << "J = " << std::endl << dfdDL << ", " << dfdDfM << std::endl << dhdDL << ", " << dhdDfM << std::endl;
             }
             else if (plastic) {
                 dDL = -f/dfdDL;
