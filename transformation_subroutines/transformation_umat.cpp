@@ -20,8 +20,6 @@ double ms_stress(const Eigen::Matrix<double, 6, 1>& stress, const Transformation
     double m_stress = params.a1()*(stress[0] + stress[1] + stress[2]);   // Contribution from hydrostatic stress
     m_stress += params.a2()*von_Mises(stress);
     m_stress += params.a3()*vector_det(s_dev);
-    std::cout << "m_stress: " << m_stress << std::endl;
-    std::cout << "stress: " << stress.transpose().format(CleanFmt) << std::endl;
     return m_stress;
 }
 
@@ -34,7 +32,6 @@ double transformation_function(const Eigen::Matrix<double, 6, 1>& stress, double
 
     double a = exp(-params.k()*(params.Ms() + ms_stress(stress, params) +
                                 ms_strain(epl, params) + params.Mss() - T));
-    std::cout << "a: " << a << std::endl;
     return 1 - a;
 }
 
