@@ -86,8 +86,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     double sy = params.sy0M()*state.fM() + params.sy0A()*(1-state.fM()) + state.R();
 
     Vector6 sigma_t = stress_vec + Del*de;  // Trial stress
-    std::cout << "de: " << de.transpose().format(CleanFmt) << std::endl;
-    std::abort();
     Vector6 sij_t = deviator(sigma_t);
 
     Vector6 stilde = sij_t;
@@ -96,7 +94,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     }
     bool plastic = params.plastic() && yield_function(stilde, sy) > 0;
     bool phase_transformations = transformation_function(sigma_t, 0, temp, params) - state.fM() > 1e-12;
-    std::cout << " phase_transformations " << phase_transformations << std::endl;
     bool elastic = !plastic && !phase_transformations;
     if (elastic) {     // Use the trial stress as the stress and the elastic stiffness matrix as the tangent
         D_alg = Del;
@@ -131,7 +128,11 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         Matrix6x6 nnt = Matrix6x6::Zero();
         Matrix6x6 Aijkl = Matrix6x6::Zero();
         std::cout << "seq2" << s_eq_2 << std::endl;
-        Vector6 nij2 = 1.5*stilde/s_eq_2;
+        Vector6 nij2 = 1.5*stilde;
+        if (s_eq_2 > 0) {
+            nij2 /= s_eq_2;
+        }
+
         double F = 0;
         Vector6 bij = Vector6::Zero();
 
