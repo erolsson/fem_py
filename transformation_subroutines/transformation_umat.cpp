@@ -209,6 +209,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         std::cout << "converged with " << iter << " iterations" << std::endl;
         std::cout << "The effective stress is  " << s_eq_2 << std::endl;
         std::cout << "Transformation function is  " << h << std::endl;
+        std::cout << "Martensite fraction is  " << state.fM() << std::endl;
 
         // Updating state variables
         state.ep_eff() += DL;
@@ -242,6 +243,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             for (unsigned i = 3; i != 6; ++i) {
                 Bijkl(i, i) *= 2;
             }
+            /*
             std::cout << 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM) << std::endl;
             std::cout << "J" << std::endl << (J).format(CleanFmt) << std::endl << std::endl;
             std::cout << "nnt" << std::endl << (nnt).format(CleanFmt) << std::endl << std::endl;
@@ -253,6 +255,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             std::cout << "B-1:" << std::endl << (Bijkl.inverse()).format(CleanFmt) << std::endl << std::endl;
             // D_alg = Bijkl.inverse()*D_alg;
             std::cout << "D_alg2:" << std::endl << (D_alg).format(CleanFmt) << std::endl << std::endl;
+             */
         }
     }
 }
