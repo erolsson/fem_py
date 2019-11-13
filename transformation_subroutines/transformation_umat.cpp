@@ -204,6 +204,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             DL -= dDL;
             DfM -= dDfM;
             residual = abs(dDL) + abs(dDfM);
+            std::cout << "Residual: " << residual << std::endl;
         }
         std::cout << "converged with " << iter << " iterations" << std::endl;
         // Updating state variables
