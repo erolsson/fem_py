@@ -73,16 +73,14 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     State state(statev, params.back_stresses());
 
     Eigen::Map<Vector6> stress_vec(stress);
-    std::cout << "s = " << stress_vec.format(CleanFmt) << std::endl;
+
     const Eigen::Map<Vector6> de(dstran);
     Eigen::Map<Matrix6x6> D_alg(ddsdde);
 
     // Elastic parameters
-    double G = params.E()/2/(1+params.v());
-    double K = params.E()/3/(1-2*params.v());
+    double G = params.E()/2/(1 + params.v());
+    double K = params.E()/3/(1 - 2*params.v());
     Matrix6x6 Del = 2*G*J + K*E3;
-
-    // Collecting state variables
 
     // Yield stress at start of increment
     double sy = params.sy0M()*state.fM() + params.sy0A()*(1-state.fM()) + state.R();
@@ -94,7 +92,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     if (params.kinematic_hardening()) {
         stilde -= state.total_back_stress();
     }
-
+    std::cout << "s = " << stress_vec.format(CleanFmt) << std::endl;
     bool plastic = params.plastic() && yield_function(stilde, sy) > 0;
     bool phase_transformations = transformation_function(sigma_t, 0, temp, params) - state.fM() > 0;
     bool elastic = !plastic && !phase_transformations;
