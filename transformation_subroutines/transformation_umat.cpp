@@ -208,7 +208,10 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         std::cout << "converged with " << iter << " iterations" << std::endl;
         std::cout << "The effective stress is  " << s_eq_2 << std::endl;
         std::cout << "Transformation function is  " << h << std::endl;
+        std::cout << "The increment in martensite fraction is  " << DfM << std::endl;
         std::cout << "Martensite fraction is  " << state.fM() << std::endl;
+        std::cout << "The stress in zz is " << sigma_2[2] << std::endl;
+
 
         // Updating state variables
         state.ep_eff() += DL;
