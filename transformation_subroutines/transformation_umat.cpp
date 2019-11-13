@@ -205,7 +205,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             DfM -= dDfM;
             residual = abs(dDL) + abs(dDfM);
         }
-
+        std::cout << "converged with " << iter << " iterations" << std::endl;
         // Updating state variables
         state.ep_eff() += DL;
         state.fM() += DfM;
@@ -239,7 +239,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 Bijkl(i, i) *= 2;
             }
 
-            std::cout << 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM) << std::endl;
             std::cout << "J" << std::endl << (J).format(CleanFmt) << std::endl << std::endl;
             std::cout << "nnt" << std::endl << (nnt).format(CleanFmt) << std::endl << std::endl;
             std::cout << "Aijkl" << std::endl << (Aijkl).format(CleanFmt) << std::endl << std::endl;
