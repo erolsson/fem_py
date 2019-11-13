@@ -128,6 +128,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         double s_eq_prime = s_eq_2;
         Matrix6x6 nnt = Matrix6x6::Zero();
         Matrix6x6 Aijkl = Matrix6x6::Zero();
+        std::cout << "seq2" << s_eq_2 << std::endl;
         Vector6 nij2 = 1.5*stilde/s_eq_2;
         double F = 0;
         Vector6 bij = Vector6::Zero();
