@@ -196,20 +196,20 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                         - 2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
                 dhdDL = double_contract(bij, dsigmaijdDL) + F*dMepdDL;
                 double detJ = dfdDL*dhdDfM - dfdDfM*dhdDL;
-                dDL = (dhdDfM*f - dfdDfM*h)/detJ;
-                dDfM = (-dhdDL*f + dfdDL*h)/detJ;
+                dDL = (dhdDfM*-f - dfdDfM*-h)/detJ;
+                dDfM = (-dhdDL*-f + dfdDL*-h)/detJ;
             }
             else if (plastic) {
-                dDL = f/dfdDL;
+                dDL = -f/dfdDL;
             }
             else {  // Only phase transformations
-                dDfM = h/dhdDfM;
+                dDfM = -h/dhdDfM;
             }
             // std::cout << "DL:" << DL << "  DfM:" << DfM << std::endl;
             // std::cout << "dDL:" << dDL << "  dDfM:" << dDfM << std::endl;
             // std::cout << "f: " << f << "  h: " << h << std::endl;
-            DL -= dDL;
-            DfM -= dDfM;
+            DL += dDL;
+            DfM += dDfM;
             residual = abs(dDL) + abs(dDfM);
         }
         std::cout << "Converged in " << iter << " iterations" << std::endl;
