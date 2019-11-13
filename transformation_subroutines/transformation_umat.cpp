@@ -205,7 +205,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             else {  // Only phase transformations
                 dDfM = h/dhdDfM;
             }
-
+            std::cout << "DL:" << DL << "  DfM:" << DfM << std::endl;
+            std::cout << "dDL:" << dDL << "  dDfM:" << dDfM << std::endl;
             DL -= dDL;
             DfM -= dDfM;
             residual = abs(dDL) + abs(dDfM);
@@ -233,7 +234,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             D_alg -= 4*G*G*(DfM*params.R2()/B/params.sy0A()*(ds_eq_2_dDL + ds_eq_2_dfM*F*dMepdDL))*nnt;
         }
         if (DfM > 0) {
-
             D_alg -= 4*G*G/B*DfM*params.R2()/params.sy0A()*nnt;
             Matrix6x6 Bijkl = I + K/3*params.dV()*delta_ij*bij.transpose();
             double B1 = RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM;
