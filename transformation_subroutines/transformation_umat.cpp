@@ -20,6 +20,8 @@ double ms_stress(const Eigen::Matrix<double, 6, 1>& stress, const Transformation
     double m_stress = params.a1()*(stress[0] + stress[1] + stress[2]);   // Contribution from hydrostatic stress
     m_stress += params.a2()*von_Mises(stress);
     m_stress += params.a3()*vector_det(s_dev);
+    std::cout << "m_stress: " << m_stress << std::endl;
+    std::cout << "stress: " << stress.transpose().format(CleanFmt) << std::endl;
     return m_stress;
 }
 
@@ -29,10 +31,6 @@ double ms_strain(double epl, const TransformationMaterialParameters& params) {
 
 double transformation_function(const Eigen::Matrix<double, 6, 1>& stress, double epl, double T,
                                const TransformationMaterialParameters& params) {
-    std::cout << "exp = " << exp(-params.k()*(params.Ms() + ms_stress(stress, params) +
-                                              ms_strain(epl, params) + params.Mss() - T)) << std::endl;
-    std::cout << "Ms:" <<  params.Ms()  << "ms_stress:" <<  ms_stress(stress, params)  << " Mss: " << params.Mss()
-              << " T:" << T << std::endl;
 
     return 1 - exp(-params.k()*(params.Ms() + ms_stress(stress, params) +
                 ms_strain(epl, params) + params.Mss() - T));
@@ -96,13 +94,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     bool plastic = params.plastic() && yield_function(stilde, sy) > 0;
     bool phase_transformations = transformation_function(sigma_t, 0, temp, params) - state.fM() > 0;
     bool elastic = !plastic && !phase_transformations;
-    std::cout << yield_function(stilde, sy) << " Elastic: " << elastic << " Plastic: " << plastic
-              << " Phase transformations: " << phase_transformations << std::endl;
     if (elastic) {     // Use the trial stress as the stress and the elastic stiffness matrix as the tangent
         D_alg = Del;
         stress_vec = sigma_t;
-        std::cout << "D_alg: " << std::endl << D_alg.format(CleanFmt) << std::endl << std::endl;
-        std::cout << "stress_vec: " << std::endl << stress_vec.format(CleanFmt) << std::endl << std::endl;
         std::abort();
     }
     else {  // Inelastic deformations
