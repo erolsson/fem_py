@@ -20,7 +20,7 @@ double ms_stress(const Eigen::Matrix<double, 6, 1>& stress, const Transformation
     double m_stress = params.a1()*(stress[0] + stress[1] + stress[2]);   // Contribution from hydrostatic stress
     m_stress += params.a2()*von_Mises(stress);
     m_stress += params.a3()*vector_det(s_dev);
-    return 0*m_stress;
+    return m_stress;
 }
 
 double ms_strain(double epl, const TransformationMaterialParameters& params) {
@@ -127,7 +127,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         if (s_eq_2 > 0) {
             nij2 /= s_eq_2;
         }
-        std::cout << "seq2: " << s_eq_2 << " sy:"  << sy << std::endl;
+        //std::cout << "seq2: " << s_eq_2 << " sy:"  << sy << std::endl;
 
         double F = 0;
         Vector6 bij = Vector6::Zero();
@@ -198,7 +198,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 double detJ = dfdDL*dhdDfM - dfdDfM*dhdDL;
                 dDL = (dhdDfM*-f - dfdDfM*-h)/detJ;
                 dDfM = (-dhdDL*-f + dfdDL*-h)/detJ;
-                std::cout << "J = " << std::endl << dfdDL << ", " << dfdDfM << std::endl << dhdDL << ", " << dhdDfM << std::endl;
+                // std::cout << "J = " << std::endl << dfdDL << ", " << dfdDfM << std::endl << dhdDL << ", " << dhdDfM << std::endl;
             }
             else if (plastic) {
                 dDL = -f/dfdDL;
@@ -206,9 +206,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             else {  // Only phase transformations
                 dDfM = -h/dhdDfM;
             }
-            std::cout << "DL:" << DL << "  DfM:" << DfM << std::endl;
-            std::cout << "dDL:" << dDL << "  dDfM:" << dDfM << std::endl;
-            std::cout << "f: " << f << "  h: " << h << std::endl;
+            // std::cout << "DL:" << DL << "  DfM:" << DfM << std::endl;
+            // std::cout << "dDL:" << dDL << "  dDfM:" << dDfM << std::endl;
+            // std::cout << "f: " << f << "  h: " << h << std::endl;
             DL += dDL;
             DfM += dDfM;
             residual = abs(dDL) + abs(dDfM);
