@@ -103,7 +103,7 @@ def write_input_file(filename, material, boundary_conditions, temperature=None, 
         initial_values += [0.]*(material.umat_depvar() - 2)
         file_lines.append('*Initial Conditions, type=Solution, user')
 
-    file_lines.append('*Step, name=step, nlgeom=NO, inc=10000000')
+    file_lines.append('*Step, name=step, nlgeom=NO, inc=10000000, unsymm=yes')
     file_lines.append('\t*Static')
     file_lines.append('\t\t1e-05, ' + str(time_period) + ', 1e-12,  ' + str(max_increment))
 
