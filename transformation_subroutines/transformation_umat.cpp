@@ -192,16 +192,16 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             Aijkl = J - 2./3*nnt;
             if (plastic && phase_transformations) {
                 dfdDfM = -3*G*RA/B - (params.sy0M() - params.sy0A());
-                Vector6 dsigmaijdDL = -3*G*double_contract(Aijkl, dsij_prime_dDL)
+                Vector6 dsigmaijdDL = -3*G*double_contract(Aijkl, dsij_prime_dDL)*0
                         - 2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
                 dhdDL = double_contract(bij, dsigmaijdDL) + F*dMepdDL;
                 double detJ = dfdDL*dhdDfM - dfdDfM*dhdDL;
                 dDL = (dhdDfM*-f - dfdDfM*-h)/detJ;
                 dDfM = (-dhdDL*-f + dfdDL*-h)/detJ;
+                std::cout << DfM*params.R2()/params.sy0A()*ds_eq_2_dDL<< std::endl;
                 std::cout << "bij: " << bij.transpose().format(CleanFmt) << std::endl;
                 std::cout << "ds_eq_2_dDL: " << ds_eq_2_dDL << std::endl;
-                std::cout << "a1: " << (-3*G*double_contract(Aijkl, dsij_prime_dDL)).transpose().format(CleanFmt)
-                          << std::endl << " a2: "
+                std::cout <<  " a2: "
                           << (2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2).transpose().format(CleanFmt)
                           << std::endl;
                 std::cout << "J = " << std::endl << dfdDL << ", " << dfdDfM << std::endl << dhdDL << ", " << dhdDfM << std::endl;
