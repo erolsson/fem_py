@@ -133,7 +133,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         Vector6 dsij_prime_dDL = Vector6::Zero();
         double B = 1;
         double residual = 1e99;
+        unsigned iter = 0;
         while(residual > 1e-15) {
+            ++iter;
             sigma_2 = sigma_t;
 
             double dDL = 0;
@@ -141,7 +143,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
             B = 1 + 3*G*params.R2()*DfM/params.sy0A();
             s_eq_2 = (s_eq_prime - 3*G*(DL + params.R1()*DfM))/B;
-            std::cout << "B:" << B << " s_eq_': " << s_eq_prime << std::endl;
             if (plastic) {
                 dsij_prime_dDL = Vector6::Zero();
                 ds_eq_2_dDL = -3*G;
@@ -169,7 +170,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             }
             if (phase_transformations) {
                 RA = params.R1() + params.R2()*s_eq_2/params.sy0A();
-                std::cout << "RA: " << RA << std::endl;
                 sigma_2 -= (2*G*RA*nij2 + K*params.dV()/3*delta_ij)*DfM;
                 h = transformation_function(sigma_2, state.ep_eff() + DL, temp, params) - (state.fM() + DfM);
                 F = params.k()*exp(-params.k()*(params.Ms() + ms_stress(sigma_2, params)
@@ -179,10 +179,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 double J2 = 0.5*double_contract(s, s);
                 bij = F*(params.a1()*delta_ij + 1.5*params.a2()*s/sqrt(3*J2)
                          + params.a3()*(contract(s, s) - 2./3*J2*delta_ij));
-                std::cout << s_eq_2 << std::endl;
-                std::cout << "bij:" << std::endl << bij.format(CleanFmt) << std::endl << std::endl;
                 ds_eq_2_dfM = -3*G/B*RA;
-                std::cout << "ds_eq_2_dfM " << ds_eq_2_dfM << std::endl;
                 Vector6 dsijdDfM = -2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2 - K/3*params.dV()*delta_ij;
                 dhdDfM = double_contract(bij, dsijdDfM) - 1;
             }
@@ -208,9 +205,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             DL -= dDL;
             DfM -= dDfM;
             residual = abs(dDL) + abs(dDfM);
-            std::cout << "DfM:" << DfM << " dDfM: " << dDfM << " dDL: " << dDL << " R: " << residual << std::endl;
         }
-        std::cout << "converged:" << std::endl;
+        std::cout << "converged with " << iter << " iterations" << std::endl;
 
         // Updating state variables
         state.ep_eff() += DL;
