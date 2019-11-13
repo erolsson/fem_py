@@ -61,7 +61,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         double* drot, double *pnewdt, double& celent, double* dfgrd0, double* dfgrd1, const int& noel, const int& npt,
         const int& layer, const int& kspt, const int& kstep, const int& kinc, short cmname_len) {
 
-    using Matrix6x6 = Eigen::Matrix<double, 6, 6, Eigen::RowMajor>;
+    using Matrix6x6 = Eigen::Matrix<double, 6, 6>;
     using Vector6 = Eigen::Matrix<double, 6, 1>;
 
     const TransformationMaterialParameters params(props);
@@ -248,7 +248,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             std::cout << "D_alg1:" << std::endl << (D_alg).format(CleanFmt) << std::endl << std::endl;
             std::cout << "B:" << std::endl << (Bijkl).format(CleanFmt) << std::endl << std::endl;
             std::cout << "B-1:" << std::endl << (Bijkl.inverse()).format(CleanFmt) << std::endl << std::endl;
-            D_alg = (Bijkl.inverse()*D_alg).transpose();
+            D_alg = Bijkl.inverse()*D_alg;
             std::cout << "I" << std::endl << (Bijkl.inverse()*Bijkl).format(CleanFmt) << std::endl << std::endl;
             std::cout << "D_alg2:" << std::endl << (D_alg).format(CleanFmt) << std::endl << std::endl;
 

@@ -11,7 +11,7 @@ Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "[", "]");
 
 using Eigen::Matrix;
 // Unit forth order tensor in matrix form
-const static Matrix<double, 6, 6> I((Matrix<double, 6, 6, Eigen::RowMajor>() <<
+const static Matrix<double, 6, 6> I((Matrix<double, 6, 6>() <<
         1.,  0.,  0.,  0.,  0.,  0.,
         0.,  1.,  0.,  0.,  0.,  0.,
         0.,  0.,  1.,  0.,  0.,  0.,
@@ -20,7 +20,7 @@ const static Matrix<double, 6, 6> I((Matrix<double, 6, 6, Eigen::RowMajor>() <<
         0.,  0.,  0.,  0.,  0.,  0.5).finished());
 
 //Deviatoric fourth order tensor in matrix form
-const static Matrix<double, 6, 6> J((Matrix<double, 6, 6, Eigen::RowMajor>() <<
+const static Matrix<double, 6, 6> J((Matrix<double, 6, 6>() <<
          2./3,  -1./3,  -1./3,  0.,  0.,  0.,
         -1./3.,  2./3,  -1./3,  0.,  0.,  0.,
         -1./3,  -1./3,   2./3., 0.,  0.,  0.,
@@ -28,7 +28,7 @@ const static Matrix<double, 6, 6> J((Matrix<double, 6, 6, Eigen::RowMajor>() <<
          0.,     0.,     0.,    0.,  0.5, 0.,
          0.,     0.,     0.,    0.,  0.,  0.5).finished());
 
-const static Matrix<double, 6, 6> E3((Matrix<double, 6, 6, Eigen::RowMajor>() <<
+const static Matrix<double, 6, 6> E3((Matrix<double, 6, 6>() <<
         1.,  1.,  1.,  0.,  0.,  0.,
         1.,  1.,  1.,  0.,  0.,  0.,
         1.,  1.,  1.,  0.,  0.,  0.,
@@ -63,7 +63,7 @@ T double_contract(const Matrix<T, 6, 1>& a, const Matrix<T, 6, 1>& b) {
 
 // Double contraction for the operation A_ijkl b_kl
 template<typename T>
-Matrix<T, 6, 1> double_contract(const Matrix<T, 6, 6, Eigen::RowMajor>& A,  const Matrix<T, 6, 1>& b) {
+Matrix<T, 6, 1> double_contract(const Matrix<T, 6, 6>& A,  const Matrix<T, 6, 1>& b) {
     Matrix<T, 6, 1> result = A*b;
     for (unsigned i = 0; i!= 6; ++i) {
         for (unsigned j = 3; j != 6; ++j) {
@@ -75,9 +75,9 @@ Matrix<T, 6, 1> double_contract(const Matrix<T, 6, 6, Eigen::RowMajor>& A,  cons
 
 // Double contraction for the operation A_ijkl B_klmn
 template<typename T>
-Matrix<T, 6, 6, Eigen::RowMajor> double_contract(const Matrix<T, 6, 6, Eigen::RowMajor>& A,
-                                                 const Matrix<T, 6, 6, Eigen::RowMajor>& B) {
-    Matrix<T, 6, 6, Eigen::RowMajor> res = A*B;
+Matrix<T, 6, 6> double_contract(const Matrix<T, 6, 6>& A,
+                                                 const Matrix<T, 6, 6>& B) {
+    Matrix<T, 6, 6> res = A*B;
     for (unsigned i = 0; i != 6; ++i) {
         for (unsigned j = 0; j != 6; ++j) {
             for (unsigned k = 3; k != 6; ++k) {
