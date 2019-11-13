@@ -239,7 +239,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             for (unsigned i = 3; i != 6; ++i) {
                 Bijkl(i, i) *= 2;
             }
-
+            /*
             std::cout << "J" << std::endl << (J).format(CleanFmt) << std::endl << std::endl;
             std::cout << "nnt" << std::endl << (nnt).format(CleanFmt) << std::endl << std::endl;
             std::cout << "Aijkl" << std::endl << (Aijkl).format(CleanFmt) << std::endl << std::endl;
@@ -250,7 +250,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             std::cout << "B-1:" << std::endl << (Bijkl.inverse()).format(CleanFmt) << std::endl << std::endl;
             D_alg = Bijkl.inverse()*D_alg;
             std::cout << "D_alg2:" << std::endl << (D_alg).format(CleanFmt) << std::endl << std::endl;
-
+            */
         }
     }
 }
