@@ -234,7 +234,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         }
         if (DfM > 0) {
 
-            // D_alg -= 4*G*G/B*DfM*params.R2()/params.sy0A()*nnt - 6*G*G*RA*DfM/s_eq_prime*Aijkl;
+             D_alg -= 4*G*G/B*DfM*params.R2()/params.sy0A()*nnt - 6*G*G*RA*DfM/s_eq_prime*Aijkl;
 
             Matrix6x6 Bijkl = I + K/3*params.dV()*delta_ij*bij.transpose()
                                 + 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2*bij.transpose();
@@ -253,7 +253,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             std::cout << "D_alg1:" << std::endl << (D_alg).format(CleanFmt) << std::endl << std::endl;
             std::cout << "B:" << std::endl << (Bijkl).format(CleanFmt) << std::endl << std::endl;
             std::cout << "B-1:" << std::endl << (Bijkl.inverse()).format(CleanFmt) << std::endl << std::endl;
-            D_alg = Bijkl.inverse()*D_alg;
+            // D_alg = Bijkl.inverse()*D_alg;
             std::cout << "D_alg2:" << std::endl << (D_alg).format(CleanFmt) << std::endl << std::endl;
         }
     }
