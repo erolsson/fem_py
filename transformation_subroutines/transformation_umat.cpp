@@ -234,10 +234,13 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         if (DfM > 0) {
 
             D_alg -= 4*G*G/B*DfM*params.R2()/params.sy0A()*nnt;
-
-            Matrix6x6 Bijkl = I + K/3*params.dV()*delta_ij*bij.transpose()
-                                + 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2*bij.transpose();
-
+            Matrix6x6 Bijkl = I + K/3*params.dV()*delta_ij*bij.transpose();
+            double B1 = RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM;
+            if (DL > 0) {
+                B1 += 1/A*dfdDfM*(1+F*dMepdDL + dfdDfM*params.R2()/params.sy0A()*(ds_eq_2_dDL + ds_eq_2_dfM*F*dMepdDL));
+                Bijkl += 3*G*(DL + RA*DfM)/s_eq_prime/A*dfdDfM*double_contract(Aijkl, dsij_prime_dDL)*bij.transpose();
+            }
+            Bijkl += 2*G*B1*nij2*bij.transpose();
             for (unsigned i = 3; i != 6; ++i) {
                 Bijkl(i, i) *= 2;
             }
