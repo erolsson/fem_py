@@ -20,7 +20,7 @@ double ms_stress(const Eigen::Matrix<double, 6, 1>& stress, const Transformation
     double m_stress = params.a1()*(stress[0] + stress[1] + stress[2]);   // Contribution from hydrostatic stress
     m_stress += params.a2()*von_Mises(stress);
     m_stress += params.a3()*vector_det(s_dev);
-    return m_stress;
+    return 0*m_stress;
 }
 
 double ms_strain(double epl, const TransformationMaterialParameters& params) {
