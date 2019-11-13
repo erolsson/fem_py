@@ -210,7 +210,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         std::cout << "Transformation function is  " << h << std::endl;
         std::cout << "The increment in martensite fraction is  " << DfM << std::endl;
         std::cout << "Martensite fraction is  " << state.fM() << std::endl;
-        std::cout << "The stress in zz is " << sigma_2[2] << std::endl;
+        std::cout << "s " << sigma_2.transpose().format(CleanFmt) << std::endl;
 
 
         // Updating state variables
