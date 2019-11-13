@@ -32,8 +32,10 @@ double ms_strain(double epl, const TransformationMaterialParameters& params) {
 double transformation_function(const Eigen::Matrix<double, 6, 1>& stress, double epl, double T,
                                const TransformationMaterialParameters& params) {
 
-    return 1 - exp(-params.k()*(params.Ms() + ms_stress(stress, params) +
-                ms_strain(epl, params) + params.Mss() - T));
+    double a = exp(-params.k()*(params.Ms() + ms_stress(stress, params) +
+                                ms_strain(epl, params) + params.Mss() - T));
+    std::cout << "a: " << a << std::endl;
+    return 1 - a;
 }
 
 class State {
@@ -90,7 +92,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     if (params.kinematic_hardening()) {
         stilde -= state.total_back_stress();
     }
-    std::cout << "s = " << sigma_t.format(CleanFmt) << std::endl;
     bool plastic = params.plastic() && yield_function(stilde, sy) > 0;
     bool phase_transformations = transformation_function(sigma_t, 0, temp, params) - state.fM() > 0;
     bool elastic = !plastic && !phase_transformations;
