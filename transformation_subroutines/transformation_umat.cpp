@@ -163,7 +163,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     ds_eq_2_dDL -= theta*theta*params.Cm(i);
                 }
                 s_eq_prime = sqrt(1.5*double_contract(sij_prime, sij_prime));
-                s_eq_2 -= back_stress_correction/B;
+                s_eq_2 = (s_eq_prime - 3*G*(DL + params.R1()*DfM) - back_stress_correction)/B;
                 nij2 = 1.5*sij_prime/s_eq_prime;
                 ds_eq_2_dDL += double_contract(nij2, dsij_prime_dDL);
                 ds_eq_2_dDL /= B;
