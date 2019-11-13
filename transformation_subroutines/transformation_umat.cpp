@@ -92,7 +92,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     if (params.kinematic_hardening()) {
         stilde -= state.total_back_stress();
     }
-    std::cout << "s = " << stress_vec.format(CleanFmt) << std::endl;
+    std::cout << "s = " << sigma_t.format(CleanFmt) << std::endl;
     bool plastic = params.plastic() && yield_function(stilde, sy) > 0;
     bool phase_transformations = transformation_function(sigma_t, 0, temp, params) - state.fM() > 0;
     bool elastic = !plastic && !phase_transformations;
