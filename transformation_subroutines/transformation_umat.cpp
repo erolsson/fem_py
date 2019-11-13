@@ -98,7 +98,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     if (elastic) {     // Use the trial stress as the stress and the elastic stiffness matrix as the tangent
         D_alg = Del;
         stress_vec = sigma_t;
-        std::abort();
     }
     else {  // Inelastic deformations
         // Increment in plastic strain and martensitic phase fraction
@@ -127,7 +126,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         double s_eq_prime = s_eq_2;
         Matrix6x6 nnt = Matrix6x6::Zero();
         Matrix6x6 Aijkl = Matrix6x6::Zero();
-        std::cout << "seq2" << s_eq_2 << std::endl;
         Vector6 nij2 = 1.5*stilde;
         if (s_eq_2 > 0) {
             nij2 /= s_eq_2;
@@ -178,8 +176,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             }
             if (phase_transformations) {
                 RA = params.R1() + params.R2()*s_eq_2/params.sy0A();
-                std::cout << "sigma2:" << sigma_2.transpose().format(CleanFmt) << std::endl;
-                std::cout << "nij2:" << nij2.transpose().format(CleanFmt) << std::endl;
                 sigma_2 -= (2*G*RA*nij2 + K*params.dV()/3*delta_ij)*DfM;
                 h = transformation_function(sigma_2, state.ep_eff() + DL, temp, params) - (state.fM() + DfM);
                 F = params.k()*exp(-params.k()*(params.Ms() + ms_stress(sigma_2, params)
@@ -215,9 +211,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             DL -= dDL;
             DfM -= dDfM;
             residual = abs(dDL) + abs(dDfM);
-            std::cout << "dhdDfM: " << dhdDfM << std::endl;
         }
-        std::cout << DfM << std::endl;
         // Updating state variables
         state.ep_eff() += DL;
         state.fM() += DfM;
@@ -250,7 +244,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             for (unsigned i = 3; i != 6; ++i) {
                 Bijkl(i, i) *= 2;
             }
-            std::cout << "B:" << std::endl << Bijkl.format(CleanFmt) << std::endl << std::endl;
             D_alg = Bijkl.inverse()*D_alg;
         }
     }
