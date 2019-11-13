@@ -73,6 +73,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     State state(statev, params.back_stresses());
 
     Eigen::Map<Vector6> stress_vec(stress);
+    std::cout << "s = " << stress_vec.format(CleanFmt) << std::endl;
     const Eigen::Map<Vector6> de(dstran);
     Eigen::Map<Matrix6x6> D_alg(ddsdde);
 
