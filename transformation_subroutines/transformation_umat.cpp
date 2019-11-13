@@ -207,6 +207,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             residual = abs(dDL) + abs(dDfM);
         }
         std::cout << "converged with " << iter << " iterations" << std::endl;
+        std::cout << "The effective stress is  " << s_eq_2 << std::endl;
+        std::cout << "Transformation function is  " << h << std::endl;
 
         // Updating state variables
         state.ep_eff() += DL;
