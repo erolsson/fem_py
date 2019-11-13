@@ -127,7 +127,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         if (s_eq_2 > 0) {
             nij2 /= s_eq_2;
         }
-        std::cout << "seq2: " << s_eq_2 << std::endl;
+        std::cout << "seq2: " << s_eq_2 << " sy:"  << sy << std::endl;
 
         double F = 0;
         Vector6 bij = Vector6::Zero();
