@@ -206,9 +206,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             else {  // Only phase transformations
                 dDfM = -h/dhdDfM;
             }
-            // std::cout << "DL:" << DL << "  DfM:" << DfM << std::endl;
-            // std::cout << "dDL:" << dDL << "  dDfM:" << dDfM << std::endl;
-            // std::cout << "f: " << f << "  h: " << h << std::endl;
+            std::cout << "DL:" << DL << "  DfM:" << DfM << std::endl;
+            std::cout << "dDL:" << dDL << "  dDfM:" << dDfM << std::endl;
+            std::cout << "f: " << f << "  h: " << h << std::endl;
             DL += dDL;
             DfM += dDfM;
             residual = abs(dDL) + abs(dDfM);
