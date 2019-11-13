@@ -248,7 +248,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             std::cout << "D_alg1:" << std::endl << (D_alg).format(CleanFmt) << std::endl << std::endl;
             std::cout << "B:" << std::endl << (Bijkl).format(CleanFmt) << std::endl << std::endl;
             std::cout << "B-1:" << std::endl << (Bijkl.inverse()).format(CleanFmt) << std::endl << std::endl;
-            D_alg = Bijkl.inverse()*D_alg;
+            D_alg = Bijkl.transpose().inverse()*D_alg;
             std::cout << "D_alg2:" << std::endl << (D_alg).format(CleanFmt) << std::endl << std::endl;
 
         }
