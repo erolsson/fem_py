@@ -110,10 +110,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         double dfdDfM = 0;
         double dhdDL = 0;
         double dhdDfM = 0;
-        std::cout << "s_tilde" << std::endl << stilde.format(CleanFmt) << std::endl << std::endl;
+
         // Effective stress and its derivatives
         double s_eq_2 = sqrt(1.5*double_contract(stilde, stilde));
-        std::cout << "s_eq_2:" << s_eq_2 << std::endl;
         double ds_eq_2_dDL = 0;
         double ds_eq_2_dfM = 0;
 
