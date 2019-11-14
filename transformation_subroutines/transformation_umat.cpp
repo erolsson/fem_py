@@ -179,6 +179,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             std::cout << "fM: " << state.fM() << std::endl;
             std::cout << "st: " << sigma_t.transpose().format(CleanFmt) << std::endl;
             if (phase_transformations) {
+                std::cout << "s_eq_2: " << s_eq_2 << std::endl;
                 RA = params.R1() + params.R2()*s_eq_2/params.sy0A();
                 sigma_2 -= (2*G*RA*nij2 + K*params.dV()/3*delta_ij)*DfM;
                 h = transformation_function(sigma_2, state.ep_eff() + DL, temp, params) - (state.fM() + DfM);
