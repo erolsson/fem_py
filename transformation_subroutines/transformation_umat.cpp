@@ -83,6 +83,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     double sy = params.sy0M()*state.fM() + params.sy0A()*(1-state.fM()) + state.R();
 
     Vector6 sigma_t = stress_vec + Del*de;  // Trial stress
+    std::cout << "sigma_0: " << stress_vec.transpose().format(CleanFmt) << std::endl;
     std::cout << "sigma_t: " << sigma_t.transpose().format(CleanFmt) << std::endl;
     Vector6 sij_t = deviator(sigma_t);
 
