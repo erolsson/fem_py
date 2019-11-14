@@ -195,6 +195,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 Vector6 dsijdDfM = -2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2 - K/3*params.dV()*delta_ij;
                 std::cout << "dsijdDfM: " << dsijdDfM.transpose().format(CleanFmt) << std::endl;
                 dhdDfM = double_contract(bij, dsijdDfM) - 1;
+                std::cout << "dhdDfM: " << dhdDfM << std::endl;
             }
 
             nnt = nij2*nij2.transpose();

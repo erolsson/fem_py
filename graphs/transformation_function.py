@@ -48,7 +48,10 @@ def transformation_function(st, martensite_fraction, plastic_strain):
             seqp = np.sqrt(1.5*np.sum(s_dev*s_dev))
             se = seqp - 3*G*(e + R1*phase)/(1+3*G*R2*phase/1000)
             RA = R1+R2*se/1000
-            sigma = st - 2*G*(e * RA*phase) - K*phase*0.037/3
+            print RA*phase
+            nij = 3./2*s_dev/seqp
+            sigma = st - 2*G*(e + RA*phase)*nij - K*phase*0.037/3
+            print sigma
             m_stress = a1*np.sum(sigma, 0) + a2*se
             func[i, j] = 1 - np.exp(-k*(ms + m_stress + mss - temp)) - (phase + f0)
     return func
