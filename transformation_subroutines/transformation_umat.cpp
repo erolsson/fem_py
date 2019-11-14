@@ -194,6 +194,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             nnt = nij2*nij2.transpose();
             Aijkl = J - 2./3*nnt;
             if (plastic && phase_transformations) {
+                std::cout << "time:" << time << std::endl;
                 std::cout << "fM: " << state.fM() << std::endl;
                 std::cout << "st: " << sigma_t.transpose().format(CleanFmt) << std::endl;
                 dfdDfM = -3*G*params.R1()/B - (params.sy0M() - params.sy0A());
