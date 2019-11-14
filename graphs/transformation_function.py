@@ -1,8 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-K = 200E3/3/(1-2*.03)
+K = 200E3/3/(1-2*.3)
 print K
+
 
 def transformation_function(st, martensite_fraction):
     sigma = np.outer(0*martensite_fraction + 1, st) - K*0.037/3*np.outer((martensite_fraction - 0.65), np.ones(3))

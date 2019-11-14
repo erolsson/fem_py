@@ -175,8 +175,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             if (phase_transformations) {
                 RA = params.R1() + params.R2()*s_eq_2/params.sy0A();
                 sigma_2 -= (2*G*RA*nij2 + K*params.dV()/3*delta_ij)*DfM;
-                std::cout << "sigma_t: " << sigma_t.transpose().format(CleanFmt) << std::endl;
-                std::cout << "sigma_2: " << sigma_2.transpose().format(CleanFmt) << std::endl;
                 h = transformation_function(sigma_2, state.ep_eff() + DL, temp, params) - (state.fM() + DfM);
                 F = params.k()*exp(-params.k()*(params.Ms() + ms_stress(sigma_2, params)
                                 + ms_strain(state.ep_eff() + DL, params) + params.Mss() - temp));
@@ -185,13 +183,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 double J2 = 0.5*double_contract(s, s);
                 bij = F*(params.a1()*delta_ij + 1.5*params.a2()*s/sqrt(3*J2)
                          + params.a3()*(contract(s, s) - 2./3*J2*delta_ij));
-                std::cout << "bij: " << bij.transpose().format(CleanFmt) << std::endl;
                 ds_eq_2_dfM = -3*G*RA/B;
                 Vector6 dsijdDfM = -2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2 - K/3*params.dV()*delta_ij;
-                std::cout << "dsijdDfM: " << dsijdDfM.transpose().format(CleanFmt) << std::endl;
                 dhdDfM = double_contract(bij, dsijdDfM) - 1;
-                std::cout << "K: " << K << std::endl;
-                std::cout << "dhdFm: " << dhdDfM << std::endl;
             }
 
             nnt = nij2*nij2.transpose();
