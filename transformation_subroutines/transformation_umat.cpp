@@ -175,6 +175,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 f = s_eq_2 - sy_2;
                 sigma_2 -= 2*G*DL*nij2;
             }
+            std::cout << "time:" << time[0] << std::endl;
+            std::cout << "fM: " << state.fM() << std::endl;
+            std::cout << "st: " << sigma_t.transpose().format(CleanFmt) << std::endl;
             if (phase_transformations) {
                 RA = params.R1() + params.R2()*s_eq_2/params.sy0A();
                 sigma_2 -= (2*G*RA*nij2 + K*params.dV()/3*delta_ij)*DfM;
@@ -194,9 +197,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             nnt = nij2*nij2.transpose();
             Aijkl = J - 2./3*nnt;
             if (plastic && phase_transformations) {
-                std::cout << "time:" << time[0] << std::endl;
-                std::cout << "fM: " << state.fM() << std::endl;
-                std::cout << "st: " << sigma_t.transpose().format(CleanFmt) << std::endl;
                 dfdDfM = -3*G*params.R1()/B - (params.sy0M() - params.sy0A());
                 Vector6 dsigmaijdDL = -3*G*double_contract(Aijkl, dsij_prime_dDL)*0
                         - 2*G*(1 + 0*DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
