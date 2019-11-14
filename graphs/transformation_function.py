@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 K = 200E3/3/(1-2*.03)
-
+print K
 
 def transformation_function(st, martensite_fraction):
     sigma = np.outer(0*martensite_fraction + 1, st) - K*0.037/3*np.outer((martensite_fraction - 0.65), np.ones(3))
@@ -30,6 +30,7 @@ def d_transformation_function(st, martensite_fraction):
     mss = -94.29909071576407
     temp = 22
     print k*np.exp(-k*(ms + m_stress + mss - temp))*a1
+    print -K*0.037/3
     return k*np.exp(-k*(ms + m_stress + mss - temp))*(-K*0.037*a1) - 1
 
 
