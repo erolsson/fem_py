@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 K = 200E3/3/(1-2*.3)
 G = 200E3/2/(1+0.3)
 R1 = 0.02
-R2 = 0.02
+R2 = 0.0
 f0 = 0.65
 b = 100.
 Q = 2100.
@@ -60,7 +60,8 @@ def transformation_function(st, martensite_fraction, plastic_strain):
 if __name__ == '__main__':
     fm = np.linspace(0, 0.1, 1000)
     dl = np.linspace(0, 0.01, 1000)
-    s = np.array([-27.55,     -27.55,       1095])
+    # s = np.array([-27.55,     -27.55,       1095])
+    s = np.array([2.557e-14,  1.145e-13,      701.1])
     # hdl = transformation_function(s, 0, dl)[0, :]
     hfm = transformation_function(s, fm, 0)
     # print (hdl[1] - hdl[0])/(dl[1] - dl[0])
