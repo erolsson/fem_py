@@ -191,7 +191,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             nnt = nij2*nij2.transpose();
             Aijkl = J - 2./3*nnt;
             if (plastic && phase_transformations) {
-                dfdDfM = ds_eq_2_dfM - (params.sy0M() - params.sy0A());
+                dfdDfM = -3*G*params.R1()/B - (params.sy0M() - params.sy0A());
                 Vector6 dsigmaijdDL = -3*G*double_contract(Aijkl, dsij_prime_dDL)*0
                         - 2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
                 dhdDL = double_contract(bij, dsigmaijdDL) + F*dMepdDL;
