@@ -7,7 +7,7 @@
 
 #include "Eigen/Dense"
 
-Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "[", "]");
+Eigen::IOFormat CleanFmt(8, 0, ", ", "\n", "[", "]");
 
 using Eigen::Matrix;
 // Unit forth order tensor in matrix form
