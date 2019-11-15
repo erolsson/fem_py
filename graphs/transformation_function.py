@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 K = 200E3/3/(1-2*.3)
 G = 200E3/2/(1+0.3)
-R1 = 0.02
+R1 = 0.0
 R2 = 0.0
 f0 = 0.65
 b = 100.
@@ -67,6 +67,7 @@ if __name__ == '__main__':
     # print (hdl[1] - hdl[0])/(dl[1] - dl[0])
     # print hdl.shape
     # plt.plot(dl, hdl, '*')
+    print hfm[0]
     print (hfm[1] - hfm[0])/(fm[1] - fm[0])
 
     # plt.figure(2)
