@@ -189,7 +189,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 h = transformation_function(sigma_2, state.ep_eff() + DL, temp, params) - (state.fM() + DfM);
                 F = params.k()*exp(-params.k()*(params.Ms() + ms_stress(sigma_2, params)
                                 + ms_strain(state.ep_eff() + DL, params) + params.Mss() - temp));
-                std::cout << "F: " << std::endl;
+                std::cout << "F: " << F << std::endl;
                 Vector6 s = deviator(sigma_2);
                 double J2 = 0.5*double_contract(s, s);
                 bij = F*(params.a1()*delta_ij + 1.5*params.a2()*s/sqrt(3*J2)
