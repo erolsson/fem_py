@@ -18,7 +18,7 @@ double yield_function(const Eigen::Matrix<double, 6, 1>& stilde, double sigma_y)
 double ms_stress(const Eigen::Matrix<double, 6, 1>& stress, const TransformationMaterialParameters& params) {
     Eigen::Matrix<double, 6, 1> s_dev = deviator(stress);
     double m_stress = params.a1()*(stress[0] + stress[1] + stress[2]);   // Contribution from hydrostatic stress
-    m_stress += params.a2()*von_Mises(stress);
+    m_stress += 0*params.a2()*von_Mises(stress);
     m_stress += params.a3()*vector_det(s_dev);
     return m_stress;
 }
