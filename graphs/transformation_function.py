@@ -1,13 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-K = 200E3/3/(1-2*.3)
-G = 200E3/2/(1+0.3)
-R1 = 0.0
-R2 = 0.0
+from materials.SS2506 import neu_sehitoglu
+
+K = neu_sehitoglu.K
+G = neu_sehitoglu.G
+R1 = neu_sehitoglu.R1
+R2 = neu_sehitoglu.R2
 f0 = 0.65
-b = 100.
-Q = 2100.
+b = neu_sehitoglu.b
+Q = neu_sehitoglu.Q
 
 
 def yield_function(st, martensite_fraction, plastic_strain):
@@ -28,12 +30,12 @@ def yield_function(st, martensite_fraction, plastic_strain):
 
 
 def transformation_function(st, martensite_fraction, plastic_strain):
-    a1 = 0.056/3
-    a2 = 0.028
+    a1 = neu_sehitoglu.a1
+    a2 = neu_sehitoglu.a2
 
-    k = 0.017
-    ms = 169
-    mss = -107.87909071576405
+    k = neu_sehitoglu.k
+    ms = neu_sehitoglu.Ms
+    mss = neu_sehitoglu.Mss
     temp = 22
 
     if not isinstance(martensite_fraction, np.ndarray):
@@ -46,8 +48,8 @@ def transformation_function(st, martensite_fraction, plastic_strain):
         for j, e in enumerate(plastic_strain):
             s_dev = st - 1./3*sum(st)
             seqp = np.sqrt(1.5*np.sum(s_dev*s_dev))
-            se = seqp - 3*G*(e + R1*phase)/(1+3*G*R2*phase/1000)
-            RA = R1+R2*se/1000
+            se = seqp - 3*G*(e + R1*phase)/(1+3*G*R2*phase/neu_sehitoglu.sy0A)
+            RA = R1+R2*se/neu_sehitoglu.sy0A
             print RA*phase
             nij = 3./2*s_dev/seqp
             sigma = st - 2*G*(e + RA*phase)*nij - K*phase*0.037/3
