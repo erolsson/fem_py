@@ -47,17 +47,25 @@ def transformation_function(st, martensite_fraction, plastic_strain):
     func = np.zeros((martensite_fraction.shape[0], plastic_strain.shape[0]))
     for i, phase in enumerate(martensite_fraction):
         for j, e in enumerate(plastic_strain):
-            s_dev = st - 1./3*sum(st)
-            seqp = np.sqrt(1.5*np.sum(s_dev*s_dev))
-            se = seqp - 3*G*(e + R1*phase)/(1+3*G*R2*phase/neu_sehitoglu.sy0A)
+            st_dev = st - 1./3*sum(st)
+            seqp = np.sqrt(1.5*np.sum(st_dev*st_dev))
+            se = (seqp - 3*G*(e + R1*phase))/(1+3*G*R2*phase/neu_sehitoglu.sy0A)
             print se
             RA = R1+R2*se/neu_sehitoglu.sy0A
-            print RA*phase
-            nij = 3./2*s_dev/seqp
+            print RA
+            nij = 3./2*st_dev/seqp
             sigma = st - 2*G*(e + RA*phase)*nij - K*phase*0.037/3
-            print sigma
+            sdev = sigma - 1./3*sum(sigma)
+            s2 = sigma + np.array([0, 0, 1e-3])
+
+            sdev2 = s2 - 1./3*sum(s2)
+            se2 = np.sqrt(1.5*sum(sdev2*sdev2))
+            print se, np.sqrt(1.5*sum(sdev*sdev))
             m_stress = a1*np.sum(sigma, 0) + a2*se
-            # m_stress2 = a1*np.sum(sigma+1e-3, 0) + a2*se
+            m_stress2 = a1*np.sum(s2, 0) + a2*se2
+            print m_stress, m_stress2
+            print "bij:", ((1 - np.exp(-k*(ms + m_stress2 + mss - temp)))
+                           - (1 - np.exp(-k*(ms + m_stress + mss - temp))))/1e-3
             func[i, j] = 1 - np.exp(-k*(ms + m_stress + mss - temp)) - (phase + f0)
     return func
 
@@ -71,7 +79,7 @@ if __name__ == '__main__':
     hfm = transformation_function(s, fm, 0)
     # print (hdl[1] - hdl[0])/(dl[1] - dl[0])
     # print hdl.shape
-    # plt.plot(dl, hdl, '*')
+    plt.plot(fm, hfm, '*')
     print hfm[0]
     print (hfm[1] - hfm[0])/(fm[1] - fm[0])
 
