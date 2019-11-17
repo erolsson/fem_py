@@ -65,7 +65,7 @@ if __name__ == '__main__':
     fm = np.linspace(0, 0.1, 1000)
     dl = np.linspace(0, 0.01, 1000)
     # s = np.array([-27.55,     -27.55,       1095])
-    s = np.array([ 3.382121e-13,  1.1446052e-13,       1541.767,])
+    s = np.array([ 2.5573293e-14,  1.1446052e-13,      701.14898])
     # hdl = transformation_function(s, 0, dl)[0, :]
     hfm = transformation_function(s, fm, 0)
     # print (hdl[1] - hdl[0])/(dl[1] - dl[0])
