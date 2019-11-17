@@ -175,33 +175,20 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 f = s_eq_2 - sy_2;
                 sigma_2 -= 2*G*DL*nij2;
             }
-            std::cout << "time:" << time[0] << std::endl;
-            std::cout << "fM: " << state.fM() << std::endl;
-            std::cout << "st: " << sigma_t.transpose().format(CleanFmt) << std::endl;
             if (phase_transformations) {
-                std::cout << "s_eq_2: " << s_eq_2 << std::endl;
                 RA = params.R1() + params.R2()*s_eq_2/params.sy0A();
-                std::cout << "RA: " << RA << std::endl;
                 sigma_2 -= (2*G*RA*nij2 + K*params.dV()/3*delta_ij)*DfM;
-                std::cout << "sigma_2: " << sigma_2.transpose().format(CleanFmt) << std::endl;
                 Vector6 stemp = sigma_t - (2*G*RA*nij2 + K*params.dV()/3*delta_ij)*1e-4;
-                std::cout << "sigma_temp: " << stemp.transpose().format(CleanFmt) << std::endl;
-                std::cout << "num_d: " << ((stemp - sigma_2)/1e-4).transpose().format(CleanFmt) << std::endl;
                 h = transformation_function(sigma_2, state.ep_eff() + DL, temp, params) - (state.fM() + DfM);
                 F = params.k()*exp(-params.k()*(params.Ms() + ms_stress(sigma_2, params)
                                 + ms_strain(state.ep_eff() + DL, params) + params.Mss() - temp));
-                std::cout << "F: " << F << std::endl;
                 Vector6 s = deviator(sigma_2);
                 double J2 = 0.5*double_contract(s, s);
-                //std::cout << "a3: " << params.a3() << std::endl;
                 bij = F*(params.a1()*delta_ij + 1.5*params.a2()*s/sqrt(3*J2)
                          + params.a3()*(contract(s, s) - 2./3*J2*delta_ij));
-                std::cout << "b: " << bij.transpose().format(CleanFmt) << std::endl;
                 ds_eq_2_dfM = -3*G*RA/B;
                 Vector6 dsijdDfM = -2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2 - K/3*params.dV()*delta_ij;
-                std::cout << "dsijdDfM: " << dsijdDfM.transpose().format(CleanFmt) << std::endl;
                 dhdDfM = double_contract(bij, dsijdDfM) - 1;
-                std::cout << "dhdDfM: " << dhdDfM << std::endl;
             }
 
             nnt = nij2*nij2.transpose();
