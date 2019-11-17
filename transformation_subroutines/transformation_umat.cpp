@@ -193,7 +193,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 std::cout << "F: " << F << std::endl;
                 Vector6 s = deviator(sigma_2);
                 double J2 = 0.5*double_contract(s, s);
-                std::cout << "a3: " << params.a3() << std::endl;
+                //std::cout << "a3: " << params.a3() << std::endl;
                 bij = F*(params.a1()*delta_ij + 1.5*params.a2()*s/sqrt(3*J2)
                          + params.a3()*(contract(s, s) - 2./3*J2*delta_ij));
                 std::cout << "b: " << bij.transpose().format(CleanFmt) << std::endl;
