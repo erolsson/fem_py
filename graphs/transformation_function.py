@@ -50,6 +50,7 @@ def transformation_function(st, martensite_fraction, plastic_strain):
             s_dev = st - 1./3*sum(st)
             seqp = np.sqrt(1.5*np.sum(s_dev*s_dev))
             se = seqp - 3*G*(e + R1*phase)/(1+3*G*R2*phase/neu_sehitoglu.sy0A)
+            print se
             RA = R1+R2*se/neu_sehitoglu.sy0A
             print RA*phase
             nij = 3./2*s_dev/seqp
