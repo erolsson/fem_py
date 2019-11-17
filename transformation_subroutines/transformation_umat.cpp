@@ -202,6 +202,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 double detJ = dfdDL*dhdDfM - dfdDfM*dhdDL;
                 dDL = (dhdDfM*-f - dfdDfM*-h)/detJ;
                 dDfM = (-dhdDL*-f + dfdDL*-h)/detJ;
+
                 std::cout << DfM*params.R2()/params.sy0A()*ds_eq_2_dDL<< std::endl;
                 std::cout << "bij: " << bij.transpose().format(CleanFmt) << std::endl;
                 std::cout << "ds_eq_2_dDL: " << ds_eq_2_dDL << std::endl;
@@ -209,6 +210,10 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                           << (2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2).transpose().format(CleanFmt)
                           << std::endl;
                 std::cout << "J = " << std::endl << dfdDL << ", " << dfdDfM << std::endl << dhdDL << ", " << dhdDfM << std::endl;
+                if (dDL < 0) {
+                    dDL = 0;
+                    dDfM = -h/dhdDfM;
+                }
             }
             else if (plastic) {
                 dDL = -f/dfdDL;
