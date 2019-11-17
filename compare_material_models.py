@@ -32,7 +32,7 @@ pressure_z[:, 1] = 3000*np.sin(np.pi*time/2)
 temperature = np.array([[0, 22.], [time[-1], 22.]])
 boundary_conditions = [BC(amplitude=pressure_z, direction='z', mode='stress')]
 args = {'boundary_conditions': boundary_conditions, 'simulation_directory': 'abaqus_material_test/one_element',
-        'material': neu_sehitoglu, 'temperature': temperature}
+        'material': neu_sehitoglu, 'temperature': temperature, 'max_increment': 0.01}
 
 for inc, lw in zip([1.], [1]):
     for simulation in simulations:

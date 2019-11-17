@@ -71,24 +71,27 @@ def transformation_function(st, martensite_fraction, plastic_strain):
 
 
 if __name__ == '__main__':
-    fm = np.linspace(0, 0.1, 1000)
-    dl = np.linspace(0, 0.01, 1000)
+    DfM = 0.0579803
+    DL = -0.000329397
+    fm = np.linspace(DfM, DfM + 0.00001, 1000)
+    dl = np.linspace(DL, DL + 0.000001, 1000)
     # s = np.array([-27.55,     -27.55,       1095])
-    s = np.array([ 2.5573293e-14,  1.1446052e-13,      701.14898])
+    s = np.array([  -27.546068,     -27.546068,      1094.8674])
     # hdl = transformation_function(s, 0, dl)[0, :]
     hfm = transformation_function(s, fm, 0)
-    # print (hdl[1] - hdl[0])/(dl[1] - dl[0])
+    hdl = transformation_function(s, 0, dl)[0]
+    print (hdl[1] - hdl[0])/(dl[1] - dl[0])
     # print hdl.shape
     plt.plot(fm, hfm, '*')
     print hfm[0]
     print (hfm[1] - hfm[0])/(fm[1] - fm[0])
 
     # plt.figure(2)
-    # ffm = yield_function(s, fm, 0)
-    # print (ffm[1] - ffm[0])/(fm[1] - fm[0])
+    ffm = yield_function(s, fm, 0)
+    print (ffm[1] - ffm[0])/(fm[1] - fm[0])
     # plt.plot(fm, ffm)
-    # fdl = yield_function(s, 0, dl)[0, :]
+    fdl = yield_function(s, 0, dl)[0]
     # plt.figure(3)
     # plt.plot(dl, fdl)
-    # print (fdl[1] - fdl[0])/(dl[1] - dl[0])
+    print (fdl[1] - fdl[0])/(dl[1] - dl[0])
     plt.show()
