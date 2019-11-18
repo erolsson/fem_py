@@ -247,25 +247,25 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         D_alg -=  6*G*G*(DL + RA*DfM)/s_eq_prime*Aijkl - 4*G*G/B*DfM*params.R2()/params.sy0A()*nnt;
 
         double A = dR2dDL - F*dMepdDL*dfdDfM -  ds_eq_2_dDL;
-        Vector6 Lekl = 2*G/A/B*nij2.transpose();
+        Vector6 Lekl = 2*G/A/B*nij2;
 
         if (DL > 0) {
-            D_alg -= 2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2*Lekl;
+            D_alg -= 2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2*Lekl.transpose();
         }
 
         if (DfM > 0) {
             Matrix6x6 Bijkl = I;
             Vector6 Fskl = bij.transpose();
             if (DL > 0) {
-                Fskl += F*dMepdDL/A*dfdDfM*bij.transpose();
-                Vector6 Lskl = 1/A*dfdDfM*bij.transpose();
-                Vector6 Fekl = F*dMepdDL/A/B*2*G*nij2.transpose();
-                D_alg -= 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2*Fekl
-                        - K/3*params.dV()*delta_ij*Fekl;
-                Bijkl += 2*G*(1+DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2*Lskl;
+                Fskl += F*dMepdDL/A*dfdDfM*bij;
+                Vector6 Lskl = 1/A*dfdDfM*bij;
+                Vector6 Fekl = F*dMepdDL/A/B*2*G*nij2;
+                D_alg -= 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2*Fekl.transpose()
+                        - K/3*params.dV()*delta_ij*Fekl.transpose();
+                Bijkl += 2*G*(1+DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2*Lskl.transpose();
             }
-            Bijkl += 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2*Fskl
-                    + K/3*params.dV()*delta_ij*Fskl;
+            Bijkl += 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2*Fskl.transpose()
+                    + K/3*params.dV()*delta_ij*Fskl.transpose();
 
             for (unsigned i = 3; i != 6; ++i) {
                 for (unsigned j = 3; j != 6; ++j)
