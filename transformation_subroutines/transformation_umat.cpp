@@ -261,6 +261,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             if (DL > 0) {
                 B1 += 1/A*dfdDfM*(1+F*dMepdDL + dfdDfM*params.R2()/params.sy0A()*(ds_eq_2_dDL + ds_eq_2_dfM*F*dMepdDL));
                 Bijkl += 3*G*(DL + RA*DfM)/s_eq_prime/A*dfdDfM*double_contract(Aijkl, dsij_prime_dDL)*bij.transpose();
+                std::cout << "B1: " << B1 << std::endl;
             }
 
             Bijkl += 2*G*B1*nij2*bij.transpose();
@@ -269,6 +270,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             }
             D_alg = Bijkl.inverse()*D_alg;
             if (DL > 0) {
+                std::cout << "Bijkl: " << std::endl << Bijkl.format(CleanFmt) << std::endl << std::endl;
                 std::cout << "RA: " << RA << std::endl;
                 std::cout << "D_alg: " << std::endl << D_alg.format(CleanFmt) << std::endl << std::endl;
             }
