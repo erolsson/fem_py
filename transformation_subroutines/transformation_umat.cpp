@@ -221,6 +221,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             else {  // Only phase transformations
                 dDfM = -h/dhdDfM;
             }
+            std::cout << "plastic:" << plastic << " phase transformation:" << phase_transformations << std::endl;
             std::cout << "DL:" << DL << "  DfM:" << DfM << std::endl;
             std::cout << "dDL:" << dDL << "  dDfM:" << dDfM << std::endl;
             std::cout << "f: " << f <<  "seq2: " << s_eq_2 <<  "sy: " << sy <<  "  h: " << h << std::endl;
@@ -266,7 +267,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             }
             Bijkl += 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2*Fskl.transpose()
                     + K/3*params.dV()*delta_ij*Fskl.transpose();
-            std::cout << "Bijkl" << std::endl << Bijkl.format(CleanFmt) << std::endl;
             for (unsigned i = 3; i != 6; ++i) {
                 for (unsigned j = 3; j != 6; ++j)
                     Bijkl(i, j) *= 2;
