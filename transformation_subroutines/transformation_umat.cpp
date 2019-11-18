@@ -274,7 +274,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 std::cout << "Bijkl: " << std::endl << Bijkl.format(CleanFmt) << std::endl << std::endl;
                 std::cout << "RA: " << RA << std::endl;
                 std::cout << "D_alg: " << std::endl << D_alg.format(CleanFmt) << std::endl << std::endl;
-                std::abort();
+                // std::abort();
             }
         }
     }
