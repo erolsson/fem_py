@@ -244,37 +244,34 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             }
         }
         D_alg = Del;
-        D_alg -=  6*G*G*(DL + RA*DfM)/s_eq_prime*Aijkl;
+        D_alg -=  6*G*G*(DL + RA*DfM)/s_eq_prime*Aijkl - 4*G*G/B*DfM*params.R2()/params.sy0A()*nnt;
+
         double A = dR2dDL - F*dMepdDL*dfdDfM -  ds_eq_2_dDL;
+        Vector6 Lekl = 2*G/A/B*nij2.transpose();
 
         if (DL > 0) {
-            D_alg -= 4*G*G/A/B*nnt
-                    + 6*G*G*(DL + RA*DfM)/s_eq_prime*(1./A/B*double_contract(Aijkl, dsij_prime_dDL)*nij2.transpose());
-            D_alg -= 4*G*G*(DfM*params.R2()/B/params.sy0A()*(ds_eq_2_dDL + ds_eq_2_dfM*F*dMepdDL))*nnt;
+            D_alg -= 2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2*Lekl;
         }
 
         if (DfM > 0) {
-            D_alg -= 4*G*G/B*DfM*params.R2()/params.sy0A()*nnt;
-            Matrix6x6 Bijkl = I + K/3*params.dV()*delta_ij*bij.transpose();
-            double B1 = RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM;
+            Matrix6x6 Bijkl = I;
+            Vector6 Fskl = bij.transpose();
             if (DL > 0) {
-                std::cout << "B1: " << B1 << std::endl;
-                B1 += params.R2()/params.sy0A()/A*dfdDfM*(ds_eq_2_dDL + ds_eq_2_dfM*F*dMepdDL);
-                Bijkl += 3*G*(DL + RA*DfM)/s_eq_prime/A*dfdDfM*double_contract(Aijkl, dsij_prime_dDL)*bij.transpose();
-                std::cout << "A: " << A << std::endl;
-                std::cout << "B1_new: " << B1 << "  1/A*dfdDfM: " << 1/A*dfdDfM << " dseq2dl:" << ds_eq_2_dDL <<  std::endl;
+                Fskl += F*dMepdDL/A*dfdDfM*bij.transpose();
+                Vector6 Lskl = 1/A*dfdDfM*bij.transpose();
+                Vector6 Fekl = F*dMepdDL/A/B*2*G*nij2.transpose();
+                D_alg -= 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2*Fekl
+                        - K/3*params.dV()*delta_ij*Fekl;
+                Bijkl += 2*G*(1+DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2*Lskl;
             }
+            Bijkl += 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2*Fskl
+                    + K/3*params.dV()*delta_ij*Fskl;
 
-            Bijkl += 2*G*B1*nij2*bij.transpose();
             for (unsigned i = 3; i != 6; ++i) {
-                Bijkl(i, i) *= 2;
+                for (unsigned j = 3; j != 6; ++j)
+                    Bijkl(i, j) *= 2;
             }
             D_alg = Bijkl.inverse()*D_alg;
-            if (DL > 0) {
-                std::cout << "Bijkl: " << std::endl << Bijkl.format(CleanFmt) << std::endl << std::endl;
-                std::cout << "RA: " << RA << std::endl;
-                std::cout << "D_alg: " << std::endl << D_alg.format(CleanFmt) << std::endl << std::endl;
-            }
         }
     }
 }
