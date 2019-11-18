@@ -259,10 +259,10 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             double B1 = RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM;
             if (DL > 0) {
                 std::cout << "B1: " << B1 << std::endl;
-                B1 += 1/A*dfdDfM*(1+F*dMepdDL + dfdDfM*params.R2()/params.sy0A()*(ds_eq_2_dDL + ds_eq_2_dfM*F*dMepdDL));
+                B1 += 1/A*dfdDfM*(1+F*dMepdDL + dfdDfM*params.R2()/params.sy0A()*( + ds_eq_2_dfM*F*dMepdDL));
                 Bijkl += 3*G*(DL + RA*DfM)/s_eq_prime/A*dfdDfM*double_contract(Aijkl, dsij_prime_dDL)*bij.transpose();
                 std::cout << "A: " << A << std::endl;
-                std::cout << "B1_new: " << B1 << std::endl;
+                std::cout << "B1_new: " << B1 << "  1/A*dfdDfM: " << 1/A*dfdDfM << " dseq2dl:" <<  ds_eq_2_dDL <<  std::endl;
             }
 
             Bijkl += 2*G*B1*nij2*bij.transpose();
