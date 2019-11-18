@@ -243,8 +243,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 state.total_back_stress() += state.back_stress_vector(i);
             }
         }
-        D_alg = Del;
-        D_alg -=  6*G*G*(DL + RA*DfM)/s_eq_prime*Aijkl - 4*G*G/B*DfM*params.R2()/params.sy0A()*nnt;
+        D_alg = Del - 6*G*G*(DL + RA*DfM)/s_eq_prime*Aijkl;
 
         double A = dR2dDL - F*dMepdDL*dfdDfM -  ds_eq_2_dDL;
         Vector6 Lekl = 2*G/A/B*nij2;
@@ -254,6 +253,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         }
 
         if (DfM > 0) {
+            D_alg -= 4*G*G/B*DfM*params.R2()/params.sy0A()*nnt;
             Matrix6x6 Bijkl = I;
             Vector6 Fskl = bij;
             if (DL > 0) {
@@ -266,7 +266,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             }
             Bijkl += 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2*Fskl.transpose()
                     + K/3*params.dV()*delta_ij*Fskl.transpose();
-
+            std::cout << "Bijkl" << std::endl << Bijkl.format(CleanFmt) << std::endl;
             for (unsigned i = 3; i != 6; ++i) {
                 for (unsigned j = 3; j != 6; ++j)
                     Bijkl(i, j) *= 2;
