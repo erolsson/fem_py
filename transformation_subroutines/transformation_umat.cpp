@@ -255,7 +255,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
         if (DfM > 0) {
             Matrix6x6 Bijkl = I;
-            Vector6 Fskl = bij.transpose();
+            Vector6 Fskl = bij;
             if (DL > 0) {
                 Fskl += F*dMepdDL/A*dfdDfM*bij;
                 Vector6 Lskl = 1/A*dfdDfM*bij;
