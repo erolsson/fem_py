@@ -71,6 +71,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     Eigen::Map<Vector6> stress_vec(stress);
 
     const Eigen::Map<Vector6> de(dstran);
+    std::cout << "de: " << de << std::endl;
     Eigen::Map<Matrix6x6> D_alg(ddsdde);
 
     // Elastic parameters
