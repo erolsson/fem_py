@@ -23,9 +23,10 @@ simulations = [  # Simulation(model=one_element_abaqus, label='New', color='b', 
 
 increments = 100
 neu_sehitoglu2 = deepcopy(neu_sehitoglu)
+neu_sehitoglu3 = deepcopy(neu_sehitoglu)
 neu_sehitoglu2.beta = 0
-neu_sehitoglu.a1 = 0
-neu_sehitoglu.a2 = 0
+neu_sehitoglu3.a1 = 0
+neu_sehitoglu3.a2 = 0
 
 time = np.linspace(0., 1., increments)
 strain_z = np.zeros((increments, 2))
@@ -40,7 +41,7 @@ boundary_conditions = [BC(amplitude=strain_z, direction='z', mode='strain')]
 args = {'boundary_conditions': boundary_conditions, 'simulation_directory': 'abaqus_material_test/one_element',
         'temperature': temperature, 'max_increment': 1.}
 
-for mat, lw in zip([neu_sehitoglu, neu_sehitoglu2], [1, 2]):
+for mat, c in zip([neu_sehitoglu, neu_sehitoglu2, neu_sehitoglu3], ['r', 'b', 'g']):
     for simulation in simulations:
         args['user_subroutine'] = simulation.umat_file
         args['simulation_name'] = simulation.name
@@ -49,9 +50,9 @@ for mat, lw in zip([neu_sehitoglu, neu_sehitoglu2], [1, 2]):
         args['material'] = mat
         e, s, epl, fM = simulation.model(**args)
         plt.figure(1)
-        plt.plot(e[:, 2], s[:, 2], '-x' + simulation.color, lw=lw, label=simulation.label)
+        plt.plot(e[:, 2], s[:, 2], '-x' + c, lw=2, label=simulation.label)
         plt.figure(2)
-        plt.plot(e[:, 2], epl, '-x' + simulation.color, lw=lw, label=simulation.label)
+        plt.plot(e[:, 2], epl, '-x' + c, lw=2, label=simulation.label)
         plt.figure(3)
-        plt.plot(e[:, 2], fM, '-x' + simulation.color, lw=lw, label=simulation.label)
+        plt.plot(e[:, 2], fM, '-x' + c, lw=2, label=simulation.label)
 plt.show()
