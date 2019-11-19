@@ -223,7 +223,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             residual = abs(dDL) + abs(dDfM);
         }
         std::cout << "inner newton converged in: " << iter << " iterations" << std::endl;
-        std::cout << "DL: " << DL << " f: "  << f << " DfM: " << DfM << " h" << h << std::endl;
+        std::cout << "DL: " << DL << " f: "  << f << " DfM: " << DfM << " h " << h << std::endl;
         // Updating state variables
         state.ep_eff() += DL;
         state.fM() += DfM;
