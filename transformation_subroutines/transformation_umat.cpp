@@ -179,15 +179,17 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 F = params.k()*exp(-params.k()*(params.Ms() + ms_stress(sigma_2, params)
                                                 + ms_strain(state.ep_eff() + DL, params) + params.Mss() - temp));
                 Vector6 s = deviator(sigma_2);
+                std::cout << "s: " << s.transpose().format(CleanFmt) << std::endl;
+
                 double J2 = 0.5*double_contract(s, s);
+                std::cout << "J2 " << J2 << std::endl;
                 bij = params.a1()*delta_ij;
                 if (J2 > 0) {
                     bij += 1.5*params.a2()*s/sqrt(3*J2) + params.a3()*(contract(s, s) - 2./3*J2*delta_ij);
                 }
                 bij *= F;
                 ds_eq_2_dfM = -3*G*RA/B;
-                Vector6 dsijdDfM =
-                        -2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2 - K/3*params.dV()*delta_ij;
+                Vector6 dsijdDfM = -2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2 - K/3*params.dV()*delta_ij;
                 dhdDfM = double_contract(bij, dsijdDfM) - 1;
                 std::cout << "dsijdDfM: " << dsijdDfM.transpose().format(CleanFmt) << std::endl;
                 std::cout << "bij: " << bij.transpose().format(CleanFmt) << std::endl;
