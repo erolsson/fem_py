@@ -85,11 +85,11 @@ test_material = ElasticPlasticTransformMaterial(E=200e3, v=0.3, sy0M=1000000., s
                                                 Ms=169, name='testMaterial', uniaxial_data=[0.8, 22., 485], fM=0.8,
                                                 beta=0, alpha=4., n=4.)
 
-neu_sehitoglu = ElasticPlasticTransformMaterial(E=200e3, v=0.3, sy0M=1000., sy0A=1000., Q=0*2100., b=100.,
+neu_sehitoglu = ElasticPlasticTransformMaterial(E=200e3, v=0.3, sy0M=1000., sy0A=500., Q=0*2100., b=100.,
                                                 Cm=np.array([15432, 281622, 470894]),
                                                 gamma_m=np.array([5., 236., 2301.]), a=np.array([0.056/3, 0.028, 0.]),
                                                 Ms=169, name='NeuSehitoglu', uniaxial_data=[0.65, 22., 485], fM=0.65,
-                                                beta=0*400000, alpha=4., n=4.)
+                                                beta=40000000, alpha=4., n=4.)
 
 if __name__ == '__main__':
     print test_material.umat_parameters()
