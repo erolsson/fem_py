@@ -211,6 +211,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 }
             }
             else if (plastic) {
+                std::cout << "Only plastic:" << std::endl;
                 dDL = -f/dfdDL;
             }
             else {  // Only phase transformations
