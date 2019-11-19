@@ -196,7 +196,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                         params.n() - 1)*params.alpha()*exp(-params.alpha()*(state.ep_eff() + DL));
                 dfdDfM = -3*G*RA/B - (params.sy0M() - params.sy0A());
                 Vector6 dsigmaijdDL = -3*G*double_contract(Aijkl, dsij_prime_dDL)*0
-                        - 2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
+                        - 2*G*(1 + 0*DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
                 dhdDL = double_contract(bij, dsigmaijdDL) + F*dMepdDL;
                 double detJ = dfdDL*dhdDfM - dfdDfM*dhdDL;
                 dDL = (dhdDfM*-f - dfdDfM*-h)/detJ;
