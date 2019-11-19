@@ -49,10 +49,15 @@ public:
     [[nodiscard]] const double& a2() const { return data_[14 + 2*back_stresses_]; } ;
     [[nodiscard]] const double& a3() const { return data_[15 + 2*back_stresses_]; } ;
 
+    // Material parameters for the strain induced phase transformations
+    [[nodiscard]] const double& beta() const { return data_[16 + 2*back_stresses_]; } ;
+    [[nodiscard]] const double& alpha() const { return data_[17 + 2*back_stresses_]; } ;
+    [[nodiscard]] const double& n() const { return data_[18 + 2*back_stresses_]; } ;
+
     [[nodiscard]] bool plastic() const { return sy0M() > 0 && sy0A() > 0; }
     [[nodiscard]] bool kinematic_hardening() const { return back_stresses_ > 0; }
-    bool stress_transformation = false;
-    bool strain_transformation = false;
+
+
 private:
     const double* data_;
     unsigned back_stresses_ = 0;

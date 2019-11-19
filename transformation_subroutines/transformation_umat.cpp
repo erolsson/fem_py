@@ -24,7 +24,7 @@ double ms_stress(const Eigen::Matrix<double, 6, 1>& stress, const Transformation
 }
 
 double ms_strain(double epl, const TransformationMaterialParameters& params) {
-    return 0.;
+    return params.beta()*(1 - pow(exp(-params.alpha()*epl), 4));
 }
 
 double transformation_function(const Eigen::Matrix<double, 6, 1>& stress, double epl, double T,
@@ -83,16 +83,12 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     double sy = params.sy0M()*state.fM() + params.sy0A()*(1-state.fM()) + state.R();
 
     Vector6 sigma_t = stress_vec + Del*de;  // Trial stress
-    std::cout << "de: " << de.transpose().format(CleanFmt) << std::endl;
-    // std::cout << "sigma_0: " << stress_vec.transpose().format(CleanFmt) << std::endl;
-    std::cout << "sigma_t: " << sigma_t.transpose().format(CleanFmt) << std::endl;
     Vector6 sij_t = deviator(sigma_t);
 
     Vector6 stilde = sij_t;
     if (params.kinematic_hardening()) {
         stilde -= state.total_back_stress();
     }
-    std::cout << "back_stress: " << state.total_back_stress().transpose().format(CleanFmt) << std::endl;
     bool plastic = params.plastic() && yield_function(stilde, sy) > 0;
     bool phase_transformations = transformation_function(sigma_t, 0, temp, params) - state.fM() > 1e-12;
     bool elastic = !plastic && !phase_transformations;
@@ -131,7 +127,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         if (s_eq_2 > 0) {
             nij2 /= s_eq_2;
         }
-        //std::cout << "seq2: " << s_eq_2 << " sy:"  << sy << std::endl;
 
         double F = 0;
         Vector6 bij = Vector6::Zero();
@@ -195,6 +190,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             nnt = nij2*nij2.transpose();
             Aijkl = J - 2./3*nnt;
             if (plastic && phase_transformations) {
+                dMepdDL = params.beta()*params.n()*pow((1 - exp(-params.alpha()*(state.ep_eff() + DL)) ),
+                        params.n() - 1)*params.alpha()*exp(-params.alpha()*(state.ep_eff() + DL));
                 dfdDfM = -3*G*RA/B - (params.sy0M() - params.sy0A());
                 Vector6 dsigmaijdDL = -3*G*double_contract(Aijkl, dsij_prime_dDL)*0
                         - 2*G*(1 + 0*DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
@@ -214,15 +211,10 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             else {  // Only phase transformations
                 dDfM = -h/dhdDfM;
             }
-            std::cout << "plastic:" << plastic << " phase transformation:" << phase_transformations << std::endl;
-            std::cout << "DL:" << DL << "  DfM:" << DfM << std::endl;
-            std::cout << "dDL:" << dDL << "  dDfM:" << dDfM << std::endl;
-            std::cout << "f: " << f <<  "seq2: " << s_eq_2 <<  "sy: " << sy <<  "  h: " << h << std::endl;
             DL += dDL;
             DfM += dDfM;
             residual = abs(dDL) + abs(dDfM);
         }
-        std::cout << "Converged in " << iter << " iterations" << std::endl;
         // Updating state variables
         state.ep_eff() += DL;
         state.fM() += DfM;
