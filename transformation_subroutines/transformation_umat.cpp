@@ -183,7 +183,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 std::cout << "sigma2: " << sigma_2.transpose().format(CleanFmt) << std::endl;
 
                 double J2 = 0.5*double_contract(s, s);
-                std::cout << "F " << F << "Mss: " <<   ms_stress(sigma_2, params) << std::endl;
+                std::cout << "J2 " << J2 << "Mss: " <<   ms_stress(sigma_2, params) << std::endl;
                 bij = params.a1()*delta_ij;
                 if (J2 > 1e-12) {
                     bij += 1.5*params.a2()*s/sqrt(3*J2) + params.a3()*(contract(s, s) - 2./3*J2*delta_ij);
