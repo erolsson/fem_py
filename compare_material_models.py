@@ -1,4 +1,5 @@
 from collections import namedtuple
+from copy import deepcopy
 
 import os
 
@@ -21,6 +22,8 @@ simulations = [  # Simulation(model=one_element_abaqus, label='New', color='b', 
                                                        'transformation_subroutine.o'), fm=0.8)]
 
 increments = 100
+neu_sehitoglu2 = deepcopy(neu_sehitoglu)
+neu_sehitoglu2.beta = 0
 
 time = np.linspace(0., 1., increments)
 strain_z = np.zeros((increments, 2))
@@ -33,14 +36,15 @@ temperature = np.array([[0, 22.], [time[-1], 22.]])
 
 boundary_conditions = [BC(amplitude=strain_z, direction='z', mode='strain')]
 args = {'boundary_conditions': boundary_conditions, 'simulation_directory': 'abaqus_material_test/one_element',
-        'material': neu_sehitoglu, 'temperature': temperature, 'max_increment': 1.}
+        'temperature': temperature, 'max_increment': 1.}
 
-for inc, lw in zip([1.], [1]):
+for mat, lw in zip([neu_sehitoglu, neu_sehitoglu2], [1, 2]):
     for simulation in simulations:
         args['user_subroutine'] = simulation.umat_file
         args['simulation_name'] = simulation.name
         args['max_time_increment'] = inc
         args['martensite_fraction'] = simulation.fm
+        args['material'] = mat
         e, s = simulation.model(**args)
         plt.figure(1)
         plt.plot(e[:, 2], s[:, 2], '-x' + simulation.color, lw=lw, label=simulation.label)
