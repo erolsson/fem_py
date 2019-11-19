@@ -29,7 +29,6 @@ double ms_strain(double epl, const TransformationMaterialParameters& params) {
 
 double transformation_function(const Eigen::Matrix<double, 6, 1>& stress, double epl, double T,
                                const TransformationMaterialParameters& params) {
-    std::cout << "Me: " << ms_strain(epl, params) << " epl: " << epl << " Ms: " <<  ms_stress(stress, params) << std::endl;
     double a = exp(-params.k()*(params.Ms() + ms_stress(stress, params) +
                                 ms_strain(epl, params) + params.Mss() - T));
     return 1 - a;
@@ -90,7 +89,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         stilde -= state.total_back_stress();
     }
     bool plastic = params.plastic() && yield_function(stilde, sy) > 0;
-    std::cout << "Trial: ";
     bool phase_transformations = transformation_function(sigma_t, state.ep_eff(), temp, params) - state.fM() > 1e-12;
     bool elastic = !plastic && !phase_transformations;
     if (elastic) {     // Use the trial stress as the stress and the elastic stiffness matrix as the tangent
@@ -176,7 +174,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 RA = params.R1() + params.R2()*s_eq_2/params.sy0A();
                 sigma_2 -= (2*G*RA*nij2 + K*params.dV()/3*delta_ij)*DfM;
                 Vector6 stemp = sigma_t - (2*G*RA*nij2 + K*params.dV()/3*delta_ij)*1e-4;
-                std::cout << "iter "  << iter << " ";
                 h = transformation_function(sigma_2, state.ep_eff() + DL, temp, params) - (state.fM() + DfM);
                 F = params.k()*exp(-params.k()*(params.Ms() + ms_stress(sigma_2, params)
                                 + ms_strain(state.ep_eff() + DL, params) + params.Mss() - temp));
@@ -206,6 +203,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     dDfM = -h/dhdDfM;
                 }
                 if (dDfM + DfM < 0) {
+                    std::cout << "only plasticity:" << std::endl;
                     dDfM = 0;
                     DfM = 0;
                     dDL = -f/dfdDL;
@@ -220,8 +218,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             DL += dDL;
             DfM += dDfM;
             residual = abs(dDL) + abs(dDfM);
-            std::cout << "inner newton converged in: " << iter << " iterations" << std::endl;
-            std::cout << "DL: " << DL << " f: "  << f << " DfM: " << DfM << " h " << h << std::endl;
         }
         // Updating state variables
         state.ep_eff() += DL;
