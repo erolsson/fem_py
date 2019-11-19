@@ -42,7 +42,7 @@ boundary_conditions = []
 args = {'boundary_conditions': boundary_conditions, 'simulation_directory': 'abaqus_material_test/one_element',
         'temperature': temperature, 'max_increment': 1.}
 
-for mat, c in zip([neu_sehitoglu, neu_sehitoglu2, neu_sehitoglu3], ['r', 'b', 'g']):
+for mat, c in zip([neu_sehitoglu], ['r', 'b', 'g']):
     for simulation in simulations:
         args['user_subroutine'] = simulation.umat_file
         args['simulation_name'] = simulation.name
