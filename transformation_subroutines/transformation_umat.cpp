@@ -275,6 +275,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             }
             D_alg = Bijkl.inverse()*D_alg;
             std::cout << D_alg.format(CleanFmt) << std::endl;
+            std::cout << std::endl << (D_alg.inverse()*stress_vec).transpose().format(CleanFmt) << std::endl;
         }
     }
 }
