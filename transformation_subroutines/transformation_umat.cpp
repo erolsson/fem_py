@@ -126,7 +126,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         Matrix6x6 nnt = Matrix6x6::Zero();
         Matrix6x6 Aijkl = Matrix6x6::Zero();
         Vector6 nij2 = 1.5*stilde;
-        if (s_eq_2 > 1e-12) {
+        if (s_eq_2 > 0) {
             nij2 /= s_eq_2;
         }
 
@@ -185,12 +185,17 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 double J2 = 0.5*double_contract(s, s);
                 std::cout << "J2 " << J2 << "Mss: " <<   ms_stress(sigma_2, params) << std::endl;
                 bij = params.a1()*delta_ij;
+                Vector6 dsijdDfM =- K/3*params.dV()*delta_ij;
                 if (J2 > 1e-12) {
                     bij += 1.5*params.a2()*s/sqrt(3*J2) + params.a3()*(contract(s, s) - 2./3*J2*delta_ij);
                 }
+                if ( s_eq_prime > 1e-12) {
+                    dsijdDfM -= 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2;
+                }
                 bij *= F;
                 ds_eq_2_dfM = -3*G*RA/B;
-                Vector6 dsijdDfM = -2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2 - K/3*params.dV()*delta_ij;
+
+
                 dhdDfM = double_contract(bij, dsijdDfM) - 1;
                 std::cout << "dsijdDfM: " << dsijdDfM.transpose().format(CleanFmt) << std::endl;
                 std::cout << "bij: " << bij.transpose().format(CleanFmt) << std::endl;
