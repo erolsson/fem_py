@@ -38,7 +38,7 @@ temperature = np.array([[0, 22.], [time[-1], 22.]])
 
 boundary_conditions = [BC(amplitude=strain_z, direction='z', mode='strain')]
 args = {'boundary_conditions': boundary_conditions, 'simulation_directory': 'abaqus_material_test/one_element',
-        'temperature': temperature, 'max_increment': 1.}
+        'temperature': temperature, 'max_increment': 0.01}
 
 for mat, lw in zip([neu_sehitoglu, neu_sehitoglu2], [1, 2]):
     for simulation in simulations:
