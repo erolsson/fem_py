@@ -138,7 +138,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         double B = 1;
         double residual = 1e99;
         unsigned iter = 0;
-        while(residual > 1e-15) {
+        while (residual > 1e-15) {
             ++iter;
             sigma_2 = sigma_t;
 
@@ -177,7 +177,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 sigma_2 -= (2*G*RA*nij2 + K*params.dV()/3*delta_ij)*DfM;
                 h = transformation_function(sigma_2, state.ep_eff() + DL, temp, params) - (state.fM() + DfM);
                 F = params.k()*exp(-params.k()*(params.Ms() + ms_stress(sigma_2, params)
-                                + ms_strain(state.ep_eff() + DL, params) + params.Mss() - temp));
+                                                + ms_strain(state.ep_eff() + DL, params) + params.Mss() - temp));
                 Vector6 s = deviator(sigma_2);
                 double J2 = 0.5*double_contract(s, s);
                 bij = params.a1()*delta_ij;
@@ -186,7 +186,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 }
                 bij *= F;
                 ds_eq_2_dfM = -3*G*RA/B;
-                Vector6 dsijdDfM = -2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2 - K/3*params.dV()*delta_ij;
+                Vector6 dsijdDfM =
+                        -2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2 - K/3*params.dV()*delta_ij;
                 dhdDfM = double_contract(bij, dsijdDfM) - 1;
                 std::cout << "dsijdDfM: " << dsijdDfM.transpose().format(CleanFmt) << std::endl;
                 std::cout << "bij: " << bij.transpose().format(CleanFmt) << std::endl;
@@ -196,10 +197,11 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             nnt = nij2*nij2.transpose();
             Aijkl = J - 2./3*nnt;
             if (plastic && phase_transformations) {
-                dMepdDL = params.beta()*params.n()*pow((1 - exp(-params.alpha()*(state.ep_eff() + DL)) ),
-                        params.n() - 1)*params.alpha()*exp(-params.alpha()*(state.ep_eff() + DL));
+                dMepdDL = params.beta()*params.n()*pow((1 - exp(-params.alpha()*(state.ep_eff() + DL))),
+                                                       params.n() - 1)*params.alpha()*
+                          exp(-params.alpha()*(state.ep_eff() + DL));
                 dfdDfM = -3*G*RA/B - (params.sy0M() - params.sy0A());
-                Vector6 dsigmaijdDL = - 2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
+                Vector6 dsigmaijdDL = -2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
                 dhdDL = double_contract(bij, dsigmaijdDL) + F*dMepdDL;
                 double detJ = dfdDL*dhdDfM - dfdDfM*dhdDL;
                 dDL = (dhdDfM*-f - dfdDfM*-h)/detJ;
@@ -214,11 +216,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     DfM = 0;
                     dDL = -f/dfdDL;
                 }
-            }
-            else if (plastic) {
+            } else if (plastic) {
                 dDL = -f/dfdDL;
-            }
-            else {  // Only phase transformations
+            } else {  // Only phase transformations
                 dDfM = -h/dhdDfM;
             }
             DL += dDL;
@@ -235,12 +235,15 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             state.total_back_stress() = Vector6::Zero();
             for (unsigned i = 0; i != params.back_stresses(); ++i) {
                 state.back_stress_vector(i) += 2./3*params.Cm(i)*DL*nij2;
-                state.back_stress_vector(i) /= (1+params.gamma(i)*DL);
+                state.back_stress_vector(i) /= (1 + params.gamma(i)*DL);
                 state.total_back_stress() += state.back_stress_vector(i);
             }
         }
-        D_alg = Del - 6*G*G*(DL + RA*DfM)/s_eq_prime*Aijkl;
-
+        D_alg = Del;
+        if (s_eq_prime > 0) {
+            D_alg -= 6*G*G*(DL + RA*DfM)/s_eq_prime*Aijkl;
+        }
+        std::cout << "Aijkl" << std::endl << Aijkl.format(CleanFmt) << std::endl;
         double A = dR2dDL - F*dMepdDL*dfdDfM -  ds_eq_2_dDL;
         Vector6 Lekl = 2*G/A/B*nij2;
 
