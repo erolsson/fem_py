@@ -25,12 +25,13 @@ increments = 100
 time = np.linspace(0., 1., increments)
 strain_z = np.zeros((increments, 2))
 strain_z[:, 0] = time
-strain_z[:, 1] = 0.02*np.sin(np.pi*time/2)
+strain_z[:, 1] = 1.*np.sin(np.pi*time/2)
 
 pressure_z = np.copy(strain_z)
 pressure_z[:, 1] = 3000*np.sin(np.pi*time/2)
 temperature = np.array([[0, 22.], [time[-1], 22.]])
-boundary_conditions = [BC(amplitude=pressure_z, direction='z', mode='stress')]
+
+boundary_conditions = [BC(amplitude=strain_z, direction='z', mode='strain')]
 args = {'boundary_conditions': boundary_conditions, 'simulation_directory': 'abaqus_material_test/one_element',
         'material': neu_sehitoglu, 'temperature': temperature, 'max_increment': 1.}
 
