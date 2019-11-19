@@ -36,8 +36,8 @@ strain_z[:, 1] = -.1*np.sin(np.pi*time/2)
 pressure_z = np.copy(strain_z)
 pressure_z[:, 1] = 3000*np.sin(np.pi*time/2)
 temperature = np.array([[0, 22.], [time[-1], 22]])
-
-boundary_conditions = [BC(amplitude=strain_z, direction='z', mode='strain')]
+boundary_conditions = [BC(amplitude=pressure_z, direction='z', mode='stress')]
+# boundary_conditions = [BC(amplitude=strain_z, direction='z', mode='strain')]
 # boundary_conditions = []
 args = {'boundary_conditions': boundary_conditions, 'simulation_directory': 'abaqus_material_test/one_element',
         'temperature': temperature, 'max_increment': 1.}
