@@ -105,6 +105,7 @@ template<typename T>
 T von_Mises(const Matrix<T, 6, 1>& s) {
     double vm2 = s[0]*s[0] + s[1]*s[1] + s[2]*s[2] - s[0]*s[1] - s[0]*s[2] - s[1]*s[2] +
                  3*(s[3]*s[3] + s[4]*s[4] + s[5]*s[5]);
+    // vm2 could be a very small negative number due to round off errors
     if (vm2 > 0) {
         return sqrt(vm2);
     }
