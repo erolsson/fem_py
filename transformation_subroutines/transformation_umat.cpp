@@ -90,7 +90,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     }
     bool plastic = params.plastic() && yield_function(stilde, sy) > 0;
     bool phase_transformations = transformation_function(sigma_t, state.ep_eff(), temp, params) - state.fM() >= 0;
-    std::cout << " h = " << transformation_function(sigma_t, state.ep_eff(), temp, params) - state.fM() << std::endl;
     bool elastic = !plastic && !phase_transformations;
     if (elastic) {     // Use the trial stress as the stress and the elastic stiffness matrix as the tangent
         D_alg = Del;
@@ -199,20 +198,17 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 dDL = (dhdDfM*-f - dfdDfM*-h)/detJ;
                 dDfM = (-dhdDL*-f + dfdDL*-h)/detJ;
                 if (dDL + DL < 0) {
-                    std::cout << "Only phase" << std::endl;
                     dDL = 0;
                     DL = 0;
                     dDfM = -h/dhdDfM;
                 }
                 if (dDfM + DfM < 0) {
-                    std::cout << "only plasticity:" << std::endl;
                     dDfM = 0;
                     DfM = 0;
                     dDL = -f/dfdDL;
                 }
             }
             else if (plastic) {
-                std::cout << "Only plastic: " << h << std::endl;
                 dDL = -f/dfdDL;
             }
             else {  // Only phase transformations
