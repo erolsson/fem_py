@@ -29,7 +29,7 @@ double ms_strain(double epl, const TransformationMaterialParameters& params) {
 
 double transformation_function(const Eigen::Matrix<double, 6, 1>& stress, double epl, double T,
                                const TransformationMaterialParameters& params) {
-
+    std::cout << "Me: " << ms_strain(epl, params) << std::endl;
     double a = exp(-params.k()*(params.Ms() + ms_stress(stress, params) +
                                 ms_strain(epl, params) + params.Mss() - T));
     return 1 - a;
