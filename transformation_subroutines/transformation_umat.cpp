@@ -182,7 +182,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 std::cout << "s: " << s.transpose().format(CleanFmt) << std::endl;
 
                 double J2 = 0.5*double_contract(s, s);
-                std::cout << "J2 " << J2 << std::endl;
+                std::cout << "F " << F << std::endl;
                 bij = params.a1()*delta_ij;
                 if (J2 > 0) {
                     bij += 1.5*params.a2()*s/sqrt(3*J2) + params.a3()*(contract(s, s) - 2./3*J2*delta_ij);
