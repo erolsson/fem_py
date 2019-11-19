@@ -35,7 +35,7 @@ strain_z[:, 0] = time
 strain_z[:, 1] = -.1*np.sin(np.pi*time/2)
 
 pressure_z = np.copy(strain_z)
-pressure_z[:, 1] = 3000*np.sin(np.pi*time/2)
+pressure_z[:, 1] = -3000*np.sin(np.pi*time/2)
 temperature = np.array([[0, 22.], [time[-1], 22]])
 boundary_conditions = [BC(amplitude=pressure_z, direction='z', mode='stress')]
 # boundary_conditions = [BC(amplitude=strain_z, direction='z', mode='strain')]
@@ -47,7 +47,6 @@ for mat, c in zip([neu_sehitoglu, neu_sehitoglu2], ['r', 'b', 'g']):
     for simulation in simulations:
         args['user_subroutine'] = simulation.umat_file
         args['simulation_name'] = simulation.name
-        args['max_time_increment'] = 0.01
         args['martensite_fraction'] = simulation.fm
         args['material'] = mat
         e, s, epl, fM = simulation.model(**args)
