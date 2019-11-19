@@ -24,6 +24,8 @@ simulations = [  # Simulation(model=one_element_abaqus, label='New', color='b', 
 increments = 100
 neu_sehitoglu2 = deepcopy(neu_sehitoglu)
 neu_sehitoglu2.beta = 0
+neu_sehitoglu.a1 = 0
+neu_sehitoglu.a2 = 0
 
 time = np.linspace(0., 1., increments)
 strain_z = np.zeros((increments, 2))
