@@ -11,8 +11,11 @@
 #include "simulation_parameters.h"
 #include "stress_functions.h"
 
-double yield_function(const Eigen::Matrix<double, 6, 1>& stilde, double sigma_y) {
-    return 3*double_contract(stilde, stilde)/2 - sigma_y*sigma_y;
+double yield_function(const Eigen::Matrix<double, 6, 1>& sigma, const Eigen::Matrix<double, 6, 1>& alpha,
+        double sigma_y, const TransformationMaterialParameters& params) {
+    Eigen::Matrix<double, 6, 1> stilde = deviator(sigma) - alpha;
+    double I1 = sigma[0] + sigma[1] + sigma[2];
+    return sqrt(3*double_contract(stilde, stilde)/2) + params.a()*I1 - sigma_y;
 }
 
 double ms_stress(const Eigen::Matrix<double, 6, 1>& stress, const TransformationMaterialParameters& params) {
@@ -89,7 +92,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     if (params.kinematic_hardening()) {
         stilde -= state.total_back_stress();
     }
-    bool plastic = params.plastic() && yield_function(stilde, sy) > 0;
+    bool plastic = params.plastic() && yield_function(sigma_t, state.total_back_stress(), sy, params) > 0;
     std::cout << temp << "  " << transformation_function(sigma_t, state.ep_eff(), temp, params) - state.fM() <<  std::endl;
     bool phase_transformations = transformation_function(sigma_t, state.ep_eff(), temp, params) - state.fM() >= 0;
     std::cout << "phase_transformations " << phase_transformations << std::endl;
@@ -148,6 +151,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
             B = 1 + 3*G*params.R2()*DfM/params.sy0A();
             s_eq_2 = (s_eq_prime - 3*G*(DL + params.R1()*DfM))/B;
+            double I1 = sigma_t[0] + sigma_t[1] + sigma_t[2] - K*params.dV()*DfM;
             if (plastic) {
                 dsij_prime_dDL = Vector6::Zero();
                 ds_eq_2_dDL = -3*G;
@@ -170,7 +174,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 ds_eq_2_dDL /= B;
                 dR2dDL = params.b()/(1 + params.b()*DL)*(params.Q() - R2);
                 dfdDL = ds_eq_2_dDL - dR2dDL;
-                f = s_eq_2 - sy_2;
+                f = s_eq_2 + params.a()*I1 - sy_2;
                 sigma_2 -= 2*G*DL*nij2;
             }
             if (phase_transformations) {
@@ -209,7 +213,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 dMepdDL = params.beta()*params.n()*pow((1 - exp(-params.alpha()*(state.ep_eff() + DL))),
                                                        params.n() - 1)*params.alpha()*
                           exp(-params.alpha()*(state.ep_eff() + DL));
-                dfdDfM = -3*G*RA/B - (params.sy0M() - params.sy0A());
+                dfdDfM = -3*G*RA/B - params.a()*K*params.dV() - (params.sy0M() - params.sy0A());
                 Vector6 dsigmaijdDL = -2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
                 dhdDL = double_contract(bij, dsigmaijdDL) + F*dMepdDL;
                 double detJ = dfdDL*dhdDfM - dfdDfM*dhdDL;
@@ -255,7 +259,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         }
         std::cout << "Aijkl" << std::endl << Aijkl.format(CleanFmt) << std::endl;
         double A = dR2dDL - F*dMepdDL*dfdDfM -  ds_eq_2_dDL;
-        Vector6 Lekl = 2*G/A/B*nij2;
+        Vector6 Lekl = (2*G/B*nij2 + params.a()*K*delta_ij)/A;
 
         if (DL > 0) {
             D_alg -= 2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2*Lekl.transpose();

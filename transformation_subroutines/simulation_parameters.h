@@ -54,6 +54,9 @@ public:
     [[nodiscard]] const double& alpha() const { return data_[17 + 2*back_stresses_]; } ;
     [[nodiscard]] const double& n() const { return data_[18 + 2*back_stresses_]; } ;
 
+    // Parameter for the SDE effect
+    [[nodiscard]] const double& a() const { return data_[19 + 2*back_stresses_]; } ;
+
     [[nodiscard]] bool plastic() const { return sy0M() > 0 && sy0A() > 0; }
     [[nodiscard]] bool kinematic_hardening() const { return back_stresses_ > 0; }
 
