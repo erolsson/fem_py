@@ -47,9 +47,11 @@ for mat, lw in zip([neu_sehitoglu, neu_sehitoglu2], [1, 2]):
         args['max_time_increment'] = 1.
         args['martensite_fraction'] = simulation.fm
         args['material'] = mat
-        e, s = simulation.model(**args)
+        e, s, epl, fM = simulation.model(**args)
         plt.figure(1)
         plt.plot(e[:, 2], s[:, 2], '-x' + simulation.color, lw=lw, label=simulation.label)
         plt.figure(2)
-        plt.plot(e[:, 2], e[:, 1], '-x' + simulation.color, lw=lw, label=simulation.label)
+        plt.plot(e[:, 2], epl, '-x' + simulation.color, lw=lw, label=simulation.label)
+        plt.figure(3)
+        plt.plot(e[:, 2], fM, '-x' + simulation.color, lw=lw, label=simulation.label)
 plt.show()

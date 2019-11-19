@@ -47,5 +47,6 @@ def one_element_abaqus(simulation_directory, material, boundary_conditions, simu
         data = pickle.load(pickle_handle)
     stresses = data[:, 0:6]
     strains = data[:, 6:12]
-
-    return strains, stresses
+    epl = data[:, 12]
+    fM = data[:, 13]
+    return strains, stresses, epl, fM
