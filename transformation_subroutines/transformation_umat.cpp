@@ -24,7 +24,7 @@ double ms_stress(const Eigen::Matrix<double, 6, 1>& stress, const Transformation
 }
 
 double ms_strain(double epl, const TransformationMaterialParameters& params) {
-    return params.beta()*(1 - pow(exp(-params.alpha()*epl), 4));
+    return params.beta()*pow(1 - exp(-params.alpha()*epl), 4);
 }
 
 double transformation_function(const Eigen::Matrix<double, 6, 1>& stress, double epl, double T,
