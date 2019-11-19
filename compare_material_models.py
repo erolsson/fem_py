@@ -44,7 +44,7 @@ for mat, lw in zip([neu_sehitoglu, neu_sehitoglu2], [1, 2]):
     for simulation in simulations:
         args['user_subroutine'] = simulation.umat_file
         args['simulation_name'] = simulation.name
-        args['max_time_increment'] = 1.
+        args['max_time_increment'] = 0.01
         args['martensite_fraction'] = simulation.fm
         args['material'] = mat
         e, s, epl, fM = simulation.model(**args)
