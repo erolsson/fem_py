@@ -89,7 +89,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         stilde -= state.total_back_stress();
     }
     bool plastic = params.plastic() && yield_function(stilde, sy) > 0;
-    std::cout << temp << std::endl;
+    std::cout << temp << "  " << transformation_function(sigma_t, state.ep_eff(), temp, params) - state.fM() <<  std::endl;
     bool phase_transformations = transformation_function(sigma_t, state.ep_eff(), temp, params) - state.fM() >= 0;
     bool elastic = !plastic && !phase_transformations;
     if (elastic) {     // Use the trial stress as the stress and the elastic stiffness matrix as the tangent
