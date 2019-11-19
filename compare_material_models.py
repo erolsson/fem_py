@@ -23,10 +23,11 @@ simulations = [  # Simulation(model=one_element_abaqus, label='New', color='b', 
 
 increments = 100
 neu_sehitoglu2 = deepcopy(neu_sehitoglu)
-neu_sehitoglu3 = deepcopy(neu_sehitoglu)
-neu_sehitoglu2.beta = 0
-neu_sehitoglu3.a1 = 0
-neu_sehitoglu3.a2 = 0
+neu_sehitoglu2.sde = 0
+# neu_sehitoglu3 = deepcopy(neu_sehitoglu)
+# neu_sehitoglu2.beta = 0
+# neu_sehitoglu3.a1 = 0
+# neu_sehitoglu3.a2 = 0
 
 time = np.linspace(0., 1., increments)
 strain_z = np.zeros((increments, 2))
@@ -42,7 +43,7 @@ boundary_conditions = [BC(amplitude=pressure_z, direction='z', mode='stress')]
 args = {'boundary_conditions': boundary_conditions, 'simulation_directory': 'abaqus_material_test/one_element',
         'temperature': temperature, 'max_increment': 1.}
 
-for mat, c in zip([neu_sehitoglu], ['r', 'b', 'g']):
+for mat, c in zip([neu_sehitoglu, neu_sehitoglu2], ['r', 'b', 'g']):
     for simulation in simulations:
         args['user_subroutine'] = simulation.umat_file
         args['simulation_name'] = simulation.name
