@@ -117,7 +117,8 @@ def write_input_file(filename, material, boundary_conditions, temperature=None, 
     for bc in boundary_conditions:
         if bc.mode == 'strain':
             file_lines.append('\t*Boundary, amplitude=' + bc.direction + '_amp')
-            file_lines.append('\t\t' + bc.direction + 'nodes, ' + dir_dict[bc.direction] + ', ' + bc.direction + '1.')
+            file_lines.append('\t\t' + bc.direction + 'nodes, ' + dir_dict[bc.direction] + ', '
+                              + dir_dict[bc.direction] + ', 1.')
         elif bc.mode == 'stress':
             file_lines.append('\t*Dsload, amplitude=' + bc.direction + '_amp')
             file_lines.append('\t\t' + bc.direction + 'surf, P, -1')
