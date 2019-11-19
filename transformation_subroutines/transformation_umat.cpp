@@ -233,6 +233,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         state.fM() += DfM;
         state.R() = R2;
         stress_vec = sigma_2;
+        std::cout << "stress_vec: " << std::endl;
 
         if (params.kinematic_hardening()) {
             state.total_back_stress() = Vector6::Zero();
