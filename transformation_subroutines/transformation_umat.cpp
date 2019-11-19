@@ -179,10 +179,10 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 F = params.k()*exp(-params.k()*(params.Ms() + ms_stress(sigma_2, params)
                                                 + ms_strain(state.ep_eff() + DL, params) + params.Mss() - temp));
                 Vector6 s = deviator(sigma_2);
-                std::cout << "s: " << s.transpose().format(CleanFmt) << std::endl;
+                std::cout << "sigma2: " << sigma_2.transpose().format(CleanFmt) << std::endl;
 
                 double J2 = 0.5*double_contract(s, s);
-                std::cout << "F " << F << std::endl;
+                std::cout << "F " << F << "Mss: " <<   ms_stress(sigma_2, params) << std::endl;
                 bij = params.a1()*delta_ij;
                 if (J2 > 0) {
                     bij += 1.5*params.a2()*s/sqrt(3*J2) + params.a3()*(contract(s, s) - 2./3*J2*delta_ij);
