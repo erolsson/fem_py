@@ -126,7 +126,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         Matrix6x6 nnt = Matrix6x6::Zero();
         Matrix6x6 Aijkl = Matrix6x6::Zero();
         Vector6 nij2 = 1.5*stilde;
-        if (s_eq_2 > 0) {
+        if (s_eq_2 > 1e-12) {
             nij2 /= s_eq_2;
         }
 
