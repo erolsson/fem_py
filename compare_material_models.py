@@ -30,7 +30,7 @@ neu_sehitoglu.a2 = 0
 time = np.linspace(0., 1., increments)
 strain_z = np.zeros((increments, 2))
 strain_z[:, 0] = time
-strain_z[:, 1] = 1.*np.sin(np.pi*time/2)
+strain_z[:, 1] = -.1*np.sin(np.pi*time/2)
 
 pressure_z = np.copy(strain_z)
 pressure_z[:, 1] = 3000*np.sin(np.pi*time/2)
