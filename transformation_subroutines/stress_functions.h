@@ -103,6 +103,8 @@ Matrix<T, 6, 1> contract(const Matrix<T, 6, 1> a, const Matrix<T, 6, 1>& b) {
 
 template<typename T>
 T von_Mises(const Matrix<T, 6, 1>& s) {
+    std::cout << "Vm2: " << s[0]*s[0] + s[1]*s[1] + s[2]*s[2] - s[0]*s[1] - s[0]*s[2] - s[1]*s[2] +
+                            3*(s[3]*s[3] + s[4]*s[4] + s[5]*s[5]) << std::endl;
     return sqrt(s[0]*s[0] + s[1]*s[1] + s[2]*s[2] - s[0]*s[1] - s[0]*s[2] - s[1]*s[2] +
         3*(s[3]*s[3] + s[4]*s[4] + s[5]*s[5]));
 }
