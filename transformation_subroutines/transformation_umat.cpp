@@ -221,7 +221,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     DfM = 0;
                     dDL = -f/dfdDL;
                 }
-                std::cout << "Combined" << " DL: " << DL << " DfM" << DfM  << std::endl;
+                std::cout << "Combined" << " DL: " << DL << " dDL: " << dDL << " DfM: " << DfM << " dDfM: "
+                          << dDfM  << std::endl;
             } else if (plastic) {
                 dDL = -f/dfdDL;
             } else {  // Only phase transformations
