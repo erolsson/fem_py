@@ -9,9 +9,9 @@ from abaqus_material_test.material_test import one_element_abaqus
 from abaqus_material_test.one_element_input_file import BC
 
 
-def run_sim_from_experiment(name, temperature, stress_strain_data):
-    stress_bc = np.array([[0., 0], [1., np.max(stress_strain_data[:, 1])]])
-    # strain_bc = np.array([[0., 0], [1., np.max(stress_strain_data[:, 0])]])
+def run_sim_from_experiment(name, temperature, stress_strain_data, sign=1):
+    stress_bc = np.array([[0., 0], [1., np.max(stress_strain_data[:, 1])*sign]])
+    # strain_bc = np.array([[0., 0], [1., np.max(stress_strain_data[:, 0])*sign]])
     e, s, _, _ = one_element_abaqus(simulation_dir, material=neu_sehitoglu,
                                     boundary_conditions=[BC(stress_bc, 'z', 'stress')],
                                     simulation_name=name,
@@ -33,8 +33,10 @@ for temp, color in zip([150., 22., 22.], ['r', 'b', 'g']):
     strain, stress = run_sim_from_experiment(sim_name, temp, data)
     plt.plot(strain[:, 2], stress[:, 2], color, lw=2)
 
-data_comp = np.genfromtxt(os.path.expanduser('~/phase_transformations/neu_sehitoglu/fig_2_compression'),
+data_comp = np.genfromtxt(os.path.expanduser('~/phase_transformations/neu_sehitoglu/fig2_compression'),
                           delimiter=',')
-strain, stress = run_sim_from_experiment('stress_22_comp', 22., data_comp)
-plt.plot(strain[:, 2], stress[:, 2], 'g', lw=2)
+
+plt.plot(data_comp[:, 0], data_comp[:, 1], 'g*')
+strain, stress = run_sim_from_experiment('stress_22_comp', 22., data_comp, sign=-1)
+plt.plot(-strain[:, 2], -stress[:, 2], 'g', lw=2)
 plt.show()
