@@ -20,6 +20,6 @@ for temp, color in zip([150., 22.], ['r', 'b']):
     stress, strain, _, _ = one_element_abaqus('abaqus_material_test/neu_sehitoglu/', material=neu_sehitoglu,
                                               boundary_conditions=[BC(stress_bc, 'z', 'stress')],
                                               simulation_name='stress_temp',
-                                              temperature=np.array([[0, temp], [1, temp]]), umat_subroutine=umat_file)
+                                              temperature=np.array([[0, temp], [1, temp]]), user_subroutine=umat_file)
     plt.plot(strain[:, 2], stress[:, 2], color, lw=2)
 plt.show()
