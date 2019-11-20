@@ -98,11 +98,7 @@ def write_input_file(filename, material, boundary_conditions, temperature=None, 
         file_lines.append('*Initial Conditions, type=Temperature')
         file_lines.append('\tall_nodes, ' + str(temperature[0, 1]))
 
-    if martensite_fraction:
-        initial_values = [0., martensite_fraction]
-        # These are the back stress components and the isostropic hardnening
-        initial_values += [0.]*(material.umat_depvar() - 2)
-        file_lines.append('*Initial Conditions, type=Solution, user')
+    file_lines.append('*Initial Conditions, type=Solution, user')
 
     file_lines.append('*Step, name=step, nlgeom=NO, inc=10000000, unsymm=yes')
     file_lines.append('\t*Static')
