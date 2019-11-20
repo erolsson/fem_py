@@ -74,7 +74,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     Eigen::Map<Vector6> stress_vec(stress);
 
     const Eigen::Map<Vector6> de(dstran);
-    std::cout << "de: " << de.transpose().format(CleanFmt) << std::endl;
     Eigen::Map<Matrix6x6> D_alg(ddsdde);
 
     // Elastic parameters
@@ -93,9 +92,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         stilde -= state.total_back_stress();
     }
     bool plastic = params.plastic() && yield_function(sigma_t, state.total_back_stress(), sy, params) > 0;
-    std::cout << temp << "  " << transformation_function(sigma_t, state.ep_eff(), temp, params) - state.fM() <<  std::endl;
     bool phase_transformations = transformation_function(sigma_t, state.ep_eff(), temp, params) - state.fM() >= 0;
-    std::cout << "phase_transformations " << phase_transformations << std::endl;
     bool elastic = !plastic && !phase_transformations;
     if (elastic) {     // Use the trial stress as the stress and the elastic stiffness matrix as the tangent
         D_alg = Del;
@@ -188,10 +185,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 F = params.k()*exp(-params.k()*(params.Ms() + ms_stress(sigma_2, params)
                                                 + ms_strain(state.ep_eff() + DL, params) + params.Mss() - temp));
                 Vector6 s = deviator(sigma_2);
-                std::cout << "sigma2: " << sigma_2.transpose().format(CleanFmt) << std::endl;
 
                 double J2 = 0.5*double_contract(s, s);
-                std::cout << "J2 " << J2 << "Mss: " <<   ms_stress(sigma_2, params) << std::endl;
                 bij = params.a1()*delta_ij;
 
                 if (J2 > 1e-12) {
@@ -202,9 +197,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
 
                 dhdDfM = double_contract(bij, dsijdDfM) - 1;
-                std::cout << "dsijdDfM: " << dsijdDfM.transpose().format(CleanFmt) << std::endl;
-                std::cout << "bij: " << bij.transpose().format(CleanFmt) << std::endl;
-                std::cout << "dhdDfM: " << dhdDfM << std::endl;
             }
 
             nnt = nij2*nij2.transpose();
@@ -243,7 +235,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         state.fM() += DfM;
         state.R() = R2;
         stress_vec = sigma_2;
-        std::cout << "stress_vec: " << stress_vec << std::endl;
 
         if (params.kinematic_hardening()) {
             state.total_back_stress() = Vector6::Zero();
@@ -257,7 +248,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         if (s_eq_prime > 0) {
             D_alg -= 6*G*G*(DL + RA*DfM)/s_eq_prime*Aijkl;
         }
-        std::cout << "Aijkl" << std::endl << Aijkl.format(CleanFmt) << std::endl;
         double A = dR2dDL - F*dMepdDL*dfdDfM -  ds_eq_2_dDL;
         Vector6 Lekl = (2*G/B*nij2 + params.a()*K*delta_ij)/A;
 
@@ -284,8 +274,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     Bijkl(i, j) *= 2;
             }
             D_alg = Bijkl.inverse()*D_alg;
-            std::cout << D_alg.format(CleanFmt) << std::endl;
-            std::cout << std::endl << (D_alg.inverse()*stress_vec).transpose().format(CleanFmt) << std::endl;
         }
     }
 }
