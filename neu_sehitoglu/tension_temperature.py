@@ -25,7 +25,7 @@ simulation_dir = os.path.expanduser('~/fem_py/abaqus_material_test/neu_sehitoglu
 
 neu_sehitoglu.sde = 0
 neu_sehitoglu.sy0M = 500
-for temp, color in zip([150., 22., 22.], ['r', 'b', 'g']):
+for temp, color in zip([150., 22.], ['r', 'b']):
     data = np.genfromtxt(os.path.expanduser('~/phase_transformations/neu_sehitoglu/fig_4_' + str(int(temp)) + 'C'),
                          delimiter=',')
     plt.plot(data[:, 0], data[:, 1], color + '*')
