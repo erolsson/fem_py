@@ -202,6 +202,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             nnt = nij2*nij2.transpose();
             Aijkl = J - 2./3*nnt;
             if (plastic && phase_transformations) {
+                std::cout << "Combined" << std::endl;
                 dMepdDL = params.beta()*params.n()*pow((1 - exp(-params.alpha()*(state.ep_eff() + DL))),
                                                        params.n() - 1)*params.alpha()*
                           exp(-params.alpha()*(state.ep_eff() + DL));
