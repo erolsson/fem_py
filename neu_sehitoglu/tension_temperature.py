@@ -11,7 +11,7 @@ from abaqus_material_test.one_element_input_file import BC
 
 def run_sim_from_experiment(name, temperature, stress_strain_data):
     stress_bc = np.array([[0., 0], [1., np.max(stress_strain_data[:, 1])]])
-    strain_bc = np.array([[0., 0], [1., np.max(stress_strain_data[:, 0])]])
+    # strain_bc = np.array([[0., 0], [1., np.max(stress_strain_data[:, 0])]])
     e, s, _, _ = one_element_abaqus(simulation_dir, material=neu_sehitoglu,
                                     boundary_conditions=[BC(stress_bc, 'z', 'stress')],
                                     simulation_name=name,
