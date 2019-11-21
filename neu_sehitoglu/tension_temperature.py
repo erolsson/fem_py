@@ -11,9 +11,9 @@ from abaqus_material_test.one_element_input_file import BC
 
 def run_sim_from_experiment(name, temperature, stress_strain_data, sign=1):
     stress_bc = np.array([[0., 0], [1., np.max(stress_strain_data[:, 1])*sign]])
-    # strain_bc = np.array([[0., 0], [1., np.max(stress_strain_data[:, 0])*sign]])
+    strain_bc = np.array([[0., 0], [1., np.max(stress_strain_data[:, 0])*sign]])
     e, s, _, _ = one_element_abaqus(simulation_dir, material=neu_sehitoglu,
-                                    boundary_conditions=[BC(stress_bc, 'z', 'stress')],
+                                    boundary_conditions=[BC(strain_bc, 'z', 'strain')],
                                     simulation_name=name,
                                     temperature=np.array([[0, temperature], [1, temperature]]),
                                     user_subroutine=umat_file)
@@ -24,9 +24,9 @@ umat_file = os.path.expanduser('~/fem_py/transformation_subroutines/transformati
 simulation_dir = os.path.expanduser('~/fem_py/abaqus_material_test/neu_sehitoglu')
 
 neu_sehitoglu.sde = 0
-# neu_sehitoglu.sy0M = 601
-for temp, color in zip([150., 22.], ['r', 'b']):
-    data = np.genfromtxt(os.path.expanduser('~/phase_transformations/neu_sehitoglu/fig_4_' + str(int(temp)) + 'C'),
+temp = 22
+for direction, color in zip(['compression', 'tension'], ['r', 'b']):
+    data = np.genfromtxt(os.path.expanduser('~/phase_transformations/neu_sehitoglu/fig2_' + direction),
                          delimiter=',')
     plt.plot(data[:, 0], data[:, 1], color + '*')
     sim_name = 'stress_' + str(int(temp)) + '_tens'
