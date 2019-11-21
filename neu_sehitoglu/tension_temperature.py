@@ -30,7 +30,7 @@ for direction, color in zip(['compression', 'tension'], ['r', 'b']):
                          delimiter=',')
     plt.figure(1)
     plt.plot(data[:, 0], data[:, 1], color + '*')
-    sim_name = 'stress_' + str(int(temp)) + '_tens'
+    sim_name = 'stress_22_' + direction
     sign = 1
     if direction == 'compression':
         sign = -1
@@ -41,6 +41,6 @@ for direction, color in zip(['compression', 'tension'], ['r', 'b']):
     plt.figure(2)
     dv = np.sum(strain[:, 0:3], 1) - stress[:, 2]/neu_sehitoglu.E*(1-2*neu_sehitoglu.v)
     print dv
-    plt.plot(strain[:, 2], dv, color, lw=2)
+    plt.plot(np.abs(strain[:, 2]), dv, color, lw=2)
 
 plt.show()
