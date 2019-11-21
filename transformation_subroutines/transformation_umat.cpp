@@ -179,7 +179,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 Vector6 dsijdDfM =- K*params.dV()*delta_ij;
                 if ( s_eq_prime > 1e-12) {
                     dsijdDfM -= 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2;
-                    sigma_2 -= (2*G*RA*nij2 + K*params.dV()/3*delta_ij)*DfM;
+                    sigma_2 -= (2*G*RA*nij2 + K*params.dV()*delta_ij)*DfM;
                 }
                 h = transformation_function(sigma_2, state.ep_eff() + DL, temp, params) - (state.fM() + DfM);
                 F = params.k()*exp(-params.k()*(params.Ms() + ms_stress(sigma_2, params)
