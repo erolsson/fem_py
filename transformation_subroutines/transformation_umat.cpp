@@ -254,7 +254,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             D_alg -= 6*G*G*(DL + RA*DfM)/s_eq_prime*Aijkl;
         }
         double A = dR2dDL - F*dMepdDL*dfdDfM -  ds_eq_2_dDL;
-        Vector6 Lekl = (2*G/B*nij2 + 3*params.a()*K*delta_ij)/A;
+        Vector6 Lekl = (2*G/B*nij2 + params.a()*K*delta_ij)/A;
 
         if (DL > 0) {
             D_alg -= 2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2*Lekl.transpose();
