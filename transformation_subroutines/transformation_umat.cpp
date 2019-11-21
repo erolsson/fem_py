@@ -218,13 +218,13 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     DL = 0;
                     dDfM = -h/dhdDfM;
                 }
-                /*
+
                 if (dDfM + DfM < 0) {
                     dDfM = 0;
                     DfM = 0;
                     dDL = -f/dfdDL;
                 }
-                 */
+
 
             } else if (plastic) {
                 dDL = -f/dfdDL;
