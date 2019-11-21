@@ -30,8 +30,8 @@ for temp, color in zip([150., 22.], ['r', 'b']):
                          delimiter=',')
     plt.plot(data[:, 0], data[:, 1], color + '*')
     sim_name = 'stress_' + str(int(temp)) + '_tens'
-    # strain, stress = run_sim_from_experiment(sim_name, temp, data)
-    # plt.plot(strain[:, 2], stress[:, 2], color, lw=2)
+    strain, stress = run_sim_from_experiment(sim_name, temp, data)
+    plt.plot(strain[:, 2], stress[:, 2], color, lw=2)
 
 data_comp = np.genfromtxt(os.path.expanduser('~/phase_transformations/neu_sehitoglu/fig2_compression'),
                           delimiter=',')
