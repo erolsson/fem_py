@@ -28,6 +28,7 @@ temp = 22
 for direction, color in zip(['compression', 'tension'], ['r', 'b']):
     data = np.genfromtxt(os.path.expanduser('~/phase_transformations/neu_sehitoglu/fig2_' + direction),
                          delimiter=',')
+    plt.figure(1)
     plt.plot(data[:, 0], data[:, 1], color + '*')
     sim_name = 'stress_' + str(int(temp)) + '_tens'
     sign = 1
@@ -35,7 +36,6 @@ for direction, color in zip(['compression', 'tension'], ['r', 'b']):
         sign = -1
     strain, stress = run_sim_from_experiment(sim_name, temp, data, sign=sign)
 
-    plt.figure(1)
     plt.plot(np.abs(strain[:, 2]), np.abs(stress[:, 2]), color, lw=2)
 
     plt.figure(2)
