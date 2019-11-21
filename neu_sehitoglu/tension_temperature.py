@@ -16,7 +16,8 @@ def run_sim_from_experiment(name, temperature, stress_strain_data, sign=1):
                                     boundary_conditions=[BC(strain_bc, 'z', 'strain')],
                                     simulation_name=name,
                                     temperature=np.array([[0, temperature], [1, temperature]]),
-                                    user_subroutine=umat_file)
+                                    user_subroutine=umat_file,
+                                    max_increment=0.01)
     return e, s
 
 
