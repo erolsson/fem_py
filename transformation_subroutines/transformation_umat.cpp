@@ -148,7 +148,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
             B = 1 + 3*G*params.R2()*DfM/params.sy0A();
             s_eq_2 = (s_eq_prime - 3*G*(DL + params.R1()*DfM))/B;
-            double I1 = sigma_t[0] + sigma_t[1] + sigma_t[2] - K*params.dV()*DfM;
+            double I1 = sigma_t[0] + sigma_t[1] + sigma_t[2] - 3*K*params.dV()*DfM;
             if (plastic) {
                 dsij_prime_dDL = Vector6::Zero();
                 ds_eq_2_dDL = -3*G;
@@ -176,7 +176,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             }
             if (phase_transformations) {
                 RA = params.R1() + params.R2()*s_eq_2/params.sy0A();
-                Vector6 dsijdDfM =- K/3*params.dV()*delta_ij;
+                Vector6 dsijdDfM =- K*params.dV()*delta_ij;
                 if ( s_eq_prime > 1e-12) {
                     dsijdDfM -= 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2;
                     sigma_2 -= (2*G*RA*nij2 + K*params.dV()/3*delta_ij)*DfM;
@@ -254,7 +254,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             D_alg -= 6*G*G*(DL + RA*DfM)/s_eq_prime*Aijkl;
         }
         double A = dR2dDL - F*dMepdDL*dfdDfM -  ds_eq_2_dDL;
-        Vector6 Lekl = (2*G/B*nij2 + params.a()*K*delta_ij)/A;
+        Vector6 Lekl = (2*G/B*nij2 + 3*params.a()*K*delta_ij)/A;
 
         if (DL > 0) {
             D_alg -= 2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2*Lekl.transpose();
@@ -269,11 +269,11 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 Vector6 Lskl = 1/A*dfdDfM*bij;
                 Vector6 Fekl = F*dMepdDL/A/B*2*G*nij2;
                 D_alg -= 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2*Fekl.transpose()
-                        - K/3*params.dV()*delta_ij*Fekl.transpose();
+                        - K*params.dV()*delta_ij*Fekl.transpose();
                 Bijkl += 2*G*(1+DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2*Lskl.transpose();
             }
             Bijkl += 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2*Fskl.transpose()
-                    + K/3*params.dV()*delta_ij*Fskl.transpose();
+                    + K*params.dV()*delta_ij*Fskl.transpose();
             for (unsigned i = 3; i != 6; ++i) {
                 for (unsigned j = 3; j != 6; ++j)
                     Bijkl(i, j) *= 2;
