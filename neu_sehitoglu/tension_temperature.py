@@ -41,7 +41,9 @@ for direction, color in zip(['compression', 'tension'], ['r', 'b']):
 
     plt.figure(2)
     dv = np.sum(strain[:, 0:3], 1) - stress[:, 2]/neu_sehitoglu.E*(1-2*neu_sehitoglu.v)
-    print dv
+    data = np.genfromtxt(os.path.expanduser('~/phase_transformations/neu_sehitoglu/fig3_' + direction),
+                         delimiter=',')
+    plt.plot(data[:, 0], data[:, 1], color + '*')
     plt.plot(np.abs(strain[:, 2]), dv, color, lw=2)
 
 plt.show()
