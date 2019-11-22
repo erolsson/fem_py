@@ -17,7 +17,7 @@ def run_sim_from_experiment(name, temperature, stress_strain_data, sign=1):
                                     simulation_name=name,
                                     temperature=np.array([[0, temperature], [1, temperature]]),
                                     user_subroutine=umat_file,
-                                    max_increment=0.01)
+                                    max_increment=1.)
     return e, s
 
 
