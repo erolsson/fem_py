@@ -47,9 +47,7 @@ class ElasticPlasticTransformMaterial:
 
         self.back_stresses = Cm.shape[0]
         self.name = name
-        Me = np.exp(-self.beta*uniaxial_data[0]**self.n)
-        print Me
-        self.Mss = (-1./self.k*np.log(1-uniaxial_data[0] - Me) - self.Ms - uniaxial_data[2]*(self.a1 + self.a2 + 2*self.a3/27) +
+        self.Mss = (-1./self.k*np.log(1-uniaxial_data[0]) - self.Ms - uniaxial_data[2]*(self.a1 + self.a2 + 2*self.a3/27) +
                     uniaxial_data[1])
 
     def abaqus_material_string(self):
