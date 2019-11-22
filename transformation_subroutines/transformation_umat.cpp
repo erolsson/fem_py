@@ -50,7 +50,7 @@ double ms_stress(const Eigen::Matrix<double, 6, 1>& stress, const Transformation
 }
 
 double ms_strain(double epl, const TransformationMaterialParameters& params, double f0) {
-    double fsb = 1 + (f0 - 1)*exp(-params.alpha()*epl);
+    double fsb = 1 + (f0*0 - 1)*exp(-params.alpha()*epl);
     return exp(-params.beta()*pow(fsb, params.n()));
 }
 
