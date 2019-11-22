@@ -37,7 +37,7 @@ class ElasticPlasticTransformMaterial:
         self.n = n
 
         self.R1 = 0.02
-        self.R2 = 0.02
+        self.R2 = 0.015
 
         self.dV = 0.037
 
