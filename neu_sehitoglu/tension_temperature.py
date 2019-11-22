@@ -13,7 +13,7 @@ def run_sim_from_experiment(name, temperature, stress_strain_data, sign=1):
     stress_bc = np.array([[0., 0], [1., np.max(stress_strain_data[:, 1])*sign]])
     strain_bc = np.array([[0., 0], [1., np.max(stress_strain_data[:, 0])*sign]])
     e, s, _, _ = one_element_abaqus(simulation_dir, material=neu_sehitoglu,
-                                    boundary_conditions=[BC(strain_bc, 'z', 'strain')],
+                                    boundary_conditions=[BC(stress_bc, 'z', 'stress')],
                                     simulation_name=name,
                                     temperature=np.array([[0, temperature], [1, temperature]]),
                                     user_subroutine=umat_file,
