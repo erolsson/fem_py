@@ -89,7 +89,7 @@ test_material = ElasticPlasticTransformMaterial(E=200e3, v=0.3, sy0M=1000000., s
                                                 beta=0, alpha=4., n=4., sde=0.04)
 
 neu_sehitoglu = ElasticPlasticTransformMaterial(E=203.3e3, v=0.3, sy0M=813., sy0A=420., Q=0*2100., b=100.,
-                                                Cm=np.array([335485, 245783, 0*6853]),
+                                                Cm=np.array([335485, 245783, 6853]),
                                                 gamma_m=np.array([1016.5, 185, 0.]),
                                                 a=np.array([0.056/3, 0.028, 0.])/1.4,
                                                 Ms=169, name='NeuSehitoglu', uniaxial_data=[0.65, 22., 485], fM=0.65,
