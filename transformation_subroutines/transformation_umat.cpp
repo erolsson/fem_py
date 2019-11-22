@@ -51,13 +51,13 @@ double ms_stress(const Eigen::Matrix<double, 6, 1>& stress, const Transformation
 
 double ms_strain(double epl, const TransformationMaterialParameters& params, double f0) {
     double fsb = 1 + (f0 - 1)*exp(-params.alpha()*epl);
-    std::cout << fsb << std::endl;
     return exp(-params.beta()*pow(fsb, params.n()));
 }
 
 double transformation_function(const Eigen::Matrix<double, 6, 1>& stress, double epl, double T,
                                const TransformationMaterialParameters& params, double fM0) {
     double a = exp(-params.k()*(params.Ms() + ms_stress(stress, params) + params.Mss() - T));
+    std::cout << 1 -  ms_strain(epl, params, fM0) << std::endl;
     return 1 - a - ms_strain(epl, params, fM0);
 }
 
