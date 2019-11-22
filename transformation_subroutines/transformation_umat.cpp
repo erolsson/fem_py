@@ -50,15 +50,15 @@ double ms_stress(const Eigen::Matrix<double, 6, 1>& stress, const Transformation
 }
 
 double ms_strain(double epl, const TransformationMaterialParameters& params, double f0) {
-    double fsb = 1 + (f0 - 1)*exp(-params.alpha()*epl);
-    return exp(-params.beta()*pow(fsb, params.n()));
+    double fsb = 1  -exp(-params.alpha()*epl);
+    return params.beta()*pow(fsb, params.n());
 }
 
 double transformation_function(const Eigen::Matrix<double, 6, 1>& stress, double epl, double T,
                                const TransformationMaterialParameters& params, double fM0) {
-    double a = exp(-params.k()*(params.Ms() + ms_stress(stress, params) + params.Mss() - T));
-    std::cout << 1 -  ms_strain(epl, params, fM0) << std::endl;
-    return 1 - a - ms_strain(epl, params, fM0);
+    double a = exp(-params.k()*(params.Ms() + ms_stress(stress, params) + params.Mss() - T) -
+            ms_strain(epl, params, fM0));
+    return 1 - a;
 }
 
 
@@ -187,8 +187,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 }
                 h = transformation_function(sigma_2, state.ep_eff() + DL, temp, params, state.fM0())
                         - (state.fM() + DfM);
-                F = params.k()*exp(-params.k()*(params.Ms() + ms_stress(sigma_2, params)
-                                         + ms_strain(state.ep_eff() + DL, params, state.fM0()) + params.Mss() - temp));
                 Vector6 s = deviator(sigma_2);
 
                 double J2 = 0.5*double_contract(s, s);
@@ -197,7 +195,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 if (J2 > 1e-12) {
                     bij += 1.5*params.a2()*s/sqrt(3*J2) + params.a3()*(contract(s, s) - 2./3*J2*delta_ij);
                 }
-                bij *= F;
+                bij *= (h - 1)*params.k();
                 ds_eq_2_dfM = -3*G*RA/B;
 
 
@@ -207,13 +205,13 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             nnt = nij2*nij2.transpose();
             Aijkl = J - 2./3*nnt;
             if (plastic && phase_transformations) {
-                double fsb = 1 + (state.fM0() - 1)*exp(-params.alpha()*(state.ep_eff() + DL));
-                double dfsbdL = params.alpha()*(1-state.fM0())*exp(-params.alpha()*(state.ep_eff() + DL));
-                dMepdDL = params.n()*params.beta()*pow(fsb, params.n()-1)*dfsbdL;
+                double fsb = 1  - exp(-params.alpha()*(state.ep_eff() + DL));
+                double dfsbdL = params.alpha()*exp(-params.alpha()*(state.ep_eff() + DL));
+                dMepdDL = params.beta()*params.n()*pow(fsb, params.n() -1)*dfsbdL;
 
                 dfdDfM = -3*G*RA/B - params.a()*K*params.dV() - (params.sy0M() - params.sy0A());
                 Vector6 dsigmaijdDL = -2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
-                dhdDL = double_contract(bij, dsigmaijdDL) + dMepdDL;
+                dhdDL = double_contract(bij, dsigmaijdDL) + (h - 1)*dMepdDL;
                 double detJ = dfdDL*dhdDfM - dfdDfM*dhdDL;
                 dDL = (dhdDfM*-f - dfdDfM*-h)/detJ;
                 dDfM = (-dhdDL*-f + dfdDL*-h)/detJ;
@@ -261,7 +259,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         if (s_eq_prime > 0) {
             D_alg -= 6*G*G*(DL + RA*DfM)/s_eq_prime*Aijkl;
         }
-        double A = dR2dDL - dMepdDL*dfdDfM -  ds_eq_2_dDL;
+        double A = dR2dDL - (h-1)*dMepdDL*dfdDfM -  ds_eq_2_dDL;
         Vector6 Lekl = (2*G/B*nij2 + params.a()*K*delta_ij)/A;
 
         if (DL > 0) {
@@ -273,9 +271,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             Matrix6x6 Bijkl = I;
             Vector6 Fskl = bij;
             if (DL > 0) {
-                Fskl += dMepdDL/A*dfdDfM*bij;
+                Fskl += (h-1)*dMepdDL/A*dfdDfM*bij;
                 Vector6 Lskl = 1/A*dfdDfM*bij;
-                Vector6 Fekl = dMepdDL/A/B*2*G*nij2;
+                Vector6 Fekl = (h-1)*dMepdDL/A/B*2*G*nij2;
                 D_alg -= 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2*Fekl.transpose()
                         - K*params.dV()*delta_ij*Fekl.transpose();
                 Bijkl += 2*G*(1+DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2*Lskl.transpose();

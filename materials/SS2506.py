@@ -48,6 +48,7 @@ class ElasticPlasticTransformMaterial:
         self.back_stresses = Cm.shape[0]
         self.name = name
         Me = np.exp(-self.beta*uniaxial_data[0]**self.n)
+        print Me
         self.Mss = (-1./self.k*np.log(1-uniaxial_data[0] - Me) - self.Ms - uniaxial_data[2]*(self.a1 + self.a2 + 2*self.a3/27) +
                     uniaxial_data[1])
 
@@ -96,4 +97,4 @@ neu_sehitoglu = ElasticPlasticTransformMaterial(E=203.3e3, v=0.3, sy0M=813., sy0
                                                 beta=1., alpha=4., n=4., sde=0.04)
 
 if __name__ == '__main__':
-    print test_material.umat_parameters()
+    print neu_sehitoglu.umat_parameters()
