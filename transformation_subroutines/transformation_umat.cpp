@@ -51,7 +51,7 @@ double ms_stress(const Eigen::Matrix<double, 6, 1>& stress, const Transformation
 
 double ms_strain(double epl, const TransformationMaterialParameters& params, double f0) {
     double fsb = 1 + (f0 - 1)*exp(-params.alpha()*epl);
-    return params.beta()*pow(fsb, 4);
+    return params.beta()*pow(fsb, params.n());
 }
 
 double transformation_function(const Eigen::Matrix<double, 6, 1>& stress, double epl, double T,
@@ -185,8 +185,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     dsijdDfM -= 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2;
                     sigma_2 -= (2*G*RA*nij2 + K*params.dV()*delta_ij)*DfM;
                 }
-                h = transformation_function(sigma_2,
-                        state.ep_eff() + DL, temp, params, state.fM0()) - (state.fM() + DfM);
+                h = transformation_function(sigma_2, state.ep_eff() + DL, temp, params, state.fM0())
+                        - (state.fM() + DfM);
                 F = params.k()*exp(-params.k()*(params.Ms() + ms_stress(sigma_2, params)
                                          + ms_strain(state.ep_eff() + DL, params, state.fM0()) + params.Mss() - temp));
                 Vector6 s = deviator(sigma_2);
@@ -208,7 +208,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             Aijkl = J - 2./3*nnt;
             if (plastic && phase_transformations) {
                 double fsb = 1 + (state.fM0() - 1)*exp(-params.alpha()*(state.ep_eff() + DL));
-                dMepdDL = -params.alpha()*params.n()*params.beta()*pow(fsb, params.n()-1)*fsb;
+                dMepdDL = params.alpha()*params.n()*params.beta()*pow(fsb, params.n()-1)*
+                        (1-state.fM0())*exp(-params.alpha()*state.fM0());
                 dfdDfM = -3*G*RA/B - params.a()*K*params.dV() - (params.sy0M() - params.sy0A());
                 Vector6 dsigmaijdDL = -2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
                 dhdDL = double_contract(bij, dsigmaijdDL) + F*dMepdDL;
