@@ -93,7 +93,7 @@ neu_sehitoglu = ElasticPlasticTransformMaterial(E=203.3e3, v=0.3, sy0M=813., sy0
                                                 gamma_m=np.array([1016.5, 185, 0.]),
                                                 a=np.array([0.056/3, 0.028, 0.])/1.4,
                                                 Ms=169, name='NeuSehitoglu', uniaxial_data=[0.65, 22., 485], fM=0.65,
-                                                beta=58., alpha=4., n=4., sde=0.04)
+                                                beta=1., alpha=4., n=4., sde=0.04)
 
 if __name__ == '__main__':
     print test_material.umat_parameters()
