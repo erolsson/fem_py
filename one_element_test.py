@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 
 from fem_functions import Node, Element8
-from materials.SS2506 import test_material
+from materials.transformation_materials import test_material
 from transformation_material import TransformationMaterial
 from nonlinear_solver import NewtonRahpson
 

@@ -2,7 +2,7 @@ from collections import namedtuple
 
 import numpy as np
 
-from materials.SS2506 import test_material
+from materials.transformation_materials import test_material
 
 BC = namedtuple('BC', ['amplitude', 'direction', 'mode'])
 

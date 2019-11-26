@@ -6,7 +6,7 @@ import numpy as np
 
 from one_element_input_file import write_input_file
 from common import package_directory
-from materials.SS2506 import test_material
+from materials.transformation_materials import test_material
 
 
 def one_element_abaqus(simulation_directory, material, boundary_conditions, simulation_name='oneElement',

@@ -11,8 +11,8 @@ from abaqus_material_test.material_test import one_element_abaqus
 from one_element_test import one_element_simulation
 from abaqus_material_test.one_element_input_file import BC
 
-from materials.SS2506 import test_material
-from materials.SS2506 import neu_sehitoglu
+from materials.transformation_materials import test_material
+from materials.transformation_materials import neu_sehitoglu
 
 Simulation = namedtuple('Simulation', ['model', 'label', 'color', 'umat_file', 'name', 'fm'])
 simulations = [  # Simulation(model=one_element_abaqus, label='New', color='b', umat_file=None, name='oneElementAbaqus',

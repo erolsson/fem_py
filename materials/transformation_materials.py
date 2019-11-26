@@ -47,7 +47,7 @@ class ElasticPlasticTransformMaterial:
 
         self.back_stresses = Cm.shape[0]
         self.name = name
-        self.Mss = (-1./self.k*np.log(1-uniaxial_data[0]) - self.Ms - uniaxial_data[2]*(self.a1 + self.a2 + 2*self.a3/27) +
+        self.Mss = (-1./self.k*np.log(1-uniaxial_data[0]) - self.Ms - uniaxial_data[2]*(self.a1 + self.a2)  +
                     uniaxial_data[1])
 
     def abaqus_material_string(self):
@@ -86,6 +86,13 @@ test_material = ElasticPlasticTransformMaterial(E=200e3, v=0.3, sy0M=1000000., s
                                                 gamma_m=np.array([950., 500., 50.]), a=[0.056, 0.028, 0.],
                                                 Ms=169, name='testMaterial', uniaxial_data=[0.8, 22., 485], fM=0.8,
                                                 beta=0, alpha=4., n=4., sde=0.04)
+
+neu_sehitoglu = ElasticPlasticTransformMaterial(E=203.3e3, v=0.3, sy0M=813., sy0A=420., Q=0*2100., b=100.,
+                                                Cm=np.array([335485, 245783, 6853]),
+                                                gamma_m=np.array([1016.5, 185, 0.]),
+                                                a=np.array([0.056/3, 0.028, 0.]),
+                                                Ms=169, name='NeuSehitoglu', uniaxial_data=[0.65, 22., 485], fM=0.65,
+                                                beta=1., alpha=4., n=4., sde=0.04)
 
 neu_sehitoglu = ElasticPlasticTransformMaterial(E=203.3e3, v=0.3, sy0M=813., sy0A=420., Q=0*2100., b=100.,
                                                 Cm=np.array([335485, 245783, 6853]),

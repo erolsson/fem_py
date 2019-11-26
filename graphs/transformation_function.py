@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
 
-from materials.SS2506 import neu_sehitoglu
+from materials.transformation_materials import neu_sehitoglu
 
 K = neu_sehitoglu.K
 G = neu_sehitoglu.G
