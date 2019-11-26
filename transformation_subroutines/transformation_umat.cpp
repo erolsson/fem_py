@@ -57,6 +57,7 @@ double ms_strain(double epl, const TransformationMaterialParameters& params, dou
 double stress_temp_trans(const Eigen::Matrix<double, 6, 1>& stress, double T,
                          const TransformationMaterialParameters& params) {
     double f = params.k()*(params.Ms() + ms_stress(stress, params) + params.Mss() - T);
+    std::cout << f << std::endl;
     if (f < 0) {
         f = 0;
     }
