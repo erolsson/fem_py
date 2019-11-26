@@ -54,21 +54,11 @@ double ms_strain(double epl, const TransformationMaterialParameters& params, dou
     return params.beta()*pow(fsb, params.n());
 }
 
-double stress_temp_trans(const Eigen::Matrix<double, 6, 1>& stress, double T,
-                         const TransformationMaterialParameters& params) {
-    double f = params.k()*(params.Ms() + ms_stress(stress, params) + params.Mss() - T);
-    std::cout << f << "   " << ms_stress(stress, params) << std::endl;
-    if (f < 0) {
-        f = 0;
-    }
-    return f;
-}
 
 double transformation_function(const Eigen::Matrix<double, 6, 1>& stress, double epl, double T,
                                const TransformationMaterialParameters& params, double fM0) {
-
-    double a = exp(-stress_temp_trans(stress, T, params) - ms_strain(epl, params, fM0));
-    return 1 - a;
+    double f = params.k()*(params.Ms() + ms_stress(stress, params) + params.Mss() - T);
+    return 1 - exp(-f - ms_strain(epl, params, fM0));
 }
 
 
@@ -197,19 +187,18 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 }
                 tr_func = transformation_function(sigma_2, state.ep_eff() + DL, temp, params, state.fM0());
                 h = tr_func - (state.fM() + DfM);
-                if (stress_temp_trans(sigma_2, temp, params) > 0) {
-                    Vector6 s = deviator(sigma_2);
-                    double J2 = 0.5*double_contract(s, s);
-                    bij = params.a1()*delta_ij;
+                Vector6 s = deviator(sigma_2);
 
-                    if (J2 > 1e-12) {
-                        bij += 1.5*params.a2()*s/sqrt(3*J2) + params.a3()*(contract(s, s) - 2./3*J2*delta_ij);
-                    }
-                    bij *= (1 - tr_func)*params.k();
+                double J2 = 0.5*double_contract(s, s);
+                bij = params.a1()*delta_ij;
 
-
-                    ds_eq_2_dfM = -3*G*RA/B;
+                if (J2 > 1e-12) {
+                    bij += 1.5*params.a2()*s/sqrt(3*J2) + params.a3()*(contract(s, s) - 2./3*J2*delta_ij);
                 }
+                bij *= (1 - tr_func)*params.k();
+                ds_eq_2_dfM = -3*G*RA/B;
+
+
                 dhdDfM = double_contract(bij, dsijdDfM) - 1;
             }
 
