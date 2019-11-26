@@ -46,6 +46,9 @@ double ms_stress(const Eigen::Matrix<double, 6, 1>& stress, const Transformation
     double m_stress = params.a1()*(stress[0] + stress[1] + stress[2]);   // Contribution from hydrostatic stress
     m_stress += params.a2()*von_Mises(stress);
     m_stress += params.a3()*vector_det(s_dev);
+    if (m_stress < 0) {
+        return 0;
+    }
     return m_stress;
 }
 
@@ -187,15 +190,16 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 }
                 tr_func = transformation_function(sigma_2, state.ep_eff() + DL, temp, params, state.fM0());
                 h = tr_func - (state.fM() + DfM);
-                Vector6 s = deviator(sigma_2);
+                if (ms_stress(sigma_2, params) > 0) {
+                    Vector6 s = deviator(sigma_2);
+                    double J2 = 0.5*double_contract(s, s);
+                    bij = params.a1()*delta_ij;
 
-                double J2 = 0.5*double_contract(s, s);
-                bij = params.a1()*delta_ij;
-
-                if (J2 > 1e-12) {
-                    bij += 1.5*params.a2()*s/sqrt(3*J2) + params.a3()*(contract(s, s) - 2./3*J2*delta_ij);
+                    if (J2 > 1e-12) {
+                        bij += 1.5*params.a2()*s/sqrt(3*J2) + params.a3()*(contract(s, s) - 2./3*J2*delta_ij);
+                    }
+                    bij *= (1 - tr_func)*params.k();
                 }
-                bij *= (1 - tr_func)*params.k();
                 ds_eq_2_dfM = -3*G*RA/B;
 
 
