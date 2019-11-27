@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numbers
 
 import numpy as np
@@ -109,4 +110,4 @@ hazar_et_al.k = 0.00916182
 hazar_et_al.dV = 0.0371
 
 if __name__ == '__main__':
-    print neu_sehitoglu.umat_parameters()
+    print(neu_sehitoglu.umat_parameters())
