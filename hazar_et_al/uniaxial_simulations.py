@@ -18,6 +18,8 @@ for experiment in experiments:
     experiment.plot_stress_strain()
     plt.figure(1)
     experiment.plot_transformation()
+    plt.figure(2)
+    experiment.plot_volume_expansion()
     stress_bc = BC(amplitude=[[0, 0], [1., 1.2*experiment.stress_strain[-1, 1]]], direction='z', mode='stress')
     if experiment.stress_strain[-1, 1] > 0:
         name = 'tension'
@@ -30,6 +32,7 @@ for experiment in experiments:
                                      temperature=np.array([[0, experiment.temperature], [1, experiment.temperature]]),
                                      user_subroutine=umat_file,
                                      max_increment=0.01)
+    
     plt.figure(0)
     plt.plot(e[:, 2], s[:, 2], '--' + experiment.color)
     plt.figure(1)

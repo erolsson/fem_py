@@ -9,10 +9,9 @@ data_directory = os.path.expanduser('~/phase_transformations/hazar_et_al/')
 
 
 class Experiment:
-    def __init__(self, temperature, color):
+    def __init__(self, temperature, color, mode='tension'):
         self.temperature = temperature
         self.color = color
-        self.stress_strain = None
         stress_strain = np.genfromtxt(data_directory + '/fig6a_' + str(self.temperature) + 'C', delimiter=',')
         self.stress_strain = stress_strain[np.argsort(stress_strain[:, 0]), :]
 
@@ -21,12 +20,24 @@ class Experiment:
         if len(transformation_data.shape) < 2:
             transformation_data = np.expand_dims(transformation_data, 0)
         self.transformation_data = transformation_data
+        try:
+            self.volume_expansion = np.genfromtxt(data_directory + '/fig18_' + mode + '_' + str(self.temperature) + 'C',
+                                                  delimiter=',')
+            if len(self.volume_expansion.shape) < 2:
+                self.volume_expansion = np.expand_dims(self.volume_expansion, 0)
+
+        except IOError:
+            self.volume_expansion = None
 
     def plot_stress_strain(self):
         plt.plot(self.stress_strain[:, 0], self.stress_strain[:, 1], self.color, lw=2)
 
     def plot_transformation(self):
         plt.plot(self.transformation_data[:, 0], self.transformation_data[:, 1], 'x' + self.color, ms=12, mew=2)
+
+    def plot_volume_expansion(self):
+        if self.volume_expansion is not None:
+            plt.plot(self.volume_expansion[:, 0], self.volume_expansion[:, 1], 'x' + self.color, ms=12, mew=2)
 
 
 experiments = [Experiment(temperature=22, color='r'), Experiment(temperature=75, color='b'),
