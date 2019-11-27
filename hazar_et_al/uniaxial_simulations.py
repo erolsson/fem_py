@@ -20,7 +20,7 @@ for experiment in experiments:
     else:
         name = 'compression'
     e, s, _, _ = one_element_abaqus(simulation_dir, material=hazar_et_al,
-                                    boundary_conditions=[BC(stress_bc, 'z', 'stress')],
+                                    boundary_conditions=stress_bc,
                                     simulation_name=name + '_' + str(int(experiment.temperature)),
                                     temperature=np.array([[0, experiment.temperature], [1, experiment.temperature]]),
                                     user_subroutine=umat_file,
