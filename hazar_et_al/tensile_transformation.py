@@ -42,7 +42,8 @@ for experiment in experiments:
 par = None
 k = 0
 a = 0
-Ms = 0
+Ms = 220
+Mss = 0
 for experiment in experiments[0:2]:
     trans_stress = np.interp(experiment.transformation_data[:, 0], experiment.stress_strain[:, 0],
                              experiment.stress_strain[:, 1])
@@ -52,18 +53,16 @@ for experiment in experiments[0:2]:
     y = -np.log(1 - experiment.transformation_data[:, 1])
     if temp == 22.:
         par = np.polyfit(trans_stress, y, 1)
-        print(par)
-        print(par[1]/0.01)
     plt.plot(trans_stress, y, 'x' + experiment.color, ms=12, mew=2)
     if temp == 75.:
         new_p = trans_stress[0]*par[0] + par[1]
         k = (new_p - y)/(75-22)
         a = par[0]/k
-        Ms = par[1]/k + 22
-    print(k, a, Ms)
+        Mss = par[1]/k + 22 - Ms
+print(k, a, Mss)
 
 for experiment in experiments:
-    y = k*(Ms + a*experiment.stress_strain[:, 1] - experiment.temperature)
+    y = k*(Ms + a*experiment.stress_strain[:, 1] + Mss - experiment.temperature)
     plt.figure(2)
     plt.plot(experiment.stress_strain[:, 1], y, experiment.color)
     plt.figure(1)
