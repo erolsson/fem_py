@@ -25,6 +25,7 @@ for experiment in experiments:
                                     temperature=np.array([[0, experiment.temperature], [1, experiment.temperature]]),
                                     user_subroutine=umat_file,
                                     max_increment=0.1)
+    print e
     plt.plot(e, s, '--' + experiment.color)
 
 plt.show()
