@@ -67,7 +67,7 @@ if __name__ == '__main__':
             y[1:] = -np.log(1 - experiment.transformation_data[:, 1])
             y[0] = -np.log(1 - 0.78)
             if temp == 22.:
-                trans_stress[0] = 800
+                trans_stress[0] = 830
             else:
                 trans_stress[0] = 1160
 
@@ -80,7 +80,7 @@ if __name__ == '__main__':
 
     k = 0.01
     a = par[0]/k
-    Mss = -np.log(1-0.78)/k - Ms - a*800 + 22
+    Mss = -np.log(1-0.78)/k - Ms - a*830 + 22
     print(k, a, Mss)
 
     for experiment in experiments:
