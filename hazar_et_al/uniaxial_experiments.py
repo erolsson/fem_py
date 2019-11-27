@@ -20,12 +20,12 @@ class Experiment:
         if len(transformation_data.shape) < 2:
             transformation_data = np.expand_dims(transformation_data, 0)
         self.transformation_data = transformation_data
+
         try:
             self.volume_expansion = np.genfromtxt(data_directory + '/fig18_' + mode + '_' + str(self.temperature) + 'C',
                                                   delimiter=',')
             if len(self.volume_expansion.shape) < 2:
                 self.volume_expansion = np.expand_dims(self.volume_expansion, 0)
-
         except IOError:
             self.volume_expansion = None
 
@@ -55,21 +55,32 @@ if __name__ == '__main__':
     a = 0
     Ms = 220
     Mss = 0
+
     for experiment in experiments[0:2]:
-        trans_stress = np.interp(experiment.transformation_data[:, 0], experiment.stress_strain[:, 0],
-                                 experiment.stress_strain[:, 1])
-        plt.figure(2)
-        k = 0.010
         temp = experiment.temperature
-        y = -np.log(1 - experiment.transformation_data[:, 1])
-        if temp == 22.:
-            par = np.polyfit(trans_stress, y, 1)
-        plt.plot(trans_stress, y, 'x' + experiment.color, ms=12, mew=2)
-        if temp == 75.:
-            new_p = trans_stress[0]*par[0] + par[1]
-            k = (new_p - y)/(75-22)
-            a = par[0]/k
-            Mss = par[1]/k + 22 - Ms
+        print(temp)
+        if temp in [22., 75.]:
+            trans_stress = np.zeros(experiment.transformation_data.shape[0] + 1)
+            y = 0*trans_stress
+            trans_stress[1:] = np.interp(experiment.transformation_data[:, 0], experiment.stress_strain[:, 0],
+                                         experiment.stress_strain[:, 1])
+            y[1:] = -np.log(1 - experiment.transformation_data[:, 1])
+            y[0] = -np.log(1 - 0.78)
+            if temp == 22.:
+                trans_stress[0] = 830
+            else:
+                trans_stress[0] = 1160
+
+            plt.figure(2)
+            print(trans_stress)
+
+            plt.plot(trans_stress, y, 'x' + experiment.color, ms=12, mew=2)
+            if temp == 22.:
+                par = np.polyfit(trans_stress, y, 1)
+
+    k = 0.01
+    a = 0.1
+    Mss = -np.log(1-0.78)/k - Ms - a*830 + 22
     print(k, a, Mss)
 
     for experiment in experiments:
