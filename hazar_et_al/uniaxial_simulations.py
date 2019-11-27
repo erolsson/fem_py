@@ -14,7 +14,7 @@ simulation_dir = os.path.expanduser('~/fem_py/abaqus_material_test/hazar_et_al')
 
 for experiment in experiments:
     experiment.plot_stress_strain()
-    stress_bc = BC([[0, 0], [1., 1.2*experiment.stress_strain[-1, 1]]])
+    stress_bc = BC([[0, 0], [1., 1.2*experiment.stress_strain[-1, 1]]], 'z', 'stress')
     if experiment.stress_strain[-1, 1] > 0:
         name = 'tension'
     else:
