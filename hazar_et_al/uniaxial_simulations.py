@@ -26,6 +26,6 @@ for experiment in experiments:
                                     user_subroutine=umat_file,
                                     max_increment=0.1)
     print e
-    plt.plot(e, s, '--' + experiment.color)
+    plt.plot(e[:, 2], s[:, 2], '--' + experiment.color)
 
 plt.show()
