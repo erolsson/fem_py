@@ -210,6 +210,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             nnt = nij2*nij2.transpose();
             Aijkl = J - 2./3*nnt;
             if (plastic && phase_transformations) {
+                std::cout << "Combined" << std::endl;
                 h = 1 - tr_func - (state.fM() + DfM_stress + c*DL);
                 dfdDfM = -3*G*RA/B - params.a()*K*params.dV() - (params.sy0M() - params.sy0A());
                 Vector6 dsigmaijdDL = -2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
