@@ -17,7 +17,7 @@ public:
     explicit State(double* data, unsigned back_stresses) : data_(data), back_stresses_(back_stresses) {}
     double& ep_eff() { return data_ [0]; }
     double& fM() { return  data_[1]; }
-    double& fM0() { return data_[2]; }
+    double& fsb() { return data_[2]; }
     double& R() { return data_ [3]; }
 
 
@@ -41,25 +41,29 @@ double yield_function(const Eigen::Matrix<double, 6, 1>& sigma, const Eigen::Mat
     return sqrt(3*double_contract(stilde, stilde)/2) + params.a()*I1 - sigma_y;
 }
 
-double ms_stress(const Eigen::Matrix<double, 6, 1>& stress, const TransformationMaterialParameters& params) {
+double stress_temperature_transformation(const Eigen::Matrix<double, 6, 1>& stress,
+                                         const TransformationMaterialParameters& params, double T) {
     Eigen::Matrix<double, 6, 1> s_dev = deviator(stress);
     double m_stress = params.a1()*(stress[0] + stress[1] + stress[2]);   // Contribution from hydrostatic stress
     m_stress += params.a2()*von_Mises(stress);
     m_stress += params.a3()*vector_det(s_dev);
-    return m_stress;
+    double f = params.k()*(params.Ms() + m_stress + params.Mss() - T);
+    if (f < 0) {
+        return 0;
+    }
+    return f;
 }
 
-double ms_strain(double epl, const TransformationMaterialParameters& params, double f0) {
-    double fsb = 1 - exp(-params.alpha()*epl);
+double ms_strain(const TransformationMaterialParameters& params, double fsb) {
     return params.beta()*pow(fsb, params.n());
 }
 
 
-double transformation_function(const Eigen::Matrix<double, 6, 1>& stress, double epl, double T,
-                               const TransformationMaterialParameters& params, double fM0) {
-    double f = params.k()*(params.Ms() + ms_stress(stress, params) + params.Mss() - T);
-    std::cout << "f: " << f << " ms_strain: " << ms_strain(epl, params, fM0) << std::endl;
-    return 1 - exp(-f - ms_strain(epl, params, fM0));
+double transformation_function(const Eigen::Matrix<double, 6, 1>& stress, double T,
+                               const TransformationMaterialParameters& params, double fsb) {
+    double f = stress_temperature_transformation(stress, params, T);
+    std::cout << "f: " << f << " ms_strain: " << ms_strain(params, fsb) << std::endl;
+    return 1 - exp(-f - ms_strain(params, fsb));
 }
 
 
@@ -97,7 +101,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         stilde -= state.total_back_stress();
     }
     bool plastic = params.plastic() && yield_function(sigma_t, state.total_back_stress(), sy, params) > 0;
-    bool phase_transformations = transformation_function(sigma_t, state.ep_eff(), temp, params, state.fM0()) - state.fM() >= 0;
+    bool phase_transformations = transformation_function(sigma_t, temp, params, state.fsb()) - state.fM() >= 0;
     bool elastic = !plastic && !phase_transformations;
     if (elastic) {     // Use the trial stress as the stress and the elastic stiffness matrix as the tangent
         D_alg = Del;
@@ -114,6 +118,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         double h = 0;
 
         double tr_func = 0;
+        double fsb2 = state.fsb();
 
         double dfdDL = 0;
         double dfdDfM = 0;
@@ -178,6 +183,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 dfdDL = ds_eq_2_dDL - dR2dDL;
                 f = s_eq_2 + params.a()*I1 - sy_2;
                 sigma_2 -= 2*G*DL*nij2;
+                fsb2  = (state.fsb() + params.alpha()*DL)/(1+params.alpha()*DL);
             }
             if (phase_transformations) {
                 RA = params.R1() + params.R2()*s_eq_2/params.sy0A();
@@ -186,7 +192,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     dsijdDfM -= 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2;
                     sigma_2 -= (2*G*RA*nij2 + K*params.dV()*delta_ij)*DfM;
                 }
-                tr_func = transformation_function(sigma_2, state.ep_eff() + DL, temp, params, state.fM0());
+                tr_func = transformation_function(sigma_2, temp, params, fsb2);
                 h = tr_func - (state.fM() + DfM);
                 Vector6 s = deviator(sigma_2);
 
@@ -206,9 +212,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             nnt = nij2*nij2.transpose();
             Aijkl = J - 2./3*nnt;
             if (plastic && phase_transformations) {
-                double fsb = 1  - exp(-params.alpha()*(state.ep_eff() + DL));
-                double dfsbdL = params.alpha()*exp(-params.alpha()*(state.ep_eff() + DL));
-                dMepdDL = -params.beta()*params.n()*pow(fsb, params.n() - 1)*dfsbdL;
+                double dfsbdL = params.alpha()/(1+params.alpha()*DL)*(1 - fsb2);
+                dMepdDL = -params.beta()*params.n()*pow(fsb2, params.n() - 1)*dfsbdL;
 
                 dfdDfM = -3*G*RA/B - params.a()*K*params.dV() - (params.sy0M() - params.sy0A());
                 Vector6 dsigmaijdDL = -2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
