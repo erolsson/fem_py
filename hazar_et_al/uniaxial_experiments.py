@@ -80,7 +80,7 @@ if __name__ == '__main__':
 
     k = 0.01
     a = par[0]/k
-    Mss = -np.log(1-0.78)/k - Ms - a*850 + 22
+    Mss = -(np.log(1-0.78) + 3.5*0.65**4)/k - Ms - a*850 + 22
     print(k, a, Mss)
 
     for experiment in experiments:
