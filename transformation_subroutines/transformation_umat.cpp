@@ -251,6 +251,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         state.ep_eff() += DL;
         state.fM() += DfM;
         state.R() = R2;
+        state.fsb() = fsb2;
         stress_vec = sigma_2;
 
         if (params.kinematic_hardening()) {
