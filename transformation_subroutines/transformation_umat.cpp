@@ -57,7 +57,6 @@ double stress_temperature_transformation(const Eigen::Matrix<double, 6, 1>& stre
 double transformation_function(const Eigen::Matrix<double, 6, 1>& stress, double T,
                                const TransformationMaterialParameters& params, double fsb, double DL) {
     double f = stress_temperature_transformation(stress, params, T);
-    std::cout << "f: " << f << " ms_strain: " << std::endl;
     return exp(-f);
 }
 
@@ -211,23 +210,19 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             nnt = nij2*nij2.transpose();
             Aijkl = J - 2./3*nnt;
             if (plastic && phase_transformations) {
-                std::cout << "Combined" << std::endl;
                 h = 1 - tr_func - (state.fM() + DfM);
                 Vector6 dsigmaijdDL = -2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2 + dsijdDfM*c;
-                dhdDL = double_contract(bij, dsigmaijdDL) + c;
+                dhdDL = double_contract(bij, dsigmaijdDL) - c;
                 double detJ = dfdDL*dhdDfM - dfdDfM*dhdDL;
                 dDL = (dhdDfM*-f - dfdDfM*-h)/detJ;
                 dDfM = (-dhdDL*-f + dfdDL*-h)/detJ;
-                std::cout << "f: " << f << "  h:" << h << std::endl;
                 if (dDL + DL < 0) {
-                    std::cout << "Strange plastic" << std::endl;
                     dDL = 0;
                     DL = 0;
                     dDfM = -h/dhdDfM;
                 }
 
                 if (dDfM + DfM + c*DL < 0) {
-                    std::cout << "Strange trans" << std::endl;
                     dDfM = 0;
                     DfM_stress = 0;
                     dDL = -f/dfdDL;
@@ -246,6 +241,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 pnewdt = 0.25;
                 return;
             }
+            std::cout << "Gp interations: " << iter << std::endl;
         }
         // Updating state variables
         state.ep_eff() += DL;
