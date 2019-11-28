@@ -155,6 +155,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             B = 1 + 3*G*params.R2()*DfM/params.sy0A();
             s_eq_2 = (s_eq_prime - 3*G*(DL + params.R1()*DfM))/B;
             double I1 = sigma_t[0] + sigma_t[1] + sigma_t[2] - 3*K*params.dV()*DfM;
+            double dfsbdL = params.alpha()/(1+params.alpha()*DL)*(1 - fsb2);
+            c = params.beta()*tr_func*params.n()*pow(fsb2, params.n() - 1)*dfsbdL;
             if (plastic) {
                 DfM = DfM_stress + c*DL;
                 dsij_prime_dDL = Vector6::Zero();
@@ -207,8 +209,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             nnt = nij2*nij2.transpose();
             Aijkl = J - 2./3*nnt;
             if (plastic && phase_transformations) {
-                double dfsbdL = params.alpha()/(1+params.alpha()*DL)*(1 - fsb2);
-                c = params.beta()*tr_func*params.n()*pow(fsb2, params.n() - 1)*dfsbdL;
                 h = 1 - tr_func - (state.fM() + DfM_stress + c*DL);
                 dfdDfM = -3*G*RA/B - params.a()*K*params.dV() - (params.sy0M() - params.sy0A());
                 Vector6 dsigmaijdDL = -2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
