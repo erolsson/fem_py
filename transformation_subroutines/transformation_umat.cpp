@@ -202,7 +202,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 if (J2 > 1e-12) {
                     bij += 1.5*params.a2()*s/sqrt(3*J2) + params.a3()*(contract(s, s) - 2./3*J2*delta_ij);
                 }
-                bij *= (1 - tr_func)*params.k();
+                bij *= tr_func*params.k();
                 ds_eq_2_dfM = -3*G*RA/B;
                 dhdDfM = double_contract(bij, dsijdDfM) - 1;
             }
@@ -212,7 +212,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             if (plastic && phase_transformations) {
                 double dfsbdL = params.alpha()/(1+params.alpha()*DL)*(1 - fsb2);
 
-                c = -params.beta()*tr_func*params.n()*pow(fsb2, params.n() - 1)*dfsbdL;
+                c = params.beta()*tr_func*params.n()*pow(fsb2, params.n() - 1)*dfsbdL;
 
                 dfdDfM = -3*G*RA/B - params.a()*K*params.dV() - (params.sy0M() - params.sy0A());
                 Vector6 dsigmaijdDL = -2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
