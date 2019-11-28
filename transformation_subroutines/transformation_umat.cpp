@@ -160,6 +160,12 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             std::cout << "cDL: " << c*DL << std::endl;
             DfM = DfM_stress + c*DL;
             dfdDfM = -3*G*RA/B - params.a()*K*params.dV() - (params.sy0M() - params.sy0A());
+            RA = params.R1() + params.R2()*s_eq_2/params.sy0A();
+            Vector6 dsijdDfM = -K*params.dV()*delta_ij;
+            if ( s_eq_prime > 1e-12) {
+                dsijdDfM -= 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2;
+                sigma_2 -= (2*G*RA*nij2 + K*params.dV()*delta_ij)*DfM;
+            }
             if (plastic) {
                 dsij_prime_dDL = Vector6::Zero();
                 ds_eq_2_dDL = -3*G;
@@ -187,12 +193,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 fsb2  = (state.fsb() + params.alpha()*DL)/(1+params.alpha()*DL);
             }
             if (phase_transformations) {
-                RA = params.R1() + params.R2()*s_eq_2/params.sy0A();
-                Vector6 dsijdDfM =- K*params.dV()*delta_ij;
-                if ( s_eq_prime > 1e-12) {
-                    dsijdDfM -= 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2;
-                    sigma_2 -= (2*G*RA*nij2 + K*params.dV()*delta_ij)*DfM;
-                }
                 tr_func = transformation_function(sigma_2, temp, params, fsb2, DL);
                 h = 1 - tr_func - (state.fM() + DfM);
                 Vector6 s = deviator(sigma_2);
@@ -213,7 +213,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             if (plastic && phase_transformations) {
                 std::cout << "Combined" << std::endl;
                 h = 1 - tr_func - (state.fM() + DfM);
-                Vector6 dsigmaijdDL = -2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
+                Vector6 dsigmaijdDL = -2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2 + dsijdDfM*c;
                 dhdDL = double_contract(bij, dsigmaijdDL) + c;
                 double detJ = dfdDL*dhdDfM - dfdDfM*dhdDL;
                 dDL = (dhdDfM*-f - dfdDfM*-h)/detJ;
