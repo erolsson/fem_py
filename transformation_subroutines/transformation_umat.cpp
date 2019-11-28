@@ -219,12 +219,14 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 dDL = (dhdDfM*-f - dfdDfM*-h)/detJ;
                 dDfM = (-dhdDL*-f + dfdDL*-h)/detJ;
                 if (dDL + DL < 0) {
+                    std::cout << "Strange plastic" << std::endl;
                     dDL = 0;
                     DL = 0;
                     dDfM = -h/dhdDfM;
                 }
 
                 if (dDfM + DfM + c*DL < 0) {
+                    std::cout << "Strange trans" << std::endl;
                     dDfM = 0;
                     DfM_stress = 0;
                     dDL = -f/dfdDL;
