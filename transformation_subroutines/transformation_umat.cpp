@@ -60,10 +60,10 @@ double ms_strain(const TransformationMaterialParameters& params, double fsb) {
 
 
 double transformation_function(const Eigen::Matrix<double, 6, 1>& stress, double T,
-                               const TransformationMaterialParameters& params, double fsb) {
+                               const TransformationMaterialParameters& params, double fsb, double DL) {
     double f = stress_temperature_transformation(stress, params, T);
     std::cout << "f: " << f << " ms_strain: " << ms_strain(params, fsb) << std::endl;
-    return exp(-f - ms_strain(params, fsb));
+    return exp(-f - ms_strain(params, fsb)*static_cast<int>(DL > 0));
 }
 
 
@@ -101,7 +101,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         stilde -= state.total_back_stress();
     }
     bool plastic = params.plastic() && yield_function(sigma_t, state.total_back_stress(), sy, params) > 0;
-    bool phase_transformations = 1 - transformation_function(sigma_t, temp, params, state.fsb()) - state.fM() >= 0;
+    bool phase_transformations = 1 - transformation_function(sigma_t, temp, params, state.fsb(), 0) - state.fM() >= 0;
     bool elastic = !plastic && !phase_transformations;
     if (elastic) {     // Use the trial stress as the stress and the elastic stiffness matrix as the tangent
         D_alg = Del;
@@ -192,7 +192,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     dsijdDfM -= 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2;
                     sigma_2 -= (2*G*RA*nij2 + K*params.dV()*delta_ij)*DfM;
                 }
-                tr_func = transformation_function(sigma_2, temp, params, fsb2);
+                tr_func = transformation_function(sigma_2, temp, params, fsb2, DL);
                 h = 1 - tr_func - (state.fM() + DfM);
                 Vector6 s = deviator(sigma_2);
 

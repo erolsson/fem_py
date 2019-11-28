@@ -82,7 +82,10 @@ if __name__ == '__main__':
     a = par[0]/k
     Mss = -(np.log(1-0.78) + 0*3.5*0.78**4)/k - Ms - a*850 + 22
     print(k, a, Mss)
-
+    B = k*(Ms + a*np.array([1150, 1350]) + Mss - np.array([75, 100]))
+    print(B)
+    print (1 - np.exp(-B))
+    print(((-np.log(1-0.78) - B)/3.05)**0.25)
     for experiment in experiments:
         y = k*(Ms + a*experiment.stress_strain[:, 1] + Mss - experiment.temperature)
         plt.figure(2)
@@ -90,6 +93,11 @@ if __name__ == '__main__':
         plt.figure(1)
         fM = 1 - np.exp(-y)
         plt.plot(experiment.stress_strain[:, 0], fM, '--' + experiment.color)
+
+        plt.figure(3)
+        plt.plot(experiment.stress_strain[:, 1], experiment.stress_strain[:, 0] - experiment.stress_strain[:, 1]/200.5e3,
+                 experiment.color)
+
 
     plt.figure(1)
     plt.xlim(0, 0.015)
