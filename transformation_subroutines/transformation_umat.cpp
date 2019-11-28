@@ -223,7 +223,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     dDfM = -h/dhdDfM;
                 }
 
-                if (dDfM + DfM < 0) {
+                if (dDfM + DfM + c*DL < 0) {
                     dDfM = 0;
                     DfM_stress = 0;
                     dDL = -f/dfdDL;
