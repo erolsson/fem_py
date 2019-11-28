@@ -148,7 +148,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         while (residual > 1e-15) {
             ++iter;
             sigma_2 = sigma_t;
-
+            DfM = DfM_stress + c*DL;
             double dDL = 0;
             double dDfM = 0;
             B = 1 + 3*G*params.R2()*DfM/params.sy0A();
@@ -156,8 +156,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             double I1 = sigma_t[0] + sigma_t[1] + sigma_t[2] - 3*K*params.dV()*DfM;
             double dfsbdL = params.alpha()/(1+params.alpha()*DL)*(1 - fsb2);
             c = params.beta()*tr_func*params.n()*pow(fsb2, params.n() - 1)*dfsbdL;
-            std::cout << "cDL: " << c*DL << std::endl;
-            DfM = DfM_stress + c*DL;
+            h = 1 - tr_func - (state.fM() + DfM);
+
             dfdDfM = -3*G*RA/B - params.a()*K*params.dV() - (params.sy0M() - params.sy0A());
             RA = params.R1() + params.R2()*s_eq_2/params.sy0A();
             Vector6 dsijdDfM = -K*params.dV()*delta_ij;
@@ -193,7 +193,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             }
             if (phase_transformations) {
                 tr_func = transformation_function(sigma_2, temp, params, fsb2, DL);
-                h = 1 - tr_func - (state.fM() + DfM);
                 Vector6 s = deviator(sigma_2);
 
                 double J2 = 0.5*double_contract(s, s);
@@ -210,7 +209,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             nnt = nij2*nij2.transpose();
             Aijkl = J - 2./3*nnt;
             if (plastic && phase_transformations) {
-                h = 1 - tr_func - (state.fM() + DfM);
                 Vector6 dsigmaijdDL = -2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2 + dsijdDfM*c;
                 dhdDL = double_contract(bij, dsigmaijdDL) - c;
                 double detJ = dfdDL*dhdDfM - dfdDfM*dhdDL;
