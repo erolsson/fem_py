@@ -41,7 +41,7 @@ extern "C" void sdvini_(double* statev, const double* coords, const int& nstatev
     std::pair<unsigned, unsigned> point_key(user_elem_number, npt);
     double martensite = 1 - austenite[point_key];
     for (unsigned i = 0; i != nstatev; ++i) {
-        if (i == 1|| i ==2)  {
+        if (i == 1)  {
             // Martensite state var
             statev[i] = martensite;
         }
