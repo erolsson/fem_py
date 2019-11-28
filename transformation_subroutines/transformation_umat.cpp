@@ -237,7 +237,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             }
             DL += dDL;
             DfM_stress += dDfM;
-            DfM = DfM_stress + c*DL;
+            DfM += dDfM + c*dDL;
             residual = abs(dDL) + abs(dDfM);
             if (iter > 10) {
                 pnewdt = 0.25;
