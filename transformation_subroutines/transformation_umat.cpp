@@ -125,12 +125,12 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         double dhdDL = 0;
         double dhdDfM = 0;
 
+        double c = 0;
+
         // Effective stress and its derivatives
         double s_eq_2 = sqrt(1.5*double_contract(stilde, stilde));
         double ds_eq_2_dDL = 0;
         double ds_eq_2_dfM = 0;
-
-        double dMepdDL = 0;
 
         double dR2dDL = 0;
         double RA = 0;
@@ -211,11 +211,12 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             Aijkl = J - 2./3*nnt;
             if (plastic && phase_transformations) {
                 double dfsbdL = params.alpha()/(1+params.alpha()*DL)*(1 - fsb2);
-                dMepdDL = -params.beta()*params.n()*pow(fsb2, params.n() - 1)*dfsbdL;
+
+                c = params.beta()*tr_func*params.n()*pow(fsb2, params.n() - 1)*dfsbdL;
 
                 dfdDfM = -3*G*RA/B - params.a()*K*params.dV() - (params.sy0M() - params.sy0A());
                 Vector6 dsigmaijdDL = -2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
-                dhdDL = double_contract(bij, dsigmaijdDL) + tr_func*dMepdDL;
+                dhdDL = double_contract(bij, dsigmaijdDL) + c;
                 double detJ = dfdDL*dhdDfM - dfdDfM*dhdDL;
                 dDL = (dhdDfM*-f - dfdDfM*-h)/detJ;
                 dDfM = (-dhdDL*-f + dfdDL*-h)/detJ;
@@ -264,7 +265,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         if (s_eq_prime > 0) {
             D_alg -= 6*G*G*(DL + RA*DfM)/s_eq_prime*Aijkl;
         }
-        double A = dR2dDL - tr_func*dMepdDL*dfdDfM -  ds_eq_2_dDL;
+        double A = dR2dDL - c*dfdDfM -  ds_eq_2_dDL;
         Vector6 Lekl = (2*G/B*nij2 + params.a()*K*delta_ij)/A;
 
         if (DL > 0) {
@@ -276,9 +277,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             Matrix6x6 Bijkl = I;
             Vector6 Fskl = bij;
             if (DL > 0) {
-                Fskl -= tr_func*dMepdDL/A*dfdDfM*bij;
+                Fskl += c/A*dfdDfM*bij;
                 Vector6 Lskl = 1/A*dfdDfM*bij;
-                Vector6 Fekl = -tr_func*dMepdDL/A/B*2*G*nij2;
+                Vector6 Fekl = c/A/B*2*G*nij2;
                 D_alg -= 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2*Fekl.transpose()
                         - K*params.dV()*delta_ij*Fekl.transpose();
                 Bijkl += 2*G*(1+DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2*Lskl.transpose();
