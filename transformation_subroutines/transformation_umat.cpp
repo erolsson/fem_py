@@ -54,16 +54,11 @@ double stress_temperature_transformation(const Eigen::Matrix<double, 6, 1>& stre
     return f;
 }
 
-double ms_strain(const TransformationMaterialParameters& params, double fsb) {
-    return params.beta()*pow(fsb, params.n());
-}
-
-
 double transformation_function(const Eigen::Matrix<double, 6, 1>& stress, double T,
                                const TransformationMaterialParameters& params, double fsb, double DL) {
     double f = stress_temperature_transformation(stress, params, T);
-    std::cout << "f: " << f << " ms_strain: " << ms_strain(params, fsb) << std::endl;
-    return exp(-f - ms_strain(params, fsb)*static_cast<int>(DL > 0));
+    std::cout << "f: " << f << " ms_strain: " << std::endl;
+    return exp(-f);
 }
 
 
@@ -113,6 +108,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
         double DL = 0;
         double DfM = 0;
+        double DfM_stress = 0;
 
         double f = 0;
         double h = 0;
@@ -160,6 +156,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             s_eq_2 = (s_eq_prime - 3*G*(DL + params.R1()*DfM))/B;
             double I1 = sigma_t[0] + sigma_t[1] + sigma_t[2] - 3*K*params.dV()*DfM;
             if (plastic) {
+                DfM = DfM_stress + c*DL;
                 dsij_prime_dDL = Vector6::Zero();
                 ds_eq_2_dDL = -3*G;
                 double sy0 = params.sy0M()*(state.fM() + DfM) + params.sy0A()*(1 - (state.fM() + DfM));
@@ -211,9 +208,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             Aijkl = J - 2./3*nnt;
             if (plastic && phase_transformations) {
                 double dfsbdL = params.alpha()/(1+params.alpha()*DL)*(1 - fsb2);
-
                 c = params.beta()*tr_func*params.n()*pow(fsb2, params.n() - 1)*dfsbdL;
-
+                h = 1 - tr_func - (state.fM() + DfM_stress + c*DL);
                 dfdDfM = -3*G*RA/B - params.a()*K*params.dV() - (params.sy0M() - params.sy0A());
                 Vector6 dsigmaijdDL = -2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
                 dhdDL = double_contract(bij, dsigmaijdDL) + c;
@@ -239,7 +235,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 dDfM = -h/dhdDfM;
             }
             DL += dDL;
-            DfM += dDfM;
+            DfM_stress += dDfM;
             residual = abs(dDL) + abs(dDfM);
             if (iter > 10) {
                 pnewdt = 0.25;
@@ -248,7 +244,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         }
         // Updating state variables
         state.ep_eff() += DL;
-        state.fM() += DfM;
+        state.fM() += DfM_stress + c*DL;
         state.R() = R2;
         state.fsb() = fsb2;
         stress_vec = sigma_2;
