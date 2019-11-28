@@ -159,6 +159,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             c = params.beta()*tr_func*params.n()*pow(fsb2, params.n() - 1)*dfsbdL;
             std::cout << "cDL: " << c*DL << std::endl;
             DfM = DfM_stress + c*DL;
+            dfdDfM = -3*G*RA/B - params.a()*K*params.dV() - (params.sy0M() - params.sy0A());
             if (plastic) {
                 dsij_prime_dDL = Vector6::Zero();
                 ds_eq_2_dDL = -3*G;
@@ -180,7 +181,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 ds_eq_2_dDL += double_contract(nij2, dsij_prime_dDL);
                 ds_eq_2_dDL /= B;
                 dR2dDL = params.b()/(1 + params.b()*DL)*(params.Q() - R2);
-                dfdDL = ds_eq_2_dDL - dR2dDL;
+                dfdDL = ds_eq_2_dDL - dR2dDL + dfdDfM*c;
                 f = s_eq_2 + params.a()*I1 - sy_2;
                 sigma_2 -= 2*G*DL*nij2;
                 fsb2  = (state.fsb() + params.alpha()*DL)/(1+params.alpha()*DL);
@@ -211,8 +212,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             Aijkl = J - 2./3*nnt;
             if (plastic && phase_transformations) {
                 std::cout << "Combined" << std::endl;
-                h = 1 - tr_func - (state.fM() + DfM_stress + c*DL);
-                dfdDfM = -3*G*RA/B - params.a()*K*params.dV() - (params.sy0M() - params.sy0A());
+                h = 1 - tr_func - (state.fM() + DfM);
                 Vector6 dsigmaijdDL = -2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
                 dhdDL = double_contract(bij, dsigmaijdDL) + c;
                 double detJ = dfdDL*dhdDfM - dfdDfM*dhdDL;
