@@ -218,6 +218,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 double detJ = dfdDL*dhdDfM - dfdDfM*dhdDL;
                 dDL = (dhdDfM*-f - dfdDfM*-h)/detJ;
                 dDfM = (-dhdDL*-f + dfdDL*-h)/detJ;
+                std::cout << "f: " << f << "  h:" << h << std::endl;
                 if (dDL + DL < 0) {
                     std::cout << "Strange plastic" << std::endl;
                     dDL = 0;
@@ -231,7 +232,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     DfM_stress = 0;
                     dDL = -f/dfdDL;
                 }
-
 
             } else if (plastic) {
                 dDL = -f/dfdDL;
