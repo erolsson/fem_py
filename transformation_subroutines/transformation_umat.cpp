@@ -151,6 +151,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             fsb2  = (state.fsb() + params.alpha()*DL)/(1+params.alpha()*DL);
             double dfsbdL = params.alpha()/(1+params.alpha()*DL)*(1 - fsb2);
             c = params.beta()*tr_func*params.n()*pow(fsb2, params.n() - 1)*dfsbdL;
+            tr_func = transformation_function(sigma_2, temp, params, fsb2, DL);
+
             DfM = DfM_stress + c*DL;
             double dDL = 0;
             double dDfM = 0;
@@ -185,6 +187,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 f = s_eq_2 + params.a()*I1 - sy_2;
                 sigma_2 -= 2*G*DL*nij2;
             }
+
             dfdDfM = -3*G*RA/B - params.a()*K*params.dV() - (params.sy0M() - params.sy0A());
             Vector6 dsijdDfM = -K*params.dV()*delta_ij;
             RA = params.R1() + params.R2()*s_eq_2/params.sy0A();
@@ -193,7 +196,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 sigma_2 -= (2*G*RA*nij2 + K*params.dV()*delta_ij)*DfM;
             }
             if (phase_transformations) {
-                tr_func = transformation_function(sigma_2, temp, params, fsb2, DL);
+
                 Vector6 s = deviator(sigma_2);
 
                 double J2 = 0.5*double_contract(s, s);
