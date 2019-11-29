@@ -230,9 +230,12 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     dDL = -f/dfdDL;
                 }
 
-            } else if (plastic) {
+            }
+            else if (plastic) {
                 dDL = -f/dfdDL;
-            } else {  // Only phase transformations
+            }
+            else {  // Only phase transformations
+                std::cout << "Only phase trans" << std::endl;
                 dDfM = -h/dhdDfM;
             }
             DL += dDL;
@@ -243,8 +246,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 pnewdt = 0.25;
                 return;
             }
-            std::cout << "Gp interations: " << iter << std::endl;
+
         }
+        std::cout << "Gp interations: " << iter << std::endl;
         // Updating state variables
         state.ep_eff() += DL;
         state.fM() += DfM;
