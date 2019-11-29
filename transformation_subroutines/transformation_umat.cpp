@@ -158,8 +158,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             B = 1 + 3*G*params.R2()*DfM/params.sy0A();
             // s_eq_2 = (s_eq_prime - 3*G*(DL + params.R1()*DfM))/B;
             double I1 = sigma_t[0] + sigma_t[1] + sigma_t[2] - 3*K*params.dV()*DfM;
-            h = 1 - tr_func - (state.fM() + DfM);
-
 
             if (plastic) {
                 dsij_prime_dDL = Vector6::Zero();
@@ -199,6 +197,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             double dfsbdL = params.alpha()/(1+params.alpha()*DL)*(1 - fsb2);
             c = params.beta()*tr_func*params.n()*pow(fsb2, params.n() - 1)*dfsbdL;
             tr_func = transformation_function(sigma_2, temp, params, fsb2, DL);
+            h = 1 - tr_func - (state.fM() + DfM);
             if (phase_transformations) {
 
                 Vector6 s = deviator(sigma_2);
