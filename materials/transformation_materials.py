@@ -109,7 +109,7 @@ hazar_et_al = ElasticPlasticTransformMaterial(E=200.5e3, v=0.27, sy0M=1061., sy0
 hazar_et_al.k = 0.01
 hazar_et_al.dV = 0.0371
 hazar_et_al.R1 = 0.02
-hazar_et_al.R2 = 0.
+hazar_et_al.R2 = 0.02
 
 if __name__ == '__main__':
     print(neu_sehitoglu.umat_parameters())

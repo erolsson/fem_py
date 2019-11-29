@@ -98,7 +98,6 @@ if __name__ == '__main__':
         plt.plot(experiment.stress_strain[:, 1], experiment.stress_strain[:, 0] - experiment.stress_strain[:, 1]/200.5e3,
                  experiment.color)
 
-
     plt.figure(1)
     plt.xlim(0, 0.015)
     plt.ylim(0.78, 1.)
