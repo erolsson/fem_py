@@ -150,10 +150,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         while (residual > 1e-15) {
             ++iter;
             sigma_2 = sigma_t;
-            fsb2  = (state.fsb() + params.alpha()*DL)/(1+params.alpha()*DL);
-            double dfsbdL = params.alpha()/(1+params.alpha()*DL)*(1 - fsb2);
-            c = params.beta()*tr_func*params.n()*pow(fsb2, params.n() - 1)*dfsbdL;
-            tr_func = transformation_function(sigma_2, temp, params, fsb2, DL);
+
 
             DfM = DfM_stress + c*DL;
             double dDL = 0;
@@ -192,11 +189,16 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
             dfdDfM = -3*G*RA/B - params.a()*K*params.dV() - (params.sy0M() - params.sy0A());
             Vector6 dsijdDfM = -K*params.dV()*delta_ij;
+            ds_eq_2_dfM = -3*G*RA/B;
             RA = params.R1() + params.R2()*s_eq_2/params.sy0A();
             if ( s_eq_prime > 1e-12) {
                 dsijdDfM -= 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2;
                 sigma_2 -= (2*G*RA*nij2 + K*params.dV()*delta_ij)*DfM;
             }
+            fsb2  = (state.fsb() + params.alpha()*DL)/(1+params.alpha()*DL);
+            double dfsbdL = params.alpha()/(1+params.alpha()*DL)*(1 - fsb2);
+            c = params.beta()*tr_func*params.n()*pow(fsb2, params.n() - 1)*dfsbdL;
+            tr_func = transformation_function(sigma_2, temp, params, fsb2, DL);
             if (phase_transformations) {
 
                 Vector6 s = deviator(sigma_2);
@@ -208,7 +210,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     bij += 1.5*params.a2()*s/sqrt(3*J2) + params.a3()*(contract(s, s) - 2./3*J2*delta_ij);
                 }
                 bij *= tr_func*params.k();
-                ds_eq_2_dfM = -3*G*RA/B;
                 dhdDfM = double_contract(bij, dsijdDfM) - 1;
             }
 
