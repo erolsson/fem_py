@@ -240,7 +240,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 dDL = -f/dfdDL;
             }
             else {  // Only phase transformations
-                std::cout << "Only phase trans" << std::endl;
+                std::cout << "dhdDfM: " << dhdDfM << " h: " << h << std::endl;
                 dDfM = -h/dhdDfM;
             }
             DL += dDL;
@@ -253,6 +253,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             }
 
         }
+        std::cout << "DfM_stress: " << DfM_stress << " DfM: "  << DfM << std::endl;
         std::cout << "Gp interations: " << iter << std::endl;
         // Updating state variables
         state.ep_eff() += DL;
