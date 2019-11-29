@@ -88,7 +88,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     double sy = params.sy0M()*state.fM() + params.sy0A()*(1-state.fM()) + state.R();
 
     Vector6 sigma_t = stress_vec + Del*de;  // Trial stress
-    std::cout << "Trial stress: " << sigma_t.transpose().format(CleanFmt) << std::endl;
     Vector6 sij_t = deviator(sigma_t);
 
     Vector6 stilde = sij_t;
@@ -96,7 +95,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         stilde -= state.total_back_stress();
     }
     bool plastic = params.plastic() && yield_function(sigma_t, state.total_back_stress(), sy, params) > 0;
-    std::cout << "Plastic: " << plastic << std::endl;
     bool phase_transformations = 1 - transformation_function(sigma_t, temp, params, state.fsb(), 0) - state.fM() >= 0;
     bool elastic = !plastic && !phase_transformations;
     if (elastic) {     // Use the trial stress as the stress and the elastic stiffness matrix as the tangent
@@ -220,8 +218,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 double detJ = dfdDL*dhdDfM - dfdDfM*dhdDL;
                 dDL = (dhdDfM*-f - dfdDfM*-h)/detJ;
                 dDfM = (-dhdDL*-f + dfdDL*-h)/detJ;
-                std::cout << "Combined DL: " << DL << " DfM: " << DfM << " DfM_stress" << DfM_stress
-                          << std::endl;
                 if (dDL + DL < 0) {
                     dDL = 0;
                     DL = 0;
@@ -236,11 +232,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
             }
             else if (plastic) {
-                std::cout << "Only plastic" << std::endl;
                 dDL = -f/dfdDL;
             }
             else {  // Only phase transformations
-                std::cout << "dhdDfM: " << dhdDfM << " h: " << h << std::endl;
                 dDfM = -h/dhdDfM;
             }
             DL += dDL;
@@ -253,15 +247,12 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             }
 
         }
-        std::cout << "DfM_stress: " << DfM_stress << " DfM: "  << DfM << std::endl;
-        std::cout << "Gp interations: " << iter << std::endl;
         // Updating state variables
         state.ep_eff() += DL;
         state.fM() += DfM;
         state.R() = R2;
         state.fsb() = fsb2;
         stress_vec = sigma_2;
-        std::cout << "sigma: " << sigma_2.transpose().format(CleanFmt) << std::endl;
 
         if (params.kinematic_hardening()) {
             state.total_back_stress() = Vector6::Zero();
