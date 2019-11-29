@@ -218,6 +218,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 double detJ = dfdDL*dhdDfM - dfdDfM*dhdDL;
                 dDL = (dhdDfM*-f - dfdDfM*-h)/detJ;
                 dDfM = (-dhdDL*-f + dfdDL*-h)/detJ;
+                std::cout << "Combined DL: " << DL << " DfM: " << DfM << std::endl << "DfM_stress" << DfM_stress
+                          << std::endl;
                 if (dDL + DL < 0) {
                     dDL = 0;
                     DL = 0;
@@ -232,6 +234,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
             }
             else if (plastic) {
+                std::cout << "Only plastic" << std::endl;
                 dDL = -f/dfdDL;
             }
             else {  // Only phase transformations
