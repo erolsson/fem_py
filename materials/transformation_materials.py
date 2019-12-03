@@ -86,6 +86,9 @@ class ElasticPlasticTransformMaterial:
                                                           self.a1, self.a2, self.a3, self.beta, self.alpha, self.n,
                                                           self.sde]
 
+    def sy0(self, fm):
+        return fm*self.sy0M + (1 - fm)*self.sy0A
+
 
 test_material = ElasticPlasticTransformMaterial(E=200e3, v=0.3, sy0M=1000000., sy0A=485, Q=0*180., b=100.,
                                                 Cm=np.array([135e3, 700e3, 50e3]),
@@ -105,11 +108,11 @@ hazar_et_al = ElasticPlasticTransformMaterial(E=200.5e3, v=0.27, sy0M=1061., sy0
                                               gamma_m=np.array([950., 500., 50.]),
                                               a=0.1206*np.array([1., 0., 0.]),
                                               Ms=220, name='SKF', Mss=-149.1, fM=0.78,
-                                              beta=3.05, alpha=400., n=4.5, sde=0.04)
+                                              beta=30.5, alpha=146., n=4, sde=0.04)
 hazar_et_al.k = 0.01
 hazar_et_al.dV = 0.0371
-hazar_et_al.R1 = 0.015
-hazar_et_al.R2 = 0.00623
+hazar_et_al.R1 = -0.07032324
+hazar_et_al.R2 = .06025889
 
 if __name__ == '__main__':
     print(neu_sehitoglu.umat_parameters())

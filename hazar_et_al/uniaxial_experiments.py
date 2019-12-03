@@ -3,7 +3,11 @@ import os
 
 import numpy as np
 
+from scipy.optimize import fmin
+
 import matplotlib.pyplot as plt
+
+from materials.transformation_materials import hazar_et_al
 
 data_directory = os.path.expanduser('~/phase_transformations/hazar_et_al/')
 
@@ -43,62 +47,96 @@ class Experiment:
 experiments = [Experiment(temperature=22, color='r'), Experiment(temperature=75, color='b'),
                Experiment(temperature=100, color='g'), Experiment(temperature=150, color='k')]
 
+
+def uniaxial_stress_strain_curve_plastic(material, epl):
+    data = np.zeros((epl.shape[0]+1, 2))
+    s = 0*epl + material.sy0(0.78)
+    s += material.Q*(1-np.exp(-material.b*epl))
+    for C, g in zip(material.Cm, material.gamma_m):
+        s += 2./3*C/g*(1-np.exp(-g*epl))
+    s /= (1. + material.sde)
+    e = s/material.E + epl
+    data[1:, 0] = e
+    data[1:, 1] = s
+    return data
+
+
+def strain_transformation(par, epl):
+    par = np.abs(par)
+    fsb = 1 - (1 - par[0])*np.exp(-par[1]*epl)
+    c = (0.78 - 1)/np.exp(-par[2]*par[0]**4.)
+    return 1 + c*np.exp(-par[2]*fsb**4.)
+
+
+def platic_trans_residual(par, *data):
+    epl, fm = data
+    fm_model = strain_transformation(par, epl)
+    return np.sum((fm - fm_model)**2)
+
+
+ms_start = {22.: 850, 75: 1000, 100: 1290}
+
+
 if __name__ == '__main__':
+    plt.figure(0)
+    plastic_strain = np.linspace(0, 0.01, 1000)
+    transformation_free_data = uniaxial_stress_strain_curve_plastic(hazar_et_al, plastic_strain)
+    plt.plot(transformation_free_data[:, 0], transformation_free_data[:, 1])
+    all_epl = []
+    all_fMe = []
     for experiment in experiments:
         plt.figure(0)
         experiment.plot_stress_strain()
         plt.figure(1)
         experiment.plot_transformation()
-
-    par = None
-    k = 0
-    a = 0
-    Ms = 220
-    Mss = 0
-
-    for experiment in experiments[0:2]:
-        temp = experiment.temperature
-        print(temp)
-        if temp in [22., 75.]:
-            trans_stress = np.zeros(experiment.transformation_data.shape[0] + 1)
-            y = 0*trans_stress
-            trans_stress[1:] = np.interp(experiment.transformation_data[:, 0], experiment.stress_strain[:, 0],
-                                         experiment.stress_strain[:, 1])
-            y[1:] = -np.log(1 - experiment.transformation_data[:, 1])
-            y[0] = -np.log(1 - 0.78)
-            if temp == 22.:
-                trans_stress[0] = 850
-            else:
-                trans_stress[0] = 1160
-
-            plt.figure(2)
-            print(trans_stress)
-
-            plt.plot(trans_stress, y, 'x' + experiment.color, ms=12, mew=2)
-            if temp == 22.:
-                par = np.polyfit(trans_stress, y, 1)
-
-    k = 0.01
-    a = par[0]/k
-    Mss = -(np.log(1-0.78) + 0*3.5*0.78**4)/k - Ms - a*850 + 22
-    print(k, a, Mss)
-    B = k*(Ms + a*np.array([1150, 1350]) + Mss - np.array([75, 100]))
-    print(B)
-    print (1 - np.exp(-B))
-    print(((-np.log(1-0.78) - B)/3.05)**0.25)
-    for experiment in experiments:
-        y = k*(Ms + a*experiment.stress_strain[:, 1] + Mss - experiment.temperature)
+        e = experiment.transformation_data[:, 0]
+        s = np.interp(e, experiment.stress_strain[:, 0], experiment.stress_strain[:, 1])
+        fM = experiment.transformation_data[:, 1]
         plt.figure(2)
-        plt.plot(experiment.stress_strain[:, 1], y, experiment.color)
-        plt.figure(1)
-        fM = 1 - np.exp(-y)
-        plt.plot(experiment.stress_strain[:, 0], fM, '--' + experiment.color)
+        if experiment.temperature in ms_start:
+            s = np.hstack(([ms_start[experiment.temperature]], s))
+            fM = np.hstack(([0.78], fM))
+        plt.plot(s, fM, 'x' + experiment.color, ms=12, mew=2)
 
-        plt.figure(3)
-        plt.plot(experiment.stress_strain[:, 1], experiment.stress_strain[:, 0] - experiment.stress_strain[:, 1]/200.5e3,
-                 experiment.color)
-        
-    plt.figure(1)
-    plt.xlim(0, 0.015)
-    plt.ylim(0.78, 1.)
+        k = 0.01
+        Ms = 220
+        a = 0.0677272727272727
+        Mss = -104.13818181818179
+        fMsigma = 1 - np.exp(-k*(Ms + a*experiment.stress_strain[:, 1] + Mss - experiment.temperature))
+        fMsigma[fMsigma <= 0.78] = 0.78
+        plt.plot(experiment.stress_strain[:, 1], fMsigma, '--' + experiment.color)
+
+        if experiment.temperature == 22.:
+            e_tr_free = np.interp(experiment.stress_strain[:, 1],
+                                  transformation_free_data[:, 0],
+                                  transformation_free_data[:, 1])
+            e_tr = experiment.stress_strain[:, 0] - e_tr_free
+            plt.figure(3)
+            x = experiment.stress_strain[1:, 1]/hazar_et_al.sy0A
+            y = np.diff(e_tr)/np.diff(fMsigma) - hazar_et_al.dV/3
+            x_max = 3.
+            x_min = 2.1
+            print(x_max)
+            par = np.polyfit(x[np.logical_and(x > x_min, x < x_max)], y[np.logical_and(x > x_min, x < x_max)], 1)
+            plt.plot(x, par[0]*x + par[1])
+            print(par)
+            plt.plot(x, y, '-*')
+
+        fMep = fM[fM > 0.78] - np.interp(s[fM > 0.78], experiment.stress_strain[:, 1], fMsigma)
+        fMep[fMep < 0] = 0
+        e = np.interp(s[fM > 0.78], transformation_free_data[:, 1], transformation_free_data[:, 0])
+        epl = e - s[fM > 0.78]/hazar_et_al.E
+        plt.figure(5)
+        plt.plot(epl, fMep + 0.78, 'x' + experiment.color, ms=12, mew=2)
+        all_epl += epl.tolist()
+        all_fMe += fMep.tolist()
+    all_epl = np.array(all_epl)
+    all_fMe = np.array(all_fMe) + 0.78
+    par = fmin(platic_trans_residual, x0=[0.8, 10, 10], args=(all_epl, all_fMe), maxfun=1e6, maxiter=1e6)
+    plt.figure(5)
+    epl = np.linspace(0, 0.002, 1000)
+    # par = [0.5, 4., 3.]
+    print(par)
+    plt.plot(epl, strain_transformation(par, epl))
+    plt.plot()
     plt.show()
