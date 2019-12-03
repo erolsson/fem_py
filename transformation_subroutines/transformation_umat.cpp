@@ -155,7 +155,11 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             B = 1 + 3*G*params.R2()*DfM/params.sy0A();
             // s_eq_2 = (s_eq_prime - 3*G*(DL + params.R1()*DfM))/B;
             double I1 = sigma_t[0] + sigma_t[1] + sigma_t[2] - 3*K*params.dV()*DfM;
-
+            fsb2  = (state.fsb() + params.alpha()*DL)/(1+params.alpha()*DL);
+            double dfsbdL = params.alpha()/(1+params.alpha()*DL)*(1 - fsb2);
+            c = params.beta()*tr_func*params.n()*pow(fsb2, params.n() - 1)*dfsbdL;
+            std::cout << "c: " << c << std::endl;
+            DfM = DfM_stress + c*DL;
             if (plastic) {
                 dsij_prime_dDL = Vector6::Zero();
                 ds_eq_2_dDL = -3*G;
@@ -190,11 +194,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 dsijdDfM -= 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2;
                 sigma_2 -= (2*G*RA*nij2 + K*params.dV()*delta_ij)*DfM;
             }
-            fsb2  = (state.fsb() + params.alpha()*DL)/(1+params.alpha()*DL);
-            double dfsbdL = params.alpha()/(1+params.alpha()*DL)*(1 - fsb2);
-            c = params.beta()*tr_func*params.n()*pow(fsb2, params.n() - 1)*dfsbdL;
-            std::cout << "c: " << c << std::endl;
-            DfM = DfM_stress + c*DL;
+
             tr_func = transformation_function(sigma_2, temp, params, fsb2, DL);
             h = 1 - tr_func - (state.fM() + DfM);
             if (phase_transformations) {
