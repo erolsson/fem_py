@@ -108,7 +108,7 @@ hazar_et_al = ElasticPlasticTransformMaterial(E=200.5e3, v=0.27, sy0M=1061., sy0
                                               gamma_m=np.array([950., 500., 50.]),
                                               a=0.1206*np.array([1., 0., 0.]),
                                               Ms=220, name='SKF', Mss=-149.1, fM=0.78,
-                                              beta=30.5, alpha=146., n=4, sde=0.04)
+                                              beta=30.5, alpha=146., n=4., sde=0.04)
 hazar_et_al.k = 0.01
 hazar_et_al.dV = 0.0371
 hazar_et_al.R1 = -0.07032324

@@ -194,6 +194,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             fsb2  = (state.fsb() + params.alpha()*DL)/(1+params.alpha()*DL);
             double dfsbdL = params.alpha()/(1+params.alpha()*DL)*(1 - fsb2);
             c = params.beta()*tr_func*params.n()*pow(fsb2, params.n() - 1)*dfsbdL;
+            std::cout << "c: " << c << std::endl;
             tr_func = transformation_function(sigma_2, temp, params, fsb2, DL);
             h = 1 - tr_func - (state.fM() + DfM);
             if (phase_transformations) {
