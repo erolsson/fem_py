@@ -106,8 +106,8 @@ neu_sehitoglu = ElasticPlasticTransformMaterial(E=203.3e3, v=0.3, sy0M=813., sy0
 hazar_et_al = ElasticPlasticTransformMaterial(E=200.5e3, v=0.27, sy0M=1061., sy0A=420., Q=180., b=100.,
                                               Cm=np.array([135e3, 700e3, 50e3]),
                                               gamma_m=np.array([950., 500., 50.]),
-                                              a=0.1206*np.array([1., 0., 0.]),
-                                              Ms=220, name='SKF', Mss=-149.1, fM=0.78,
+                                              a=0.0677272727272727*np.array([1., 0., 0.]),
+                                              Ms=220, name='SKF', Mss=-104.13818181818179, fM=0.78,
                                               beta=30.5, alpha=146., n=4., sde=0.04)
 hazar_et_al.k = 0.01
 hazar_et_al.dV = 0.0371
