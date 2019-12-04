@@ -4,6 +4,7 @@
 
 #include "transformation_umat.h"
 
+#include <cmath>
 #include <iostream>
 
 #include "Eigen/Dense"
@@ -11,14 +12,18 @@
 #include "simulation_parameters.h"
 #include "stress_functions.h"
 
+const double pi = 3.14159265359;
+
 class State {
 public:
     using Vector6 = Eigen::Matrix<double, 6, 1>;
     explicit State(double* data, unsigned back_stresses) : data_(data), back_stresses_(back_stresses) {}
     double& ep_eff() { return data_ [0]; }
     double& fM() { return  data_[1]; }
-    double& fsb() { return data_[2]; }
-    double& R() { return data_ [3]; }
+    double& fM_stress() { return data_[2]; }
+    double& fM_strain() { return data_[3]; }
+    double& fsb() { return data_[4]; }
+    double& R() { return data_ [5]; }
 
 
     Eigen::Map<Vector6> back_stress_vector(unsigned n) {
@@ -47,19 +52,17 @@ double stress_temperature_transformation(const Eigen::Matrix<double, 6, 1>& stre
     double m_stress = params.a1()*(stress[0] + stress[1] + stress[2]);   // Contribution from hydrostatic stress
     m_stress += params.a2()*von_Mises(stress);
     m_stress += params.a3()*vector_det(s_dev);
-    double f = params.k()*(params.Ms() + m_stress + params.Mss() - T);
-    if (f < 0) {
-        return 0;
-    }
-    return f;
+    return params.k()*(params.Ms() + m_stress + params.Mss() - T);
 }
 
-double transformation_function(const Eigen::Matrix<double, 6, 1>& stress, double T,
-                               const TransformationMaterialParameters& params, double fsb, double DL) {
-    double f = stress_temperature_transformation(stress, params, T);
-    return exp(-f);
+double stress_transformation_function(const Eigen::Matrix<double, 6, 1>& stress, double T,
+                                      const TransformationMaterialParameters& params, double fM) {
+    return 1 - exp(-stress_temperature_transformation(stress, params, T)) - fM;
 }
 
+double normal_pdf(double x) {
+    return exp(-0.5*x*x)/sqrt(2*pi);
+}
 
 extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *sse, double *spd, double *scd,
         double *rpl, double *ddsddt, double *drplde, double *drpldt, double *stran, double *dstran, double* time,
@@ -90,13 +93,14 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     Vector6 sigma_t = stress_vec + Del*de;  // Trial stress
     Vector6 sij_t = deviator(sigma_t);
 
-    Vector6 stilde = sij_t;
+    Vector6 stilde2 = sij_t;
     if (params.kinematic_hardening()) {
-        stilde -= state.total_back_stress();
+        stilde2 -= state.total_back_stress();
     }
     bool plastic = params.plastic() && yield_function(sigma_t, state.total_back_stress(), sy, params) > 0;
-    bool phase_transformations = 1 - transformation_function(sigma_t, temp, params, state.fsb(), 0) - state.fM() >= 0;
-    bool elastic = !plastic && !phase_transformations;
+    bool stress_transformations = stress_transformation_function(sigma_t, temp, params, state.fM()) >= 0;
+    bool strain_transformations = params.beta() > 0 && plastic;
+    bool elastic = !plastic && !stress_transformations;
     if (elastic) {     // Use the trial stress as the stress and the elastic stiffness matrix as the tangent
         D_alg = Del;
         stress_vec = sigma_t;
@@ -106,24 +110,32 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         Vector6 sigma_2 = sigma_t;
 
         double DL = 0;
-        double DfM = 0;
         double DfM_stress = 0;
+        double DfM_strain = 0;
+
+        double DfM = 0;
 
         double f = 0;
-        double h = 0;
-
-        double tr_func = 0;
-        double fsb2 = state.fsb();
+        double h_stress = 0;
+        double h_strain = 0;
 
         double dfdDL = 0;
         double dfdDfM = 0;
-        double dhdDL = 0;
-        double dhdDfM = 0;
+        double dh_stressDL = 0;
+        double dh_stressDfM = 0;
+
+        double dh_straindDL = 0;
+        double dh_strainDfM = 0;
 
         double c = 0;
 
         // Effective stress and its derivatives
-        double s_eq_2 = sqrt(1.5*double_contract(stilde, stilde));
+        Vector6 s1 = deviator(static_cast<Vector6>(stress_vec));
+        double s_vM_1 = sqrt(1.5*double_contract(s1, s1));
+        double s_eq_2 = sqrt(1.5*double_contract(stilde2, stilde2));
+
+        double I1_1 = stress_vec[0] + stress_vec[1] + stress_vec[2];
+
         double ds_eq_2_dDL = 0;
         double ds_eq_2_dfM = 0;
 
@@ -132,7 +144,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         double s_eq_prime = s_eq_2;
         Matrix6x6 nnt = Matrix6x6::Zero();
         Matrix6x6 Aijkl = Matrix6x6::Zero();
-        Vector6 nij2 = 1.5*stilde;
+        Vector6 nij2 = 1.5*stilde2;
         if (s_eq_2 > 0) {
             nij2 /= s_eq_2;
         }
@@ -147,19 +159,19 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         unsigned iter = 0;
         while (residual > 1e-15) {
             ++iter;
+            DfM = DfM_stress + DfM_strain;
+            double fM2 = state.fM() + DfM;
             sigma_2 = sigma_t;
 
-
             double dDL = 0;
-            double dDfM = 0;
+            double dDfM_stress = 0;
+            double dDfM_strain = 0;
+
             B = 1 + 3*G*params.R2()*DfM/params.sy0A();
             // s_eq_2 = (s_eq_prime - 3*G*(DL + params.R1()*DfM))/B;
-            double I1 = sigma_t[0] + sigma_t[1] + sigma_t[2] - 3*K*params.dV()*DfM;
-            fsb2  = (state.fsb() + params.alpha()*DL)/(1+params.alpha()*DL);
-            double dfsbdL = params.alpha()/(1+params.alpha()*DL)*(1 - fsb2);
-            c = params.beta()*tr_func*params.n()*pow(fsb2, params.n() - 1)*dfsbdL;
-            std::cout << "c: " << c << std::endl;
-            DfM = DfM_stress + c*DL;
+            double I1_2 = sigma_t[0] + sigma_t[1] + sigma_t[2] - 3*K*params.dV()*DfM;
+
+            // Calculates f and the derivative df/dDL,
             if (plastic) {
                 dsij_prime_dDL = Vector6::Zero();
                 ds_eq_2_dDL = -3*G;
@@ -182,66 +194,94 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 ds_eq_2_dDL /= B;
                 dR2dDL = params.b()/(1 + params.b()*DL)*(params.Q() - R2);
                 dfdDL = ds_eq_2_dDL - dR2dDL + dfdDfM*c;
-                f = s_eq_2 + params.a()*I1 - sy_2;
-                sigma_2 -= 2*G*DL*nij2;
+                f = s_eq_2 + params.a()*I1_2 - sy_2;
             }
+            RA = params.R1() + params.R2()*s_eq_2/params.sy0A();
 
             dfdDfM = -3*G*RA/B - params.a()*K*params.dV() - (params.sy0M() - params.sy0A());
             Vector6 dsijdDfM = -K*params.dV()*delta_ij;
             ds_eq_2_dfM = -3*G*RA/B;
-            RA = params.R1() + params.R2()*s_eq_2/params.sy0A();
+
             if ( s_eq_prime > 1e-12) {
                 dsijdDfM -= 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2;
-                sigma_2 -= (2*G*RA*nij2 + K*params.dV()*delta_ij)*DfM;
+                sigma_2 -= 2*G*(DL + RA*DfM)*nij2 + K*params.dV()*delta_ij*DfM;
             }
 
-            tr_func = transformation_function(sigma_2, temp, params, fsb2, DL);
-            h = 1 - tr_func - (state.fM() + DfM);
-            if (phase_transformations) {
+            Vector6 dsijdDL = -2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
 
-                Vector6 s = deviator(sigma_2);
+            // Calculating the von Mises stress at step 2
+            Vector6 s = deviator(sigma_2);
+            double J2 = 0.5*double_contract(s, s);
+            double s_vM_2 = sqrt(3*J2);
+            Vector6 dsvMdsij = Vector6::Zero();
+            if (J2 > 1e-12)
+                dsvMdsij = 1.5*params.a2()*s/sqrt(3*J2);
 
-                double J2 = 0.5*double_contract(s, s);
+            // h_strain and derivatives of h_strain
+            if (plastic) {
+                double DvM = s_vM_2 - s_vM_1;
+                double Sigma = I1_2/s_vM_2;
+                double DSigma = (I1_2 - I1_1)/DvM;
+
+                double dSigmadDL = -Sigma/s_vM_2*double_contract(dsvMdsij, dsijdDL);
+                double dSigmadDfM = 1/s_vM_2*(3*K*params.dV() + Sigma*double_contract(dsvMdsij, dsijdDfM));
+
+                double dDSigmadDL = -DSigma/DvM*double_contract(dsvMdsij, dsijdDL);
+                double dDSigmadDfM = 1/DvM*(3*K*params.dV() + DSigma*double_contract(dsvMdsij, dsijdDfM));
+
+                double Dfsb = (1 + state.fsb())*params.alpha()*DL/(1 + params.alpha()*DL);
+                double fsb2 = state.fsb() + Dfsb;
+                double dfsb2dDL = params.alpha()*(1-state.fsb())/pow(1 + params.alpha()*DL, 2);
+
+                double dcdDL = params.alpha()*params.beta()*pow(fsb2, params.n()-2)*(params.n()*(1-fsb2) - 1)*dfsb2dDL;
+
+                double Gamma = params.g0() - params.g1()*temp/params.Ms() + params.g2()*Sigma;
+                double x = (Gamma - params.g_mean())/params.g_std();
+                double P = 0.5*(1 + erf(x));
+                double As = params.alpha()*params.beta()*(1-fsb2)*pow(fsb2, params.n()-1)*P;
+                double d = normal_pdf(x)/params.g_std();
+                double Bs = params.g2()*params.beta()*pow(fsb2, params.n())*d*(DSigma > 0);
+                double dAsddL = dcdDL*P + params.g2()*d*dSigmadDL;
+                double dAsdfM = params.g2()*d*dSigmadDfM;
+
+                double dBsdDL = params.g2()*params.beta()*d*pow(fsb2, params.n()-1)*(params.n()*dfsb2dDL
+                                   - params.g2()*x/params.g_std()*dSigmadDL)*(DSigma > 0);
+                double dBsdfM = params.g2()*params.beta()*pow(fsb2,
+                        params.n())*d*x/params.g_std()*params.g2()*dSigmadDfM*(DSigma > 0);
+
+                h_strain = (1 - fM2)*(As*DL + Bs*DSigma) - DfM_strain;
+                dh_straindDL = (1 - fM2)*(As + DL*dAsddL + Bs*dDSigmadDL + DSigma*dBsdDL);
+                dh_strainDfM = -(As*DL + Bs*DSigma) + (1 - fM2)*(DL*dAsdfM + Bs*dDSigmadDfM + DSigma*dBsdfM);
+            }
+
+            if (stress_transformations) {
+                h_stress = stress_transformation_function(sigma_2, temp, params, fM2);
+
                 bij = params.a1()*delta_ij;
 
                 if (J2 > 1e-12) {
                     bij += 1.5*params.a2()*s/sqrt(3*J2) + params.a3()*(contract(s, s) - 2./3*J2*delta_ij);
                 }
-                bij *= tr_func*params.k();
-                dhdDfM = double_contract(bij, dsijdDfM) - 1;
+                double exp_fun = 1 - (h_stress + fM2);
+                bij *= exp_fun*params.k();
+                dh_stressDfM = double_contract(bij, dsijdDfM) - 1;
             }
 
-            nnt = nij2*nij2.transpose();
-            Aijkl = J - 2./3*nnt;
-            if (plastic && phase_transformations) {
-                Vector6 dsigmaijdDL = -2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2 + dsijdDfM*c;
-                dhdDL = double_contract(bij, dsigmaijdDL) - c;
-                double detJ = dfdDL*dhdDfM - dfdDfM*dhdDL;
-                dDL = (dhdDfM*-f - dfdDfM*-h)/detJ;
-                dDfM = (-dhdDL*-f + dfdDL*-h)/detJ;
-                if (dDL + DL < 0) {
-                    dDL = 0;
-                    DL = 0;
-                    dDfM = -h/dhdDfM;
-                }
+            if ( !plastic ) {
+                dDfM_stress = - h_stress/dh_stressDfM;
+            }
 
-                if (dDfM + DfM + c*DL < 0) {
-                    dDfM = 0;
-                    DfM_stress = 0;
+            else if ( !stress_transformations) {
+                if ( !strain_transformations) {
                     dDL = -f/dfdDL;
                 }
+                else {
+                    double det = dfdDL*(dh_stressDfM -1) - dfdDfM*dh_straindDL;
+                }
+            }
 
-            }
-            else if (plastic) {
-                dDL = -f/dfdDL;
-            }
-            else {  // Only phase transformations
-                dDfM = -h/dhdDfM;
-            }
-            DL += dDL;
-            DfM_stress += dDfM;
 
-            residual = abs(dDL) + abs(dDfM);
+            residual = abs(dDL) + abs(dDfM_stress) + abs(dDfM_strain);
             if (iter > 25) {
                 pnewdt = 0.25;
                 return;

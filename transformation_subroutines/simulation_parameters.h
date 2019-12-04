@@ -29,33 +29,42 @@ public:
     [[nodiscard]] const double& Cm(unsigned n) const { return data_[7 + 2*n]; }
     [[nodiscard]] const double& gamma(unsigned n) const { return data_[7 + 2*n+1]; }
 
-    [[nodiscard]] const double& R1() const { return data_[7 + 2*back_stresses_]; } ;
-    [[nodiscard]] const double& R2() const { return data_[8 + 2*back_stresses_]; } ;
+    // Parameter for the SDE effect
+    [[nodiscard]] const double& a() const { return data_[7 + 2*back_stresses_]; } ;
+
+    // Parameters for Greenwood Johnson
+    [[nodiscard]] const double& R1() const { return data_[8 + 2*back_stresses_]; } ;
+    [[nodiscard]] const double& R2() const { return data_[9 + 2*back_stresses_]; } ;
 
     // Volume expansion of martensite compared to austenite
-    [[nodiscard]] const double& dV() const { return data_[9 + 2*back_stresses_]; } ;
+    [[nodiscard]] const double& dV() const { return data_[10 + 2*back_stresses_]; } ;
 
     // Martensite start temperature
-    [[nodiscard]] const double& Ms() const { return data_[10 + 2*back_stresses_]; } ;
+    [[nodiscard]] const double& Ms() const { return data_[11 + 2*back_stresses_]; } ;
 
     // Stabilisation temperature due to tempering
-    [[nodiscard]] const double& Mss() const { return data_[11 + 2*back_stresses_]; } ;
+    [[nodiscard]] const double& Mss() const { return data_[12 + 2*back_stresses_]; } ;
 
     // Koistinen-Marburger parameter
-    [[nodiscard]] const double& k() const { return data_[12 + 2*back_stresses_]; } ;
+    [[nodiscard]] const double& k() const { return data_[13 + 2*back_stresses_]; } ;
 
     // Material parameters for stress induced phase transformations
-    [[nodiscard]] const double& a1() const { return data_[13 + 2*back_stresses_]; } ;
-    [[nodiscard]] const double& a2() const { return data_[14 + 2*back_stresses_]; } ;
-    [[nodiscard]] const double& a3() const { return data_[15 + 2*back_stresses_]; } ;
+    [[nodiscard]] const double& a1() const { return data_[14 + 2*back_stresses_]; } ;
+    [[nodiscard]] const double& a2() const { return data_[15 + 2*back_stresses_]; } ;
+    [[nodiscard]] const double& a3() const { return data_[16 + 2*back_stresses_]; } ;
 
     // Material parameters for the strain induced phase transformations
-    [[nodiscard]] const double& beta() const { return data_[16 + 2*back_stresses_]; } ;
-    [[nodiscard]] const double& alpha() const { return data_[17 + 2*back_stresses_]; } ;
-    [[nodiscard]] const double& n() const { return data_[18 + 2*back_stresses_]; } ;
+    [[nodiscard]] const double& beta() const { return data_[17 + 2*back_stresses_]; } ;
+    [[nodiscard]] const double& alpha() const { return data_[18 + 2*back_stresses_]; } ;
+    [[nodiscard]] const double& n() const { return data_[19 + 2*back_stresses_]; } ;
 
-    // Parameter for the SDE effect
-    [[nodiscard]] const double& a() const { return data_[19 + 2*back_stresses_]; } ;
+    [[nodiscard]] const double& g0() const { return data_[20 + 2*back_stresses_]; } ;
+    [[nodiscard]] const double& g1() const { return data_[21 + 2*back_stresses_]; } ;
+    [[nodiscard]] const double& g2() const { return data_[22 + 2*back_stresses_]; } ;
+
+    [[nodiscard]] const double& g_mean() const { return data_[23 + 2*back_stresses_]; } ;
+    [[nodiscard]] const double& g_std() const { return data_[24 + 2*back_stresses_]; } ;
+
 
     [[nodiscard]] bool plastic() const { return sy0M() > 0 && sy0A() > 0; }
     [[nodiscard]] bool kinematic_hardening() const { return back_stresses_ > 0; }

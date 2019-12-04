@@ -73,9 +73,8 @@ class ElasticPlasticTransformMaterial:
         return material_string
 
     def umat_depvar(self):
-        if self.back_stresses > 0:
-            return 4 + (self.gamma_m.shape[0]+1)*6
-        return 4
+        return 6 + self.back_stresses*6
+
 
     def umat_parameters(self):
         parameters = [self.E, self.v, self.sy0M, self.sy0A,  self.Q, self.b, self.gamma_m.shape[0]]
