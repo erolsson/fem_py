@@ -351,7 +351,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         Vector6 Fekl = Vector6::Zero();
         Vector6 Fskl = Vector6::Zero();
         std::cout << "Converged in: " << iter << "iterations"  << std::endl;
-        std::cout << "DL: " << DL << " DfM_stress: " << DfM_stress << " DfM_strain: " << DfM_strain << std::endl;
+        std::cout << "DL: " << DL << " DfM_stress: " << DfM_stress << " DfM_strain: " << DfM_strain
+                  << " DfM: " << DfM << std::endl;
 
         if (DfM_stress > 0) {
             Fskl = bij;
