@@ -94,7 +94,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     Vector6 sij_t = deviator(sigma_t);
 
     Vector6 stilde2 = sij_t;
-    std::cout << "sij_t: " << sij_t.transpose().format(CleanFmt) << std::endl;
+    std::cout << "total_back_stress: " << state.total_back_stress().transpose().format(CleanFmt) << std::endl;
     if (params.kinematic_hardening()) {
         stilde2 -= state.total_back_stress();
     }
