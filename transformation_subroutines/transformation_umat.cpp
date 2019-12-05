@@ -99,6 +99,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         stilde2 -= state.total_back_stress();
     }
     bool plastic = params.plastic() && yield_function(sigma_t, state.total_back_stress(), sy, params) > 0;
+    std::cout << yield_function(sigma_t, state.total_back_stress(), sy, params) << std::endl;
     bool stress_transformations = stress_transformation_function(sigma_t, temp, params, state.fM()) >= 0;
     bool strain_transformations = params.beta() > 0 && plastic;
     bool elastic = !plastic && !stress_transformations;
@@ -322,8 +323,10 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 pnewdt = 0.25;
                 return;
             }
-
         }
+        std::cout << "Converged in: " << iter << "iterations"  << std::endl;
+        std::cout << "DL: " << DL << " DfM_stress: " << DfM_stress << " DfM_strain: " << DfM_strain
+                  << " DfM: " << DfM << std::endl;
         // Updating state variables
         state.ep_eff() += DL;
         state.fM() += DfM;
@@ -352,9 +355,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         Vector6 Lskl = Vector6::Zero();
         Vector6 Fekl = Vector6::Zero();
         Vector6 Fskl = Vector6::Zero();
-        std::cout << "Converged in: " << iter << "iterations"  << std::endl;
-        std::cout << "DL: " << DL << " DfM_stress: " << DfM_stress << " DfM_strain: " << DfM_strain
-                  << " DfM: " << DfM << std::endl;
+
 
         if (DfM_stress > 0) {
             Fskl = bij;
