@@ -186,7 +186,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
             // Calculates f and the derivative df/dDL,
             if (plastic) {
-                DL = 1e-6;
                 dsij_prime_dDL = Vector6::Zero();
                 ds_eq_2_dDL = -3*G;
                 double sy0 = params.sy0M()*(state.fM() + DfM) + params.sy0A()*(1 - (state.fM() + DfM));
@@ -286,7 +285,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             }
 
             else if ( !stress_transformations) {
-                if ( !strain_transformations) {
+                if ( !strain_transformations || h_strain == 0.) {
                     dDL = f/dfdDL;
                 }
                 else {
