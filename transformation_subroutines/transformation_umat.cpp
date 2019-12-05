@@ -209,10 +209,10 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 f = s_eq_2 + params.a()*I1_2 - sy_2;
             }
             RA = params.R1() + params.R2()*s_eq_2/params.sy0A();
-
-            dfdDfM = -3*G*RA/B - 3*params.a()*K*params.dV() - (params.sy0M() - params.sy0A());
-            Vector6 dsijdDfM = -K*params.dV()*delta_ij;
             ds_eq_2_dfM = -3*G*RA/B;
+            dfdDfM = ds_eq_2_dfM - 3*params.a()*K*params.dV() - (params.sy0M() - params.sy0A());
+            Vector6 dsijdDfM = -K*params.dV()*delta_ij;
+
             if ( s_eq_prime > 1e-12) {
                 dsijdDfM -= 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2;
                 sigma_2 -= 2*G*(DL + RA*DfM)*nij2 + K*params.dV()*delta_ij*DfM;
@@ -271,7 +271,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 h_stress = stress_transformation_function(sigma_2, temp, params, fM2);
                 bij = params.a1()*delta_ij;
                 if (J2 > 1e-12) {
-                    bij += params.a2()*dsvMdsij+ params.a3()*(contract(s, s) - 2./3*J2*delta_ij);
+                    bij += params.a2()*dsvMdsij + params.a3()*(contract(s, s) - 2./3*J2*delta_ij);
                 }
                 double exp_fun = 1 - (h_stress + fM2);
                 bij *= exp_fun*params.k();
