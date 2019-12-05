@@ -240,10 +240,10 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 double dDSigmadDfM = DvM_inv*(3*K*params.dV() + DSigma*double_contract(dsvMdsij, dsijdDfM));
                 fsb2 = 1 - (1 - state.fsb0())*exp(-params.alpha()*(state.ep_eff() + DL));
                 dfsb2dDL = params.alpha()*(1 - state.fsb0())*exp(-params.alpha()*(state.ep_eff() + DL));
-                std::cout << dfsb2dDL << std::endl;
+
                 double c = params.alpha()*params.beta()*(1-fsb2)*pow(fsb2, n-1);
                 double dcdDL = params.alpha()*params.beta()*((n-1)*pow(fsb2, n-2) - n*pow(fsb2, n-1))*dfsb2dDL;
-
+                std::cout << dcdDL << std::endl;
                 double Gamma = params.g0() - params.g1()*temp/params.Ms() + params.g2()*Sigma;
                 norm_drivning_force = (Gamma - params.g_mean())/params.g_std();
                 P = 0.5*(1 + erf(norm_drivning_force));
