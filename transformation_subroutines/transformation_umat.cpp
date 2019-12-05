@@ -240,7 +240,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 double dDSigmadDfM = DvM_inv*(3*K*params.dV() + DSigma*double_contract(dsvMdsij, dsijdDfM));
                 fsb2 = 1 - (1 - state.fsb0())*exp(-params.alpha()*(state.ep_eff() + DL));
                 dfsb2dDL = params.alpha()*(1 - state.fsb0())*exp(-params.alpha()*(state.ep_eff() + DL));
-
+                std::cout << dfsb2dDL << std::endl;
                 double c = params.alpha()*params.beta()*(1-fsb2)*pow(fsb2, n-1);
                 double dcdDL = params.alpha()*params.beta()*((n-1)*pow(fsb2, n-2) - n*pow(fsb2, n-1))*dfsb2dDL;
 
