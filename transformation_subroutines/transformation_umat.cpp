@@ -281,29 +281,34 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             if ( !plastic ) {
                 dDfM_stress = h_stress/dh_stressDfM;
             }
-
-            else if ( !stress_transformations) {
-                if ( !strain_transformations || h_strain == 0.) {
+            else {
+                if ( !stress_transformations && !strain_transformations) {
                     dDL = f/dfdDL;
                 }
-                else {
+                else if (! stress_transformations) {
                     double det = dfdDL*(dh_strainDfM - 1) - dfdDfM*dh_straindDL;
                     dDL = ((dh_straindDL-1)*f - dfdDfM*h_strain)/det;
                     dDfM_strain = (-dh_straindDL*f + dfdDL*h_strain)/det;
                 }
+                else if (! strain_transformations) {
+                    double det = dfdDL*dh_stressDfM - dfdDfM*dh_stressDfM;
+                    dDL = (dh_stressDfM*f - dfdDfM*h_stress)/det;
+                    dDfM_stress = (-dh_stressDfM*f + dfdDL*h_stress)/det;
+                }
+                else {
+                    double a = dfdDL;
+                    double b = dfdDfM;
+                    double c = dh_stressDL;
+                    double d = dh_stressDfM;
+                    double e = dh_straindDL;
+                    double g = dh_strainDfM;
+                    double det = a*d- c*b;   // Pseudo determinant appearing in the inverse
+                    dDL = (d*f - b*h_stress)/det;
+                    dDfM_stress = -(c + d*e -c*g)/det*f + (a + b*e - a*g)*h_stress + h_strain;
+                    dDfM_strain = (d*e - c*g)/det*f - (b*e-a*g)/det*h_stress - h_strain;
+                }
             }
-            else {
-                double a = dfdDL;
-                double b = dfdDfM;
-                double c = dh_stressDL;
-                double d = dh_stressDfM;
-                double e = dh_straindDL;
-                double g = dh_strainDfM;
-                double det = a*d- c*b;   // Pseudo determinant appearing in the inverse
-                dDL = (d*f - b*h_stress)/det;
-                dDfM_stress = -(c + d*e -c*g)/det*f + (a + b*e - a*g)*h_stress + h_strain;
-                dDfM_strain = (d*e - c*g)/det*f - (b*e-a*g)/det*h_stress - h_strain;
-            }
+
 
             DL -= dDL;
             DfM_stress -= dDfM_stress;
