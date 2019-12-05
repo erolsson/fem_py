@@ -265,6 +265,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 }
                 double exp_fun = 1 - (h_stress + fM2);
                 bij *= exp_fun*params.k();
+                std::cout << "exp_fun: " << exp_fun << std::endl;
                 std::cout << "bij: " << bij.transpose().format(CleanFmt) << std::endl;
                 std::cout << "dsijdDfM: " << dsijdDfM.transpose().format(CleanFmt) << std::endl;
                 dh_stressDfM = double_contract(bij, dsijdDfM) - 1;
