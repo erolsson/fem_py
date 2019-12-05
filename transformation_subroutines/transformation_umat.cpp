@@ -210,7 +210,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             }
 
             Vector6 dsijdDL = -2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
-
+            std::cout << "sigma2: " << sigma_2.transpose().format(CleanFmt) << std::endl;
             // Calculating the von Mises stress at step 2
             Vector6 s = deviator(sigma_2);
             double J2 = 0.5*double_contract(s, s);
