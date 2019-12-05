@@ -23,15 +23,16 @@ public:
     double& fM_stress() { return data_[2]; }
     double& fM_strain() { return data_[3]; }
     double& fsb() { return data_[4]; }
-    double& R() { return data_ [5]; }
+    double& fsb0() { return data_[5]; }
+    double& R() { return data_ [6]; }
 
 
     Eigen::Map<Vector6> back_stress_vector(unsigned n) {
-        return Eigen::Map<Vector6>(&data_[6 + n*6]);
+        return Eigen::Map<Vector6>(&data_[7 + n*6]);
     }
 
     Eigen::Map<Vector6> total_back_stress() {
-        return Eigen::Map<Vector6>(&data_[6 + back_stresses_*6]);
+        return Eigen::Map<Vector6>(&data_[7 + back_stresses_*6]);
     }
 
 private:
@@ -239,8 +240,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 double dDSigmadDfM = 1/DvM*(3*K*params.dV() + DSigma*double_contract(dsvMdsij, dsijdDfM));
 
                 double Dfsb = (1 + state.fsb())*params.alpha()*DL/(1 + params.alpha()*DL);
-                fsb2 += Dfsb;
-                dfsb2dDL = params.alpha()*(1-state.fsb())/pow(1 + params.alpha()*DL, 2);
+                fsb2 = 1 - (1 - state.fsb0())*exp(-params.alpha()*(state.ep_eff() + DL));
+                dfsb2dDL = params.alpha()*(1 - state.fsb0())*exp(-params.alpha()*(state.ep_eff() + DL));
 
                 double dcdDL = params.alpha()*params.beta()*pow(fsb2, params.n()-2)*(params.n()*(1-fsb2) - 1)*dfsb2dDL;
 
