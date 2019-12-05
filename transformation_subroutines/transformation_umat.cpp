@@ -53,6 +53,7 @@ double stress_temperature_transformation(const Eigen::Matrix<double, 6, 1>& stre
     double m_stress = params.a1()*(stress[0] + stress[1] + stress[2]);   // Contribution from hydrostatic stress
     m_stress += params.a2()*von_Mises(stress);
     m_stress += params.a3()*vector_det(s_dev);
+    std::cout << "params.Ms(): " << params.Ms() << " params.Mss(): " << params.Mss() << std::endl;
     return params.k()*(params.Ms() + m_stress + params.Mss() - T);
 }
 
