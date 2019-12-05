@@ -27,11 +27,11 @@ public:
 
 
     Eigen::Map<Vector6> back_stress_vector(unsigned n) {
-        return Eigen::Map<Vector6>(&data_[4 + n*6]);
+        return Eigen::Map<Vector6>(&data_[6 + n*6]);
     }
 
     Eigen::Map<Vector6> total_back_stress() {
-        return Eigen::Map<Vector6>(&data_[4 + back_stresses_*6]);
+        return Eigen::Map<Vector6>(&data_[6 + back_stresses_*6]);
     }
 
 private:
