@@ -161,6 +161,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         while (residual > 1e-15) {
             ++iter;
             DfM = DfM_stress + DfM_strain;
+            std::cout << "DfM: " << DfM << std::endl;
             double fM2 = state.fM() + DfM;
             sigma_2 = sigma_t;
 
