@@ -253,9 +253,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 double dAsddL = dcdDL*P + c*params.g2()*pdf*dSigmadDL;
                 double dAsdfM = c*params.g2()*pdf*dSigmadDfM;
 
-                double dBsdDL = (pdf*n*pow(fsb2, n - 1)*dfsb2dDL +
+                double dBsdDL = (pdf*n*pow(fsb2, n - 1)*dfsb2dDL -
                         Bs*norm_drivning_force/params.g_std()*params.g2()*dSigmadDL)*(DSigma > 0);
-                double dBsdfM = Bs*norm_drivning_force/params.g_std()*params.g2()*dSigmadDfM;
+                double dBsdfM = -Bs*norm_drivning_force/params.g_std()*params.g2()*dSigmadDfM;
 
                 // std::cout << "As: " << As << " Bs: " << Bs << " P: " << P << " pdf: " << pdf << " Gamma: "
                 //           << Gamma << " Sigma:" << Sigma << std::endl;
