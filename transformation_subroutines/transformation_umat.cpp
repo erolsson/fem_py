@@ -242,7 +242,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 fsb2 = 1 - (1 - state.fsb0())*exp(-params.alpha()*(state.ep_eff() + DL));
                 dfsb2dDL = params.alpha()*(1 - state.fsb0())*exp(-params.alpha()*(state.ep_eff() + DL));
 
-                std::cout << "fsb2: " << fsb2 << " dfsb2dDL: " << dfsb2dDL << std::endl;
                 double c = params.alpha()*params.beta()*(1-fsb2)*pow(fsb2, params.n()-1);
                 double dcdDL = params.alpha()*params.beta()*((params.n()-1)*pow(fsb2, params.n()-2)
                         - params.n()*pow(fsb2, params.n()-1));
@@ -260,13 +259,13 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                         - params.g2()*norm_drivning_force/params.g_std()*dSigmadDL)*(DSigma > 0);
                 double dBsdfM = params.g2()*params.beta()*pow(fsb2,
                         params.n())*pdf*norm_drivning_force/params.g_std()*params.g2()*dSigmadDfM*(DSigma > 0);
-                std::cout << "As: " << As << " Bs: " << Bs << " P: " << P << " pdf: " << pdf << " Gamma: "
-                          << Gamma << " Sigma:" << Sigma << std::endl;
+                // std::cout << "As: " << As << " Bs: " << Bs << " P: " << P << " pdf: " << pdf << " Gamma: "
+                //           << Gamma << " Sigma:" << Sigma << std::endl;
                 h_strain = (1 - fM2)*(As*DL + Bs*DSigma) - DfM_strain;
                 dh_straindDL = (1 - fM2)*(As + DL*dAsddL + Bs*dDSigmadDL + DSigma*dBsdDL);
                 dh_strainDfM = -(As*DL + Bs*DSigma) + (1 - fM2)*(DL*dAsdfM + Bs*dDSigmadDfM + DSigma*dBsdfM);
-                std::cout << "h_strain: " << h_strain << " dh_straindDL: " << dh_straindDL << " dh_strainDfM: "
-                          << dh_strainDfM << std::endl;
+                // std::cout << "h_strain: " << h_strain << " dh_straindDL: " << dh_straindDL << " dh_strainDfM: "
+                //           << dh_strainDfM << std::endl;
             }
 
             if (stress_transformations) {
@@ -315,7 +314,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             DfM_strain -= dDfM_strain;
 
             residual = abs(dDL) + abs(dDfM_stress) + abs(dDfM_strain);
-            std::cout << "DL: " << DL << " DfM_stress: " << DfM_stress << " DfM_strain: " << DfM_strain << std::endl;
+
+            // std::cout << "DL: " << DL << " DfM_stress: " << DfM_stress << " DfM_strain: " << DfM_strain << std::endl;
             if (iter > 25) {
                 pnewdt = 0.25;
                 return;
@@ -350,6 +350,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         Vector6 Lskl = Vector6::Zero();
         Vector6 Fekl = Vector6::Zero();
         Vector6 Fskl = Vector6::Zero();
+        std::cout << "Converged in: " << iter << "iterations"  << std::endl;
         std::cout << "DL: " << DL << " DfM_stress: " << DfM_stress << " DfM_strain: " << DfM_strain << std::endl;
 
         if (DfM_stress > 0) {
