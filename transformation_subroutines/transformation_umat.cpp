@@ -228,7 +228,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
             // h_strain and derivatives of h_strain
             if (plastic) {
+
                 DvM = s_vM_2 - s_vM_1;
+                std::cout << "DvM: " << DvM << std::endl;
                 Sigma = I1_2/s_vM_2;
                 DSigma = (I1_2 - I1_1)/DvM;
 
