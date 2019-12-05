@@ -233,7 +233,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 }
                 Sigma = I1_2/s_vM_2;
                 DSigma = (I1_2 - I1_1)*DvM_inv;
-
+                double n = params.n();
                 double dSigmadDL = -Sigma/s_vM_2*double_contract(dsvMdsij, dsijdDL);
                 double dSigmadDfM = 1/s_vM_2*(3*K*params.dV() + Sigma*double_contract(dsvMdsij, dsijdDfM));
                 double dDSigmadDL = -DSigma*DvM_inv*double_contract(dsvMdsij, dsijdDL);
@@ -241,22 +241,22 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 fsb2 = 1 - (1 - state.fsb0())*exp(-params.alpha()*(state.ep_eff() + DL));
                 dfsb2dDL = params.alpha()*(1 - state.fsb0())*exp(-params.alpha()*(state.ep_eff() + DL));
 
-                double c = params.alpha()*params.beta()*(1-fsb2)*pow(fsb2, params.n()-1);
-                double dcdDL = params.alpha()*params.beta()*((params.n()-1)*pow(fsb2, params.n()-2)
-                        - params.n()*pow(fsb2, params.n()-1));
+                double c = params.alpha()*params.beta()*(1-fsb2)*pow(fsb2, n-1);
+                double dcdDL = params.alpha()*params.beta()*((n-1)*pow(fsb2, n-2) - n*pow(fsb2, n-1))*dfsb2dDL;
 
                 double Gamma = params.g0() - params.g1()*temp/params.Ms() + params.g2()*Sigma;
                 norm_drivning_force = (Gamma - params.g_mean())/params.g_std();
                 P = 0.5*(1 + erf(norm_drivning_force));
                 As = c*P;
                 pdf = normal_pdf(norm_drivning_force)/params.g_std();
-                Bs = params.g2()*params.beta()*pow(fsb2, params.n())*pdf*(DSigma > 0);
+                Bs = params.g2()*params.beta()*pow(fsb2, n)*pdf*(DSigma > 0);
                 double dAsddL = dcdDL*P + c*params.g2()*pdf*dSigmadDL;
                 double dAsdfM = c*params.g2()*pdf*dSigmadDfM;
 
-                double dBsdDL = (pdf*params.n()*pow(fsb2, params.n() - 1)*dfsb2dDL +
+                double dBsdDL = (pdf*n*pow(fsb2, n - 1)*dfsb2dDL +
                         Bs*norm_drivning_force/params.g_std()*params.g2()*dSigmadDL)*(DSigma > 0);
                 double dBsdfM = Bs*norm_drivning_force/params.g_std()*params.g2()*dSigmadDfM;
+
                 // std::cout << "As: " << As << " Bs: " << Bs << " P: " << P << " pdf: " << pdf << " Gamma: "
                 //           << Gamma << " Sigma:" << Sigma << std::endl;
                 h_strain = (1 - fM2)*(As*DL + Bs*DSigma) - DfM_strain;
