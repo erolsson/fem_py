@@ -45,6 +45,9 @@ extern "C" void sdvini_(double* statev, const double* coords, const int& nstatev
             // Martensite state var
             statev[i] = martensite;
         }
+        else if (i == 4) {
+            statev[i] = 1e-3;
+        }
         else {
             statev[i] = 0;
         }
