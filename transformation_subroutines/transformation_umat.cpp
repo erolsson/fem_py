@@ -255,6 +255,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             }
 
             if (stress_transformations) {
+                std::cout << "Stress transformation: " << std::endl;
                 h_stress = stress_transformation_function(sigma_2, temp, params, fM2);
 
                 bij = params.a1()*delta_ij;
