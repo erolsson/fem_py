@@ -322,6 +322,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         // Updating state variables
         state.ep_eff() += DL;
         state.fM() += DfM;
+        state.fM_stress() += DfM_stress;
+        state.fM_strain() += DfM_strain;
         state.R() = R2;
         state.fsb() = fsb2;
         stress_vec = sigma_2;
