@@ -231,7 +231,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 if (abs(s_vM_2 - s_vM_1) > 0) {
                     DvM_inv = 1/(s_vM_2 - s_vM_1);
                 }
-                std::cout << "DvM: " << std::endl;
                 Sigma = I1_2/s_vM_2;
                 DSigma = (I1_2 - I1_1)*DvM_inv;
 
@@ -266,8 +265,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 h_strain = (1 - fM2)*(As*DL + Bs*DSigma) - DfM_strain;
                 dh_straindDL = (1 - fM2)*(As + DL*dAsddL + Bs*dDSigmadDL + DSigma*dBsdDL);
                 dh_strainDfM = -(As*DL + Bs*DSigma) + (1 - fM2)*(DL*dAsdfM + Bs*dDSigmadDfM + DSigma*dBsdfM);
-                // std::cout << "h_strain: " << h_strain << " dh_straindDL: " << dh_straindDL << " dh_strainDfM: "
-                //           << dh_strainDfM << std::endl;
+                std::cout << "h_strain: " << h_strain << " dh_straindDL: " << dh_straindDL << " dh_strainDfM: "
+                           << dh_strainDfM << std::endl;
             }
 
             if (stress_transformations) {
