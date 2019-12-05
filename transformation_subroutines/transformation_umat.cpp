@@ -236,10 +236,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
                 double dSigmadDL = -Sigma/s_vM_2*double_contract(dsvMdsij, dsijdDL);
                 double dSigmadDfM = 1/s_vM_2*(3*K*params.dV() + Sigma*double_contract(dsvMdsij, dsijdDfM));
-                double dDSigmadDL = 0;
-                double dDSigmadDfM = 0;
-                    dDSigmadDL = -DSigma*DvM_inv*double_contract(dsvMdsij, dsijdDL);
-                    dDSigmadDfM = DvM_inv*(3*K*params.dV() + DSigma*double_contract(dsvMdsij, dsijdDfM));
+                double dDSigmadDL = -DSigma*DvM_inv*double_contract(dsvMdsij, dsijdDL);
+                double dDSigmadDfM = DvM_inv*(3*K*params.dV() + DSigma*double_contract(dsvMdsij, dsijdDfM));
                 fsb2 = 1 - (1 - state.fsb0())*exp(-params.alpha()*(state.ep_eff() + DL));
                 dfsb2dDL = params.alpha()*(1 - state.fsb0())*exp(-params.alpha()*(state.ep_eff() + DL));
 
@@ -256,10 +254,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 double dAsddL = dcdDL*P + c*params.g2()*pdf*dSigmadDL;
                 double dAsdfM = c*params.g2()*pdf*dSigmadDfM;
 
-                double dBsdDL = params.g2()*params.beta()*pdf*pow(fsb2, params.n() - 1)*(params.n()*dfsb2dDL
-                        - params.g2()*norm_drivning_force/params.g_std()*dSigmadDL)*(DSigma > 0);
-                double dBsdfM = params.g2()*params.beta()*pow(fsb2,
-                        params.n())*pdf*norm_drivning_force/params.g_std()*params.g2()*dSigmadDfM*(DSigma > 0);
+                double dBsdDL = (pdf*params.n()*pow(fsb2, params.n() - 1)*dfsb2dDL +
+                        Bs*norm_drivning_force/params.g_std()*params.g2()*dSigmadDL)*(DSigma > 0);
+                double dBsdfM = Bs*norm_drivning_force/params.g_std()*params.g2()*dSigmadDfM;
                 // std::cout << "As: " << As << " Bs: " << Bs << " P: " << P << " pdf: " << pdf << " Gamma: "
                 //           << Gamma << " Sigma:" << Sigma << std::endl;
                 h_strain = (1 - fM2)*(As*DL + Bs*DSigma) - DfM_strain;
@@ -272,9 +269,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
             if (stress_transformations) {
                 h_stress = stress_transformation_function(sigma_2, temp, params, fM2);
-
                 bij = params.a1()*delta_ij;
-
                 if (J2 > 1e-12) {
                     bij += params.a2()*dsvMdsij+ params.a3()*(contract(s, s) - 2./3*J2*delta_ij);
                 }
@@ -285,7 +280,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
             if ( !plastic ) {
                 dDfM_stress = h_stress/dh_stressDfM;
-
             }
 
             else if ( !stress_transformations) {
