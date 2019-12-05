@@ -236,10 +236,12 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
                 double dSigmadDL = -Sigma/s_vM_2*double_contract(dsvMdsij, dsijdDL);
                 double dSigmadDfM = 1/s_vM_2*(3*K*params.dV() + Sigma*double_contract(dsvMdsij, dsijdDfM));
-
-                double dDSigmadDL = -DSigma/DvM*double_contract(dsvMdsij, dsijdDL);
-                double dDSigmadDfM = 1/DvM*(3*K*params.dV() + DSigma*double_contract(dsvMdsij, dsijdDfM));
-
+                double dDSigmadDL = 0;
+                double dDSigmadDfM = 0;
+                if (abs(DvM) > 1e-12) {
+                    dDSigmadDL = -DSigma/DvM*double_contract(dsvMdsij, dsijdDL);
+                    dDSigmadDfM = 1/DvM*(3*K*params.dV() + DSigma*double_contract(dsvMdsij, dsijdDfM));
+                }
                 fsb2 = 1 - (1 - state.fsb0())*exp(-params.alpha()*(state.ep_eff() + DL));
                 dfsb2dDL = params.alpha()*(1 - state.fsb0())*exp(-params.alpha()*(state.ep_eff() + DL));
 
