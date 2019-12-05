@@ -316,7 +316,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             DfM = DfM_stress + DfM_strain;
             residual = abs(dDL) + abs(dDfM_stress) + abs(dDfM_strain);
 
-            // std::cout << "DL: " << DL << " DfM_stress: " << DfM_stress << " DfM_strain: " << DfM_strain << std::endl;
+            std::cout << "DL: " << DL << " DfM_stress: " << DfM_stress << " DfM_strain: " << DfM_strain << std::endl;
             if (iter > 25) {
                 pnewdt = 0.25;
                 return;
