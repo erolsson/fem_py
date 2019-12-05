@@ -101,6 +101,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     bool plastic = params.plastic() && yield_function(sigma_t, state.total_back_stress(), sy, params) > 0;
     bool stress_transformations = stress_transformation_function(sigma_t, temp, params, state.fM()) >= 0;
     std::cout << "Stress tr: " << stress_transformation_function(sigma_t, temp, params, state.fM()) << std::endl;
+    std::cout << stress_temperature_transformation(sigma_t, params, temp) << std::endl;
     bool strain_transformations = params.beta() > 0 && plastic;
     bool elastic = !plastic && !stress_transformations;
     if (elastic) {     // Use the trial stress as the stress and the elastic stiffness matrix as the tangent
