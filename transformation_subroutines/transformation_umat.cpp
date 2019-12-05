@@ -94,7 +94,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     Vector6 sij_t = deviator(sigma_t);
 
     Vector6 stilde2 = sij_t;
-    std::cout << "total_back_stress: " << state.total_back_stress().transpose().format(CleanFmt) << std::endl;
     if (params.kinematic_hardening()) {
         stilde2 -= state.total_back_stress();
     }
@@ -209,7 +208,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 dsijdDfM -= 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2;
                 sigma_2 -= 2*G*(DL + RA*DfM)*nij2 + K*params.dV()*delta_ij*DfM;
             }
-
+            std::cout << "K*params.dV()*delta_ij*DfM: " << K*params.dV()*delta_ij*DfM << std::endl;
             Vector6 dsijdDL = -2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
             std::cout << "sigma2: " << sigma_2.transpose().format(CleanFmt) << std::endl;
             // Calculating the von Mises stress at step 2
