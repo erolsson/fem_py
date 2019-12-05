@@ -186,6 +186,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
             // Calculates f and the derivative df/dDL,
             if (plastic) {
+                DL = 1e-6;
                 dsij_prime_dDL = Vector6::Zero();
                 ds_eq_2_dDL = -3*G;
                 double sy0 = params.sy0M()*(state.fM() + DfM) + params.sy0A()*(1 - (state.fM() + DfM));
@@ -239,7 +240,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 double dDSigmadDL = -DSigma/DvM*double_contract(dsvMdsij, dsijdDL);
                 double dDSigmadDfM = 1/DvM*(3*K*params.dV() + DSigma*double_contract(dsvMdsij, dsijdDfM));
 
-                double Dfsb = (1 + state.fsb())*params.alpha()*DL/(1 + params.alpha()*DL);
                 fsb2 = 1 - (1 - state.fsb0())*exp(-params.alpha()*(state.ep_eff() + DL));
                 dfsb2dDL = params.alpha()*(1 - state.fsb0())*exp(-params.alpha()*(state.ep_eff() + DL));
 
