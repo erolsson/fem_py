@@ -269,7 +269,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             }
 
             if ( !plastic ) {
+                std::cout << "h_stress: " << h_stress << " dh_stressDfM: " << dh_stressDfM << std::endl;
                 dDfM_stress = h_stress/dh_stressDfM;
+
             }
 
             else if ( !stress_transformations) {
