@@ -129,6 +129,13 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
         double fsb2 = state.fsb();
 
+        double As = 0;
+        double Bs = 0;
+        double DSigma = 0;
+        double P = 0;
+        double pdf = 0;
+        double dfsb2dDL = 0;
+
         // Effective stress and its derivatives
         Vector6 s1 = deviator(static_cast<Vector6>(stress_vec));
         double s_vM_1 = sqrt(1.5*double_contract(s1, s1));
@@ -223,7 +230,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             if (plastic) {
                 double DvM = s_vM_2 - s_vM_1;
                 double Sigma = I1_2/s_vM_2;
-                double DSigma = (I1_2 - I1_1)/DvM;
+                DSigma = (I1_2 - I1_1)/DvM;
 
                 double dSigmadDL = -Sigma/s_vM_2*double_contract(dsvMdsij, dsijdDL);
                 double dSigmadDfM = 1/s_vM_2*(3*K*params.dV() + Sigma*double_contract(dsvMdsij, dsijdDfM));
@@ -233,23 +240,23 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
                 double Dfsb = (1 + state.fsb())*params.alpha()*DL/(1 + params.alpha()*DL);
                 fsb2 += Dfsb;
-                double dfsb2dDL = params.alpha()*(1-state.fsb())/pow(1 + params.alpha()*DL, 2);
+                dfsb2dDL = params.alpha()*(1-state.fsb())/pow(1 + params.alpha()*DL, 2);
 
                 double dcdDL = params.alpha()*params.beta()*pow(fsb2, params.n()-2)*(params.n()*(1-fsb2) - 1)*dfsb2dDL;
 
                 double Gamma = params.g0() - params.g1()*temp/params.Ms() + params.g2()*Sigma;
                 double x = (Gamma - params.g_mean())/params.g_std();
-                double P = 0.5*(1 + erf(x));
-                double As = params.alpha()*params.beta()*(1-fsb2)*pow(fsb2, params.n()-1)*P;
-                double d = normal_pdf(x)/params.g_std();
-                double Bs = params.g2()*params.beta()*pow(fsb2, params.n())*d*(DSigma > 0);
-                double dAsddL = dcdDL*P + params.g2()*d*dSigmadDL;
-                double dAsdfM = params.g2()*d*dSigmadDfM;
+                P = 0.5*(1 + erf(x));
+                As = params.alpha()*params.beta()*(1-fsb2)*pow(fsb2, params.n()-1)*P;
+                pdf = normal_pdf(x)/params.g_std();
+                Bs = params.g2()*params.beta()*pow(fsb2, params.n())*pdf*(DSigma > 0);
+                double dAsddL = dcdDL*P + params.g2()*pdf*dSigmadDL;
+                double dAsdfM = params.g2()*pdf*dSigmadDfM;
 
-                double dBsdDL = params.g2()*params.beta()*d*pow(fsb2, params.n()-1)*(params.n()*dfsb2dDL
-                                   - params.g2()*x/params.g_std()*dSigmadDL)*(DSigma > 0);
+                double dBsdDL = params.g2()*params.beta()*pdf*pow(fsb2, params.n() - 1)*(params.n()*dfsb2dDL
+                                                                                         - params.g2()*x/params.g_std()*dSigmadDL)*(DSigma > 0);
                 double dBsdfM = params.g2()*params.beta()*pow(fsb2,
-                        params.n())*d*x/params.g_std()*params.g2()*dSigmadDfM*(DSigma > 0);
+                        params.n())*pdf*x/params.g_std()*params.g2()*dSigmadDfM*(DSigma > 0);
 
                 h_strain = (1 - fM2)*(As*DL + Bs*DSigma) - DfM_strain;
                 dh_straindDL = (1 - fM2)*(As + DL*dAsddL + Bs*dDSigmadDL + DSigma*dBsdDL);
@@ -347,6 +354,10 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             Lskl = 1/A*dfdDfM*bij;
         }
         else {
+            double B1 = (1 - state.fM())/(1 + As*DL + Bs*DSigma);
+            B1 *= As + params.alpha()*params.beta()*pow(fsb2, params.n()-2)*(params.n()*(1-fsb2) - 1)*P
+                  + pdf*params.n()*params.beta()*pow(fsb2, params.n() - 1)*dfsb2dDL;
+            std::cout << "B1: " << B1 << std::endl;
             std::cout << "Only plastic: aborting!" << std::endl;
             std::abort();
         }
