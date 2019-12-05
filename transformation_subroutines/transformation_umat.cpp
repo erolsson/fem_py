@@ -210,7 +210,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             }
             RA = params.R1() + params.R2()*s_eq_2/params.sy0A();
 
-            dfdDfM = -3*G*RA/B - params.a()*K*params.dV() - (params.sy0M() - params.sy0A());
+            dfdDfM = -3*G*RA/B - 3*params.a()*K*params.dV() - (params.sy0M() - params.sy0A());
             Vector6 dsijdDfM = -K*params.dV()*delta_ij;
             ds_eq_2_dfM = -3*G*RA/B;
             if ( s_eq_prime > 1e-12) {
