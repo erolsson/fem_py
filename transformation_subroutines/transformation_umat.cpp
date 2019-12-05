@@ -172,7 +172,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         unsigned iter = 0;
         while (residual > 1e-15) {
             ++iter;
-            DfM = DfM_stress + DfM_strain;
             double fM2 = state.fM() + DfM;
             sigma_2 = sigma_t;
 
@@ -312,7 +311,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             DL -= dDL;
             DfM_stress -= dDfM_stress;
             DfM_strain -= dDfM_strain;
-
+            DfM = DfM_stress + DfM_strain;
             residual = abs(dDL) + abs(dDfM_stress) + abs(dDfM_strain);
 
             // std::cout << "DL: " << DL << " DfM_stress: " << DfM_stress << " DfM_strain: " << DfM_strain << std::endl;
