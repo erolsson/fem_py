@@ -53,8 +53,6 @@ double stress_temperature_transformation(const Eigen::Matrix<double, 6, 1>& stre
     double m_stress = params.a1()*(stress[0] + stress[1] + stress[2]);   // Contribution from hydrostatic stress
     m_stress += params.a2()*von_Mises(stress);
     m_stress += params.a3()*vector_det(s_dev);
-    std::cout << "params.Ms(): " << params.Ms() << " params.Mss(): " << params.Mss() << " " <<  m_stress <<
-              " " << params.k() << std::endl;
     return params.k()*(params.Ms() + m_stress + params.Mss() - T);
 }
 
@@ -102,9 +100,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     }
     bool plastic = params.plastic() && yield_function(sigma_t, state.total_back_stress(), sy, params) > 0;
     bool stress_transformations = stress_transformation_function(sigma_t, temp, params, state.fM()) >= 0;
-    std::cout << "fm:" << state.fM() << std::endl;
-    std::cout << "Stress tr: " << stress_transformation_function(sigma_t, temp, params, state.fM()) << std::endl;
-    std::cout << stress_temperature_transformation(sigma_t, params, temp) << std::endl;
     bool strain_transformations = params.beta() > 0 && plastic;
     bool elastic = !plastic && !stress_transformations;
     if (elastic) {     // Use the trial stress as the stress and the elastic stiffness matrix as the tangent
