@@ -368,7 +368,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         else {
             double B1 = (1 - state.fM())/(1 + As*DL + Bs*DSigma);
             double B2 = B1*(As + params.alpha()*params.beta()*pow(fsb2, params.n()-2)*(params.n()*(1-fsb2) - 1)*P
-                  + pdf*params.n()*params.beta()*pow(fsb2, params.n() - 1)*(DSigma > 0)*dfsb2dDL);
+                  + pdf*params.n()*params.beta()*pow(fsb2, params.n() - 1)*(DSigma > 0)*dfsb2dDL*0);
             Lekl = (2*G*nij2 + params.a()*K*delta_ij)/(A*B - B*B2*dfdDfM);
 
             Vector6 Gkl = B1*Bs*(DvM_inv*delta_ij - DSigma*dsvMdsij +
