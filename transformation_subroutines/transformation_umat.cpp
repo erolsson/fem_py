@@ -246,16 +246,16 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 std::cout << dcdDL << std::endl;
                 double Gamma = params.g0() - params.g1()*temp/params.Ms() + params.g2()*Sigma;
                 norm_drivning_force = (Gamma - params.g_mean())/params.g_std();
-                P = 0.5*(1 + erf(norm_drivning_force));
+                P = 0*0.5*(1 + erf(norm_drivning_force)) + 1;
                 As = c*P;
                 pdf = normal_pdf(norm_drivning_force)/params.g_std();
-                Bs = params.g2()*params.beta()*pow(fsb2, n)*pdf*(DSigma > 0);
-                double dAsddL = dcdDL*P + c*params.g2()*pdf*dSigmadDL;
+                Bs = params.g2()*params.beta()*pow(fsb2, n)*pdf*(DSigma > 0)*0;
+                double dAsddL = dcdDL*P + 0*c*params.g2()*pdf*dSigmadDL;
                 double dAsdfM = c*params.g2()*pdf*dSigmadDfM;
 
                 double dBsdDL = (pdf*n*pow(fsb2, n - 1)*dfsb2dDL -
-                        Bs*norm_drivning_force/params.g_std()*params.g2()*dSigmadDL)*(DSigma > 0);
-                double dBsdfM = -Bs*norm_drivning_force/params.g_std()*params.g2()*dSigmadDfM;
+                        Bs*norm_drivning_force/params.g_std()*params.g2()*dSigmadDL)*(DSigma > 0)*0;
+                double dBsdfM = -Bs*norm_drivning_force/params.g_std()*params.g2()*dSigmadDfM*0;
 
                 // std::cout << "As: " << As << " Bs: " << Bs << " P: " << P << " pdf: " << pdf << " Gamma: "
                 //           << Gamma << " Sigma:" << Sigma << std::endl;
