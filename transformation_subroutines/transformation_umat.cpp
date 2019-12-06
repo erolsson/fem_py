@@ -233,7 +233,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 }
                 Sigma = I1_2/s_vM_2;
                 DSigma = (I1_2 - I1_1)*DvM_inv;
-                std::cout << "DSigma: " << std::endl;
+                std::cout << "DSigma: " << DSigma << std::endl;
                 double n = params.n();
                 double dSigmadDL = -Sigma/s_vM_2*double_contract(dsvMdsij, dsijdDL);
                 double dSigmadDfM = 1/s_vM_2*(3*K*params.dV() - Sigma*double_contract(dsvMdsij, dsijdDfM));
