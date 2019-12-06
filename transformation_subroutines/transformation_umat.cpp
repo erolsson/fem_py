@@ -109,7 +109,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     else {  // Inelastic deformations
         // Increment in plastic strain and martensitic phase fraction
         Vector6 sigma_2 = sigma_t;
-
+        Vector6 s = deviator(sigma_2);
         double DL = 0;
         double DfM_stress = 0;
         double DfM_strain = 0;
@@ -134,8 +134,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         double Bs = 0;
         double DSigma = 0;
         double Sigma = 0;
-        double DvM_inv = 0;
         double P = 0;
+        double I1_2 = 0;
         double pdf = 0;
         double dfsb2dDL = 0;
         double norm_drivning_force = 0;
@@ -181,7 +181,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
             B = 1 + 3*G*params.R2()*DfM/params.sy0A();
             // s_eq_2 = (s_eq_prime - 3*G*(DL + params.R1()*DfM))/B;
-            double I1_2 = sigma_t[0] + sigma_t[1] + sigma_t[2] - 3*K*params.dV()*DfM;
+           I1_2 = sigma_t[0] + sigma_t[1] + sigma_t[2] - 3*K*params.dV()*DfM;
 
             // Calculates f and the derivative df/dDL,
             if (plastic) {
@@ -219,7 +219,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             }
             Vector6 dsijdDL = -2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
             // Calculating the von Mises stress at step 2
-            Vector6 s = deviator(sigma_2);
+            s = deviator(sigma_2);
             double J2 = 0.5*double_contract(s, s);
             s_vM_2 = sqrt(3*J2);
             dsvMdsij = Vector6::Zero();
@@ -228,9 +228,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
             // h_strain and derivatives of h_strain
             if (plastic) {
-                if (abs(s_vM_2 - s_vM_1) > 0) {
-                    DvM_inv = 1/(s_vM_2 - s_vM_1);
-                }
                 Sigma = I1_2/s_vM_2;
                 double DI1 = 3*K*(de[0] + de[1] + de[2] - DfM*params.dV());
                 double DvM = 1.5/s_vM_2*double_contract(deviator(sigma_t),
@@ -375,9 +372,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                   + pdf*params.n()*params.beta()*pow(fsb2, params.n() - 1)*(DSigma > 0))*dfsb2dDL);
             Lekl = (2*G*nij2 + params.a()*K*delta_ij)/(A*B - B*B2*dfdDfM);
 
-            Vector6 Gkl = B1*Bs*(DvM_inv*delta_ij - DSigma*dsvMdsij +
-                    (norm_drivning_force/params.g_std()*params.g2()*DSigma*(DSigma > 0)
-                    *(1/s_vM_2*delta_ij - Sigma*dsvMdsij)));
+            Vector6 Gkl = B1*Bs*Sigma*(1-norm_drivning_force/params.g_std()*params.g2())*(delta_ij/I1_2 - 1.5*s/s_vM_2);
             Lskl = Gkl*dfdDfM/(A + B2*dfdDfM);
             Fekl = B2*Lekl;
             Fskl = Gkl*(1 + dfdDfM/(A + B2*dfdDfM)*B2);
