@@ -246,16 +246,16 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 std::cout << dcdDL << std::endl;
                 double Gamma = params.g0() - params.g1()*temp/params.Ms() + params.g2()*Sigma;
                 norm_drivning_force = (Gamma - params.g_mean())/params.g_std();
-                P = 0*0.5*(1 + erf(norm_drivning_force)) + 1;
+                P = 0.5*(1 + erf(norm_drivning_force));
                 As = c*P;
                 pdf = normal_pdf(norm_drivning_force)/params.g_std();
-                Bs = params.g2()*params.beta()*pow(fsb2, n)*pdf*(DSigma > 0)*0;
-                double dAsddL = dcdDL*P + 0*c*params.g2()*pdf*dSigmadDL;
-                double dAsdfM = 0*c*params.g2()*pdf*dSigmadDfM;
+                Bs = params.g2()*params.beta()*pow(fsb2, n)*pdf*(DSigma > 0);
+                double dAsddL = dcdDL*P + c*params.g2()*pdf*dSigmadDL;
+                double dAsdfM = c*params.g2()*pdf*dSigmadDfM;
 
                 double dBsdDL = (pdf*n*pow(fsb2, n - 1)*dfsb2dDL -
-                        Bs*norm_drivning_force/params.g_std()*params.g2()*dSigmadDL)*(DSigma > 0)*0;
-                double dBsdfM = -Bs*norm_drivning_force/params.g_std()*params.g2()*dSigmadDfM*0;
+                        Bs*norm_drivning_force/params.g_std()*params.g2()*dSigmadDL)*(DSigma > 0);
+                double dBsdfM = -Bs*norm_drivning_force/params.g_std()*params.g2()*dSigmadDfM;
 
                 // std::cout << "As: " << As << " Bs: " << Bs << " P: " << P << " pdf: " << pdf << " Gamma: "
                 //           << Gamma << " Sigma:" << Sigma << std::endl;
@@ -368,7 +368,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         else {
             double B1 = (1 - state.fM())/(1 + As*DL + Bs*DSigma);
             double B2 = B1*(As + (params.alpha()*params.beta()*pow(fsb2, params.n()-2)*(params.n()*(1-fsb2) - 1)*P*DL
-                  + pdf*params.n()*params.beta()*pow(fsb2, params.n() - 1)*(DSigma > 0)*0)*dfsb2dDL);
+                  + pdf*params.n()*params.beta()*pow(fsb2, params.n() - 1)*(DSigma > 0))*dfsb2dDL);
             Lekl = (2*G*nij2 + params.a()*K*delta_ij)/(A*B - B*B2*dfdDfM);
 
             Vector6 Gkl = B1*Bs*(DvM_inv*delta_ij - DSigma*dsvMdsij +
