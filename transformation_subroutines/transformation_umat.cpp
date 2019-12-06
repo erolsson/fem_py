@@ -287,7 +287,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 }
                 else if (! stress_transformations) {
                     double det = dfdDL*(dh_strainDfM - 1) - dfdDfM*dh_straindDL;
-                    dDL = ((dh_straindDL-1)*f - dfdDfM*h_strain)/det;
+                    dDL = ((dh_strainDfM-1)*f - dfdDfM*h_strain)/det;
                     dDfM_strain = (-dh_straindDL*f + dfdDL*h_strain)/det;
                 }
                 else if (! strain_transformations) {
