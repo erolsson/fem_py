@@ -232,13 +232,17 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     DvM_inv = 1/(s_vM_2 - s_vM_1);
                 }
                 Sigma = I1_2/s_vM_2;
-                DSigma = (I1_2 - I1_1)*DvM_inv;
+                double DI1 = 3*K*(de[0] + de[1] + de[2] - DfM*params.dV());
+                double DvM = 1.5/s_vM_2*double_contract(deviator(sigma_t),
+                        static_cast<Vector6>(2*G*(deviator(static_cast<Vector6>(de)) - (DL + RA*DfM)*nij2)));
+                // DSigma = (I1_2 - I1_1)*DvM_inv;
+                DSigma = Sigma*(DI1/I1_2 - DvM/s_vM_2);
                 std::cout << "DSigma: " << DSigma << std::endl;
                 double n = params.n();
                 double dSigmadDL = -Sigma/s_vM_2*double_contract(dsvMdsij, dsijdDL);
                 double dSigmadDfM = 1/s_vM_2*(3*K*params.dV() - Sigma*double_contract(dsvMdsij, dsijdDfM));
-                double dDSigmadDL = -DSigma*DvM_inv*double_contract(dsvMdsij, dsijdDL);
-                double dDSigmadDfM = DvM_inv*(3*K*params.dV() - DSigma*double_contract(dsvMdsij, dsijdDfM));
+                double dDSigmadDL = dSigmadDL*(DI1/I1_2 - DvM/s_vM_2);
+                double dDSigmadDfM = dSigmadDfM*(DI1/I1_2 - DvM/s_vM_2);
                 fsb2 = 1 - (1 - state.fsb0())*exp(-params.alpha()*(state.ep_eff() + DL));
                 dfsb2dDL = params.alpha()*(1 - state.fsb0())*exp(-params.alpha()*(state.ep_eff() + DL));
 
