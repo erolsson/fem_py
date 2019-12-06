@@ -235,9 +235,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 DSigma = (I1_2 - I1_1)*DvM_inv;
                 double n = params.n();
                 double dSigmadDL = -Sigma/s_vM_2*double_contract(dsvMdsij, dsijdDL);
-                double dSigmadDfM = 1/s_vM_2*(3*K*params.dV() + Sigma*double_contract(dsvMdsij, dsijdDfM));
+                double dSigmadDfM = 1/s_vM_2*(3*K*params.dV() - Sigma*double_contract(dsvMdsij, dsijdDfM));
                 double dDSigmadDL = -DSigma*DvM_inv*double_contract(dsvMdsij, dsijdDL);
-                double dDSigmadDfM = DvM_inv*(3*K*params.dV() + DSigma*double_contract(dsvMdsij, dsijdDfM));
+                double dDSigmadDfM = DvM_inv*(3*K*params.dV() - DSigma*double_contract(dsvMdsij, dsijdDfM));
                 fsb2 = 1 - (1 - state.fsb0())*exp(-params.alpha()*(state.ep_eff() + DL));
                 dfsb2dDL = params.alpha()*(1 - state.fsb0())*exp(-params.alpha()*(state.ep_eff() + DL));
 
@@ -252,9 +252,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 double dAsddL = dcdDL*P + c*params.g2()*pdf*dSigmadDL;
                 double dAsdfM = c*params.g2()*pdf*dSigmadDfM;
 
-                double dBsdDL = (pdf*n*pow(fsb2, n - 1)*dfsb2dDL -
-                        Bs*norm_drivning_force/params.g_std()*params.g2()*dSigmadDL)*(DSigma > 0);
-                double dBsdfM = -Bs*norm_drivning_force/params.g_std()*params.g2()*dSigmadDfM*(DSigma > 0);
+                double dBsdDL = (pdf*n*pow(fsb2, n - 1)*dfsb2dDL
+                        -  Bs*norm_drivning_force/params.g_std()*params.g2()*dSigmadDL)*(DSigma > 0);
+                double dBsdfM = -Bs*norm_drivning_force/params.g_std()*params.g2()*dSigmadDfM;
 
                 // std::cout << "As: " << As << " Bs: " << Bs << " P: " << P << " pdf: " << pdf << " Gamma: "
                 //           << Gamma << " Sigma:" << Sigma << std::endl;
