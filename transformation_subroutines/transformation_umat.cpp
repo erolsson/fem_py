@@ -301,6 +301,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     dDL = (d*f - b*h_stress)/det;
                     dDfM_stress = -(c + d*e -c*g)/det*f + (a + b*e - a*g)*h_stress + h_strain;
                     dDfM_strain = (d*e - c*g)/det*f - (b*e-a*g)/det*h_stress - h_strain;
+                    std::cout << "f: " << f << " h_stress: " << h_stress << " h_strain: " << h_strain << std::endl;
                     std::cout << "dDL: " << -dDL << " dDfM_stress: " << -dDfM_stress << " dDfM_strain: "
                               << -dDfM_strain << std::endl;
                 }
@@ -310,7 +311,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     dDfM_strain = 0;
                     DfM_strain = 0;
                     dDfM_stress = h_stress/dh_stressDfM;
-                    std::cout << "DL < 0: giving dDfM_stress = " << dDfM_stress << std::endl;
+                    std::cout << "DL < 0: giving dDfM_stress = " << -dDfM_stress << std::endl;
                 }
             }
 
