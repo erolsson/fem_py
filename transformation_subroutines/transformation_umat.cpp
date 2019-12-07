@@ -304,6 +304,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 }
                 if (DL < 0 && stress_transformations) {
                     DL = 0;
+                    dDL = 0;
+                    dDfM_strain = 0;
                     DfM_strain = 0;
                     dDfM_stress = h_stress/dh_stressDfM;
                 }
