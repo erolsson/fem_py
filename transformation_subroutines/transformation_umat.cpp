@@ -308,6 +308,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     dDfM_strain = 0;
                     DfM_strain = 0;
                     dDfM_stress = h_stress/dh_stressDfM;
+                    std::cout << "DL < 0: giving dDfM_stress = " << dDfM_stress << std::endl;
                 }
             }
 
