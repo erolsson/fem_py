@@ -7,7 +7,7 @@ from materials.transformation_materials import test_material
 BC = namedtuple('BC', ['amplitude', 'direction', 'mode'])
 
 
-def write_input_file(filename, material, boundary_conditions, temperature=None, element_size=1., element_type='C3D8R',
+def write_input_file(filename, material, boundary_conditions, temperature=None, element_size=1., element_type='C3D8',
                      umat_file=None, time_period=1., max_increment=1., martensite_fraction=None):
     try:
         material_name = material.name

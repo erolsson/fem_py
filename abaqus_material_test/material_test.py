@@ -10,7 +10,7 @@ from materials.transformation_materials import test_material
 
 
 def one_element_abaqus(simulation_directory, material, boundary_conditions, simulation_name='oneElement',
-                       element_size=1., element_type='C3D8R', user_subroutine=None,
+                       element_size=1., element_type='C3D8', user_subroutine=None,
                        time_period=1., max_increment=1., martensite_fraction=None, temperature=None, **_):
     run_directory = os.getcwd()
     file_directory = os.path.dirname(os.path.abspath(__file__))
