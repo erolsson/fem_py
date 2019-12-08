@@ -399,7 +399,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 for (unsigned j = 3; j != 6; ++j)
                     Bijkl(i, j) *= 2;
             }
-            // D_alg = Bijkl.inverse()*D_alg;
+            D_alg = Bijkl.inverse()*D_alg;
         }
     }
 }
