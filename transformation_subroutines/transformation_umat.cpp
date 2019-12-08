@@ -145,6 +145,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         // Effective stress and its derivatives
         Vector6 s1 = deviator(static_cast<Vector6>(stress_vec));
         double s_vM_1 = sqrt(1.5*double_contract(s1, s1));
+        std::cout << "stilde2: " << stilde2.transpose().format(CleanFmt) << std::endl;
         double s_eq_2 = sqrt(1.5*double_contract(stilde2, stilde2));
 
         double I1_1 = stress_vec[0] + stress_vec[1] + stress_vec[2];
