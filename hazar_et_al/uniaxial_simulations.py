@@ -34,12 +34,12 @@ for experiment in experiments[0:1]:
                                      max_increment=1.)
     
     plt.figure(0)
-    plt.plot(e[:, 2], s[:, 2], '--' + experiment.color)
+    plt.plot(e[:, 2], s[:, 2], '--x' + experiment.color)
     plt.figure(1)
-    plt.plot(e[:, 2], fm, '--' + experiment.color)
+    plt.plot(e[:, 2], fm, '--x' + experiment.color)
     plt.figure(2)
     inelastic_strain = e[:, 2] - s[:, 2]/hazar_et_al.E
     dV = np.sum(e[:, 0:3], 1) - s[:, 2]/hazar_et_al.E*(1 - 2*hazar_et_al.v)
-    plt.plot(inelastic_strain, dV, '--' + experiment.color)
+    plt.plot(inelastic_strain, dV, '--x' + experiment.color)
 
 plt.show()
