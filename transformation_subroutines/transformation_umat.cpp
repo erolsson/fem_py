@@ -210,11 +210,11 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 f = s_eq_2 + params.a()*I1_2 - sy_2;
             }
             RA = params.R1() + params.R2()*s_eq_2/params.sy0A();
-            ds_eq_2_dfM = 0*-3*G*RA/B;
+            ds_eq_2_dfM = -3*G*RA/B;
             dfdDfM = ds_eq_2_dfM - 3*params.a()*K*params.dV() - (params.sy0M() - params.sy0A());
             Vector6 dsijdDfM = -K*params.dV()*delta_ij;
             if ( s_eq_prime > 1e-12) {
-                dsijdDfM -= 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2;
+                dsijdDfM -= 2*G*(0*RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2;
                 sigma_2 -= 2*G*(DL + RA*DfM)*nij2 + K*params.dV()*delta_ij*DfM;
             }
             std::cout << "dsijdDfM: " << dsijdDfM.transpose().format(CleanFmt) << std::endl;
