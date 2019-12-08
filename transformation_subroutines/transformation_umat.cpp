@@ -361,7 +361,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         if (DfM_stress > 0) {
             Fskl = bij;
             Lekl = 1./A/B*(2*G*nij2 + params.a()*K*delta_ij);
-            Lskl = 1/A*dfdDfM*bij;
+            Lskl = 1./A*dfdDfM*bij;
+            std::cout << Fskl.transpose().format(CleanFmt) << std::endl;
         }
         else {
             double B1 = (1 - state.fM())/(1 + As*DL + Bs*DSigma);
