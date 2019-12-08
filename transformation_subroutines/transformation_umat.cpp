@@ -213,11 +213,11 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             ds_eq_2_dfM = -3*G*RA/B;
             dfdDfM = ds_eq_2_dfM - 3*params.a()*K*params.dV() - (params.sy0M() - params.sy0A());
             Vector6 dsijdDfM = -K*params.dV()*delta_ij;
-            std::cout << "dsijdDfM: " << dsijdDfM.transpose().format(CleanFmt) << std::endl;
             if ( s_eq_prime > 1e-12) {
                 dsijdDfM -= 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2;
                 sigma_2 -= 2*G*(DL + RA*DfM)*nij2 + K*params.dV()*delta_ij*DfM;
             }
+            std::cout << "dsijdDfM: " << dsijdDfM.transpose().format(CleanFmt) << std::endl;
             Vector6 dsijdDL = -2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
             // Calculating the von Mises stress at step 2
             s = deviator(sigma_2);
