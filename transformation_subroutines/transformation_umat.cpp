@@ -182,7 +182,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             B = 1 + 3*G*params.R2()*DfM/params.sy0A();
             // s_eq_2 = (s_eq_prime - 3*G*(DL + params.R1()*DfM))/B;
             I1_2 = sigma_t[0] + sigma_t[1] + sigma_t[2] - 3*K*params.dV()*DfM;
-
+            s_eq_2 = (s_eq_prime - 3*G*(DL + params.R1()*DfM))/B;
             // Calculates f and the derivative df/dDL,
             if (plastic) {
                 dsij_prime_dDL = Vector6::Zero();
