@@ -392,6 +392,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 std::cout << "Time: " << *time << std::endl;
                 std::cout << "ds_eq_2_dfM: " << ds_eq_2_dfM << "  "  <<  std::endl;
                 std::cout << Bijkl.format(CleanFmt) << std::endl;
+                std::cout << (params.dV()*delta_ij*Fskl.transpose()).format(CleanFmt) << std::endl;
             }
             for (unsigned i = 3; i != 6; ++i) {
                 for (unsigned j = 3; j != 6; ++j)
