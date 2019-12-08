@@ -145,7 +145,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         // Effective stress and its derivatives
         Vector6 s1 = deviator(static_cast<Vector6>(stress_vec));
         double s_vM_1 = sqrt(1.5*double_contract(s1, s1));
-        std::cout << "stilde2: " << stilde2.transpose().format(CleanFmt) << std::endl;
         double s_eq_2 = sqrt(1.5*double_contract(stilde2, stilde2));
 
         double I1_1 = stress_vec[0] + stress_vec[1] + stress_vec[2];
@@ -219,8 +218,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 sigma_2 -= 2*G*(DL + RA*DfM)*nij2;
                 dsijdDfM -= 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2;
             }
-            std::cout << "dsijdDfM: " << dsijdDfM.transpose().format(CleanFmt) << std::endl;
-            std::cout << DfM*params.R2()/params.sy0A()*ds_eq_2_dfM << std::endl;
             Vector6 dsijdDL = -2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2;
             // Calculating the von Mises stress at step 2
             s = deviator(sigma_2);
@@ -251,7 +248,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 double Gamma = params.g0() - params.g1()*temp/params.Ms() + params.g2()*Sigma;
                 norm_drivning_force = (Gamma - params.g_mean())/params.g_std();
                 P = 0.5*(1 + erf(norm_drivning_force));
-                std::cout << "P: " << P << std::endl;
                 As = c*P;
                 pdf = normal_pdf(norm_drivning_force)/params.g_std();
                 Bs = params.g2()*params.beta()*pow(fsb2, n)*pdf*(DSigma > 0);
@@ -305,9 +301,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     dDL = (d*f - b*h_stress)/det;
                     dDfM_stress = -(c + d*e -c*g)/det*f + (a + b*e - a*g)/det*h_stress + h_strain;
                     dDfM_strain = (d*e - c*g)/det*f - (b*e-a*g)/det*h_stress - h_strain;
-                    std::cout << "f: " << f << " h_stress: " << h_stress << " h_strain: " << h_strain << std::endl;
-                    std::cout << "dDL: " << -dDL << " dDfM_stress: " << -dDfM_stress << " dDfM_strain: "
-                              << -dDfM_strain << std::endl;
                 }
                 if (DL - dDL < 0 && stress_transformations) {
                     DL = 0;
@@ -315,12 +308,13 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     dDfM_strain = 0;
                     DfM_strain = 0;
                     dDfM_stress = h_stress/dh_stressDfM;
-                    std::cout << "DL < 0: giving dDfM_stress = " << -dDfM_stress << std::endl;
                 }
             }
 
 
             DL -= dDL;
+            std::cout << "iter: " << iter << " DfM_stress:" << DfM_stress << " h: " << h_stress << " dhdDfM"
+                      << dh_stressDfM << std::endl;
             DfM_stress -= dDfM_stress;
             DfM_strain -= dDfM_strain;
             DfM = DfM_stress + DfM_strain;
@@ -342,8 +336,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         state.R() = R2;
         state.fsb() = fsb2;
         stress_vec = sigma_2;
-        std::cout << "trial stress: " << sigma_t.transpose().format(CleanFmt) << std::endl;
-        std::cout << "trial stress: " << sigma_2.transpose().format(CleanFmt) << std::endl;
         if (params.kinematic_hardening()) {
             state.total_back_stress() = Vector6::Zero();
             for (unsigned i = 0; i != params.back_stresses(); ++i) {
