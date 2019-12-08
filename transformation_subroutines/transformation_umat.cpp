@@ -325,6 +325,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             std::cout << "DL: " << DL << " DfM_stress: " << DfM_stress << " DfM_strain: " << DfM_strain << std::endl;
             std::cout << "RA: " << RA << " R1: " << params.R1() << " R2: " << params.R2() << " s_eq: " << s_eq_2
                       << std::endl;
+            std::cout << "Sigma_2: " << sigma_2.transpose().format(CleanFmt) << std::endl;
         }
         // Updating state variables
         state.ep_eff() += DL;
