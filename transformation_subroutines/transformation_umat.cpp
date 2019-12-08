@@ -182,7 +182,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
             B = 1 + 3*G*params.R2()*DfM/params.sy0A();
             // s_eq_2 = (s_eq_prime - 3*G*(DL + params.R1()*DfM))/B;
-           I1_2 = sigma_t[0] + sigma_t[1] + sigma_t[2] - 3*K*params.dV()*DfM;
+            I1_2 = sigma_t[0] + sigma_t[1] + sigma_t[2] - 3*K*params.dV()*DfM;
 
             // Calculates f and the derivative df/dDL,
             if (plastic) {
@@ -214,7 +214,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             dfdDfM = ds_eq_2_dfM - 3*params.a()*K*params.dV() - (params.sy0M() - params.sy0A());
             Vector6 dsijdDfM = -K*params.dV()*delta_ij;
             if ( s_eq_prime > 1e-12) {
-                dsijdDfM -= 2*G*(0*RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2;
+                dsijdDfM -= 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2;
                 sigma_2 -= 2*G*(DL + RA*DfM)*nij2 + K*params.dV()*delta_ij*DfM;
             }
             std::cout << "dsijdDfM: " << dsijdDfM.transpose().format(CleanFmt) << std::endl;
@@ -399,7 +399,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 for (unsigned j = 3; j != 6; ++j)
                     Bijkl(i, j) *= 2;
             }
-            D_alg = Bijkl.inverse()*D_alg;
+            // D_alg = Bijkl.inverse()*D_alg;
         }
     }
 }
