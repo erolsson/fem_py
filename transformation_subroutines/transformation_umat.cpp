@@ -392,13 +392,13 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                         - K*params.dV()*delta_ij*Fekl.transpose();
                 Bijkl += 2*G*(1+DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2*Lskl.transpose();
             }
-            Bijkl += 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2*Fskl.transpose()
+            Bijkl += 0*2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2*Fskl.transpose()
                     + K*params.dV()*delta_ij*Fskl.transpose();
             for (unsigned i = 3; i != 6; ++i) {
                 for (unsigned j = 3; j != 6; ++j)
                     Bijkl(i, j) *= 2;
             }
-            // D_alg = Bijkl.inverse()*D_alg;
+            D_alg = Bijkl.inverse()*D_alg;
         }
     }
 }
