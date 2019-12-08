@@ -307,8 +307,10 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
 
             DL -= dDL;
-            std::cout << "iter: " << iter << " DfM_stress:" << DfM_stress << " h: " << h_stress << " dhdDfM"
-                      << dh_stressDfM << std::endl;
+            if (npt == 1.) {
+                std::cout << "iter: " << iter << " DfM_stress:" << DfM_stress << " h: " << h_stress << " dhdDfM"
+                          << dh_stressDfM << std::endl;
+            }
             DfM_stress -= dDfM_stress;
             DfM_strain -= dDfM_strain;
             DfM = DfM_stress + DfM_strain;
@@ -318,10 +320,12 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 return;
             }
         }
-        std::cout << "Converged in " << iter << " iterations" << std::endl;
-        std::cout << "DL: " << DL << " DfM_stress: " << DfM_stress << " DfM_strain: " << DfM_strain << std::endl;
-        std::cout << "RA: " << RA << " R1: " << params.R1() << " R2: " << params.R2() << " s_eq: " << s_eq_2
-                  << std::endl;
+        if (npt == 1) {
+            std::cout << "Converged in " << iter << " iterations" << std::endl;
+            std::cout << "DL: " << DL << " DfM_stress: " << DfM_stress << " DfM_strain: " << DfM_strain << std::endl;
+            std::cout << "RA: " << RA << " R1: " << params.R1() << " R2: " << params.R2() << " s_eq: " << s_eq_2
+                      << std::endl;
+        }
         // Updating state variables
         state.ep_eff() += DL;
         state.fM() += DfM;
@@ -382,8 +386,10 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             }
             Bijkl += 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2*Fskl.transpose()
                     + K*params.dV()*delta_ij*Fskl.transpose();
-            std::cout << "Time: " << *time << " npt:" << npt << std::endl;
-            std::cout << Bijkl.format(CleanFmt) << std::endl;
+            if (npt == 1.) {
+                std::cout << "Time: " << *time << std::endl;
+                std::cout << Bijkl.format(CleanFmt) << std::endl;
+            }
             for (unsigned i = 3; i != 6; ++i) {
                 for (unsigned j = 3; j != 6; ++j)
                     Bijkl(i, j) *= 2;
