@@ -142,19 +142,13 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         Vector6 dsvMdsij = Vector6::Zero();
         double s_vM_2 = 0;
 
-        // Effective stress and its derivatives
-        Vector6 s1 = deviator(static_cast<Vector6>(stress_vec));
-        double s_vM_1 = sqrt(1.5*double_contract(s1, s1));
-        double s_eq_2 = sqrt(1.5*double_contract(stilde2, stilde2));
-
-        double I1_1 = stress_vec[0] + stress_vec[1] + stress_vec[2];
-
         double ds_eq_2_dDL = 0;
         double ds_eq_2_dfM = 0;
 
         double dR2dDL = 0;
         double RA = 0;
-        double s_eq_prime = s_eq_2;
+        double s_eq_prime = sqrt(1.5*double_contract(stilde2, stilde2));
+        double s_eq_2 = s_eq_prime;
         Matrix6x6 nnt = Matrix6x6::Zero();
         Matrix6x6 Aijkl = Matrix6x6::Zero();
         Vector6 nij2 = 1.5*stilde2;
@@ -361,7 +355,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             Fskl = bij;
             Lekl = 1./A/B*(2*G*nij2 + params.a()*K*delta_ij);
             Lskl = 1./A*dfdDfM*bij;
-            std::cout << Fskl.transpose().format(CleanFmt) << std::endl;
         }
         else {
             double B1 = (1 - state.fM())/(1 + As*DL + Bs*DSigma);
