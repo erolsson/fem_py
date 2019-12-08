@@ -390,7 +390,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             if (npt == 1.) {
                 std::cout << "Fskl: " << Fskl.transpose().format(CleanFmt) << std::endl;
                 std::cout << "Time: " << *time << std::endl;
-                std::cout << "ds_eq_2_dfM: " << ds_eq_2_dfM << "  "  <<  std::endl;
+                std::cout << "ds_eq_2_dfM: " << ds_eq_2_dfM << "  "
+                          <<  RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM << std::endl;
                 std::cout << Bijkl.format(CleanFmt) << std::endl;
                 std::cout << (K*params.dV()*delta_ij*Fskl.transpose()).format(CleanFmt) << std::endl;
                 std::cout << "nij:" << nij2.transpose().format(CleanFmt) << std::endl;
