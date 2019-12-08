@@ -328,6 +328,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         }
         std::cout << "Converged in " << iter << " iterations" << std::endl;
         std::cout << "DL: " << DL << " DfM_stress: " << DfM_stress << " DfM_strain: " << DfM_strain << std::endl;
+        std::cout << "RA: " << RA << std::endl;
         // Updating state variables
         state.ep_eff() += DL;
         state.fM() += DfM;
