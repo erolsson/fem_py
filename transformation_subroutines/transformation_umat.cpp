@@ -376,7 +376,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         if (DL > 0) {
             D_alg -= 2*G*(1 + DfM*params.R2()/params.sy0A()*ds_eq_2_dDL)*nij2*Lekl.transpose();
         }
-
+        nnt = nij2*nij2.transpose();
         if (DfM > 0) {
             D_alg -= 4*G*G/B*DfM*params.R2()/params.sy0A()*nnt;
             Matrix6x6 Bijkl = I;
