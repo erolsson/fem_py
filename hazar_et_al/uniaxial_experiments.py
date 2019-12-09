@@ -108,6 +108,7 @@ if __name__ == '__main__':
         Ms = 220
         a = 0.05
         Mss = -np.log(1-0.78)/k - Ms - a*850 + 22
+        print(Mss)
         fMsigma = 1 - np.exp(-k*(Ms + a*experiment.stress_strain[:, 1] + Mss - experiment.temperature))
         fMsigma[fMsigma <= 0.78] = 0.78
         plt.plot(experiment.stress_strain[:, 1], fMsigma, '--' + experiment.color)
