@@ -370,6 +370,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             Lekl = (2*G*nij2 + params.a()*K*delta_ij)/(A*B - B*B2*dfdDfM);
 
             Vector6 Gkl = B1*Bs*Sigma*(1-norm_drivning_force/params.g_std()*params.g2())*(delta_ij/I1_2 - 1.5*s/s_vM_2);
+            std::cout << Gkl.transpose().format(CleanFmt) << std::endl;
             Lskl = Gkl*dfdDfM/(A + B2*dfdDfM);
             Fekl = B2*Lekl;
             Fskl = Gkl*(1 + dfdDfM/(A + B2*dfdDfM)*B2);
@@ -389,6 +390,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             }
             Bijkl += 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2*Fskl.transpose()
                     + K*params.dV()*delta_ij*Fskl.transpose();
+            /*
             if (npt == 1.) {
                 std::cout << "Fskl: " << Fskl.transpose().format(CleanFmt) << std::endl;
                 std::cout << "Time: " << *time << std::endl;
@@ -398,6 +400,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 std::cout << (K*params.dV()*delta_ij*Fskl.transpose()).format(CleanFmt) << std::endl;
                 std::cout << "nij:" << nij2.transpose().format(CleanFmt) << std::endl;
             }
+             */
             for (unsigned i = 3; i != 6; ++i) {
                 for (unsigned j = 3; j != 6; ++j)
                     Bijkl(i, j) *= 2;
