@@ -127,8 +127,8 @@ if __name__ == '__main__':
             plt.figure(10)
             plt.plot(experiment.stress_strain[:, 1], e_tr)
 
-            par_r = np.polyfit(x[x<hazar_et_al.sy0(0.78)/hazar_et_al.sy0A],
-                               y[x<hazar_et_al.sy0(0.78)/hazar_et_al.sy0A], 1)
+            par_r = np.polyfit(x[x<2.4],
+                               y[x<2.4], 1)
             plt.figure(3)
             plt.plot(x, par_r[0]*x + par_r[1])
             print(par_r)

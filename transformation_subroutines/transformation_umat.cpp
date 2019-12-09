@@ -182,7 +182,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             if (plastic) {
                 dsij_prime_dDL = Vector6::Zero();
                 ds_eq_2_dDL = -3*G;
-                double sy0 = params.sy0M()*(state.fM() + DfM) + params.sy0A()*(1 - (state.fM() + DfM));
+                // double sy0 = params.sy0M()*(state.fM() + DfM) + params.sy0A()*(1 - (state.fM() + DfM));
+                double sy0 = params.sy0M()*0.78 + params.sy0A()*(1 - 0.78);
                 R2 = (state.R() + params.b()*params.Q()*DL)/(1 + params.b()*DL);
                 double sy_2 = sy0 + R2;
                 Vector6 sij_prime = sij_t;
