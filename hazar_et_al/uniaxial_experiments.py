@@ -4,6 +4,7 @@ import os
 import numpy as np
 
 from scipy.optimize import fmin
+from scipy.stats import norm
 
 import matplotlib.pyplot as plt
 
@@ -62,17 +63,20 @@ def uniaxial_stress_strain_curve_plastic(material, epl):
     return data
 
 
-def strain_transformation(par, epl):
+def strain_transformation(par, epl, temperature):
     par = np.abs(par)
     fsb = 1 - (1 - par[0])*np.exp(-par[1]*epl)
     # print(fsb, epl, par)
-    c = (1 - 0.78)/np.exp(-par[2]*par[0]**4.)
-    return 1 - c*np.exp(-par[2]*fsb**4.)
+    Gamma = par[3] - par[4]*np.array(temperature)/hazar_et_al.Ms
+    p = norm.cdf(Gamma, loc=0, scale=abs(par[5]))
+    print(p, Gamma)
+    c = (1 - 0.78)/np.exp(-par[2]*par[0]**4.*p)
+    return 1 - c*np.exp(-par[2]*fsb**4.*p)
 
 
 def platic_trans_residual(par, *data):
-    epl, fm = data
-    fm_model = strain_transformation(par, epl)
+    epl, fm, temperature = data
+    fm_model = strain_transformation(par, epl, temperature)
     return np.sum((fm - fm_model)**2)
 
 
@@ -86,6 +90,7 @@ if __name__ == '__main__':
     plt.plot(transformation_free_data[:, 0], transformation_free_data[:, 1])
     all_epl = []
     all_fMe = []
+    temp = []
     for experiment in experiments:
         plt.figure(0)
         experiment.plot_stress_strain()
@@ -119,28 +124,40 @@ if __name__ == '__main__':
             x = x[~np.isinf(y)]
             y = y[(~np.isinf(y))]
 
-            par = np.polyfit(x[2:], y[2:], 1)
-            plt.plot(x, par[0]*x + par[1])
-            print(par)
-
+            par_r = np.polyfit(x[2:], y[2:], 1)
+            plt.plot(x, par_r[0]*x + par_r[1])
+            print(par_r)
+            par_r = [0.00623/2**0.5, 0.015/2**0.5]
             plt.plot(x, y, '-*')
 
+
         fMep = fM[fM > 0.78] - np.interp(s[fM > 0.78], experiment.stress_strain[:, 1], fMsigma)
+        dfm = (fM[fM > 0.78] - 0.78)
+        s_eq = np.interp(experiment.transformation_data[:, 0], experiment.stress_strain[:, 0],
+                         experiment.stress_strain[:, 1])
+        e_tr = (par_r[1] + par_r[0]*s_eq/hazar_et_al.sy0A + hazar_et_al.dV/3)*dfm
+        print(e_tr)
         fMep[fMep < 0] = 0
-        e = np.interp(s[fM > 0.78], transformation_free_data[:, 1], transformation_free_data[:, 0])
-        epl = e - s[fM > 0.78]/hazar_et_al.E
+        e = experiment.transformation_data[:, 0]
+        print(e)
+        epl = e - e_tr - s_eq/hazar_et_al.E
+        print(s_eq/hazar_et_al.E)
         plt.figure(5)
         plt.plot(epl, fMep + 0.78, 'x' + experiment.color, ms=12, mew=2)
         all_epl += epl.tolist()
         all_fMe += fMep.tolist()
+        temp += [experiment.temperature]*len(fMep)
     all_epl = np.array(all_epl)
     all_fMe = np.array(all_fMe) + 0.78
-    par = fmin(platic_trans_residual, x0=[0.8, 10, 10], args=(all_epl, all_fMe), maxfun=1e6, maxiter=1e6)
+    par_ep = fmin(platic_trans_residual, x0=[0.8, 10, 10, 60, 10, 1], args=(all_epl, all_fMe, temp), maxfun=1e6,
+                  maxiter=1e6)
     plt.figure(5)
     epl = np.linspace(0, 0.002, 1000)
     # par = [0.5, 4., 3.]
-    print(par)
-    plt.plot(epl, strain_transformation(par, epl))
-    print(strain_transformation(par, 1.15e-3))
+    print(par_ep)
+    plt.plot(epl, strain_transformation(par_ep, epl, 22), 'r')
+    plt.plot(epl, strain_transformation(par_ep, epl, 75), 'b')
+    plt.plot(epl, strain_transformation(par_ep, epl, 100), 'g')
+    plt.plot(epl, strain_transformation(par_ep, epl, 150), 'k')
     plt.plot()
     plt.show()

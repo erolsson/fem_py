@@ -116,12 +116,12 @@ hazar_et_al = ElasticPlasticTransformMaterial(E=200.5e3, v=0.27, sy0M=1016, sy0A
                                               gamma_m=np.array([950., 500., 50.]),
                                               a=0*0.0677272727272727*np.array([1., 0., 0.]),
                                               Ms=220, name='SKF', Mss=-104.13818181818179, fM=0.78,
-                                              beta=58.39, alpha=126.61, n=4., sde=0.04, g0=6000000, g1=0*176000, g2=5.2,
-                                              g_mean=57, g_std=350)
+                                              beta=58.39, alpha=126.61, n=4., sde=0.04, g0=44.6, g1=237, g2=0,
+                                              g_mean=0, g_std=-61)
 hazar_et_al.k = 0.01
 hazar_et_al.dV = 0.0371
-hazar_et_al.R1 = -0.02730086
-hazar_et_al.R2 = 0.02206769
+hazar_et_al.R1 = 0.015/2**0.5
+hazar_et_al.R2 = 0.00623/2**0.5
 
 if __name__ == '__main__':
     print(neu_sehitoglu.umat_parameters())
