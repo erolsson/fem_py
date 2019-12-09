@@ -79,7 +79,7 @@ def platic_trans_residual(par, *data):
     return np.sum((fm - fm_model)**2)
 
 
-ms_start = {22.: 850, 75: 1000, 100: 1290}
+ms_start = {22.: 800, 75: 1000, 100: 1290}
 
 
 if __name__ == '__main__':
@@ -107,7 +107,7 @@ if __name__ == '__main__':
         k = 0.01
         Ms = 220
         a = 0.05
-        Mss = -np.log(1-0.78)/k - Ms - a*850 + 22
+        Mss = -np.log(1-0.78)/k - Ms - a*ms_start[22] + 22
         print(Mss)
         fMsigma = 1 - np.exp(-k*(Ms + a*experiment.stress_strain[:, 1] + Mss - experiment.temperature))
         fMsigma[fMsigma <= 0.78] = 0.78
@@ -124,10 +124,16 @@ if __name__ == '__main__':
             x = x[~np.isinf(y)]
             y = y[(~np.isinf(y))]
 
-            par_r = np.polyfit(x[2:], y[2:], 1)
+            plt.figure(10)
+            plt.plot(experiment.stress_strain[:, 1], e_tr)
+
+            par_r = np.polyfit(x[x<hazar_et_al.sy0(0.78)/hazar_et_al.sy0A],
+                               y[x<hazar_et_al.sy0(0.78)/hazar_et_al.sy0A], 1)
+            plt.figure(3)
             plt.plot(x, par_r[0]*x + par_r[1])
             print(par_r)
-            par_r = [0.00623/2**0.5, 0.015/2**0.5]
+            par_r = np.array([0.00623, 0.015])/2**0.5
+            plt.figure(3)
             plt.plot(x, y, '-*')
 
         fMep = fM[fM > 0.78] - np.interp(s[fM > 0.78], experiment.stress_strain[:, 1], fMsigma)
@@ -135,11 +141,11 @@ if __name__ == '__main__':
         s_eq = np.interp(experiment.transformation_data[:, 0], experiment.stress_strain[:, 0],
                          experiment.stress_strain[:, 1])
         e_tr = (par_r[1] + par_r[0]*s_eq/hazar_et_al.sy0A + hazar_et_al.dV/3)*dfm
-        print(e_tr)
+        print("tr_strain", e_tr)
         fMep[fMep < 0] = 0
-        e = experiment.transformation_data[:, 0]
-        print(e)
-        epl = e - e_tr - s_eq/hazar_et_al.E
+        e = experiment.transformation_data[:, 0] - s_eq/hazar_et_al.E
+        print("inel strain", e)
+        epl = e - e_tr
         print(s_eq/hazar_et_al.E)
         plt.figure(5)
         plt.plot(epl, fMep + 0.78, 'x' + experiment.color, ms=12, mew=2)
