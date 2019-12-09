@@ -20,7 +20,7 @@ for experiment in experiments:
     experiment.plot_transformation()
     plt.figure(2)
     experiment.plot_volume_expansion()
-    stress_bc = BC(amplitude=[[0, 0], [1., 1.2*experiment.stress_strain[-1, 1]]], direction='z', mode='stress')
+    stress_bc = BC(amplitude=[[0, 0], [1., 1.0*experiment.stress_strain[-1, 1]]], direction='z', mode='stress')
     if experiment.stress_strain[-1, 1] > 0:
         name = 'tension'
     else:
