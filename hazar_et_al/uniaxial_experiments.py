@@ -115,14 +115,16 @@ if __name__ == '__main__':
             plt.figure(3)
             x = experiment.stress_strain[1:, 1]/hazar_et_al.sy0A
             y = np.diff(e_tr)/np.diff(fMsigma) - hazar_et_al.dV/3
-            x_max = 3.
-            x_min = 2.1
-            print(x_max)
-            par = np.polyfit(x[np.logical_and(x > x_min, x < x_max)], y[np.logical_and(x > x_min, x < x_max)], 1)
+            x = x[~np.isinf(y)]
+            y = y[(~np.isinf(y))]
+
+            par = np.polyfit(x[2:], y[2:], 1)
             plt.plot(x, par[0]*x + par[1])
             print(par)
+
+            dsada
             plt.plot(x, y, '-*')
-            sdsada
+
         fMep = fM[fM > 0.78] - np.interp(s[fM > 0.78], experiment.stress_strain[:, 1], fMsigma)
         fMep[fMep < 0] = 0
         e = np.interp(s[fM > 0.78], transformation_free_data[:, 1], transformation_free_data[:, 0])
