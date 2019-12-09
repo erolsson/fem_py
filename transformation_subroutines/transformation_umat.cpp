@@ -182,8 +182,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             if (plastic) {
                 dsij_prime_dDL = Vector6::Zero();
                 ds_eq_2_dDL = -3*G;
-                // double sy0 = params.sy0M()*(state.fM() + DfM) + params.sy0A()*(1 - (state.fM() + DfM));
-                double sy0 = params.sy0M()*0.78 + params.sy0A()*(1 - 0.78);
+                double sy0 = params.sy0M()*(state.fM() + DfM) + params.sy0A()*(1 - (state.fM() + DfM));
                 R2 = (state.R() + params.b()*params.Q()*DL)/(1 + params.b()*DL);
                 double sy_2 = sy0 + R2;
                 Vector6 sij_prime = sij_t;
@@ -206,7 +205,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             }
             RA = params.R1() + params.R2()*s_eq_2/params.sy0A();
             ds_eq_2_dfM = -3*G*RA/B;
-            dfdDfM = ds_eq_2_dfM - 3*params.a()*K*params.dV() - 0*(params.sy0M() - params.sy0A());
+            dfdDfM = ds_eq_2_dfM - 3*params.a()*K*params.dV() - (params.sy0M() - params.sy0A());
             sigma_2 -= K*params.dV()*delta_ij*DfM;
             Vector6 dsijdDfM = -K*params.dV()*delta_ij;
 

@@ -141,12 +141,11 @@ if __name__ == '__main__':
 
         s_eq = np.interp(experiment.transformation_data[:, 0], experiment.stress_strain[:, 0],
                          experiment.stress_strain[:, 1])
-        e_tr = (par_r[1] + par_r[0]*s_eq/hazar_et_al.sy0A + hazar_et_al.dV/3)*dfm
-        print("tr_strain", e_tr)
-        fMep[fMep < 0] = 0
-        e = experiment.transformation_data[:, 0] - s_eq/hazar_et_al.E
-        print("inel strain", e)
-        epl = e - e_tr
+        epl = 0*fM[fM>0.78]
+        for i, f in enumerate(fM[fM>0.78]):
+            uniax = uniaxial_stress_strain_curve_plastic(hazar_et_al, np.linspace(0, 0.01, 1000), f)
+            epl[i] = np.interp(s_eq[i], uniax[:, 1], uniax[:, 0]) - s_eq[i]/hazar_et_al.E
+
         print(s_eq/hazar_et_al.E)
         plt.figure(5)
         plt.plot(epl, fMep + 0.78, 'x' + experiment.color, ms=12, mew=2)
@@ -155,7 +154,7 @@ if __name__ == '__main__':
         temp += [experiment.temperature]*len(fMep)
     all_epl = np.array(all_epl)
     all_fMe = np.array(all_fMe) + 0.78
-    par_ep = fmin(platic_trans_residual, x0=[0.8, 10, 10, 60, 10, 1], args=(all_epl, all_fMe, temp), maxfun=1e6,
+    par_ep = fmin(platic_trans_residual, x0=[0.0, 100, 100, 400, 400, 10], args=(all_epl, all_fMe, temp), maxfun=1e6,
                   maxiter=1e6)
     plt.figure(5)
     epl = np.linspace(0, 0.002, 1000)
