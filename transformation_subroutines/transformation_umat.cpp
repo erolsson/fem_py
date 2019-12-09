@@ -362,6 +362,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             double B1 = (1 - state.fM())/(1 + As*DL + Bs*DSigma);
             double B2 = B1*(As + (params.alpha()*params.beta()*pow(fsb2, params.n()-2)*(params.n()*(1-fsb2) - 1)*P*DL
                   + pdf*params.n()*params.beta()*pow(fsb2, params.n() - 1)*(DSigma > 0))*dfsb2dDL);
+            std::cout << "B2: " << B2 << std::endl;
             Lekl = (2*G*nij2 + params.a()*K*delta_ij)/(A*B - B*B2*dfdDfM);
 
             Vector6 Gkl = B1*Bs*Sigma*(1-norm_drivning_force/params.g_std()*params.g2())*(delta_ij/I1_2 - 1.5*s/s_vM_2);
