@@ -365,7 +365,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             Lekl = (2*G*nij2 + params.a()*K*delta_ij)/(A*B - B*B2*dfdDfM);
 
             Vector6 Gkl = B1*Bs*Sigma*(1-norm_drivning_force/params.g_std()*params.g2())*(delta_ij/I1_2 - 1.5*s/s_vM_2);
-            std::cout << Gkl.transpose().format(CleanFmt) << std::endl;
+            std::cout << "Gkl: " << Gkl.transpose().format(CleanFmt) << std::endl;
             Lskl = Gkl*dfdDfM/(A + B2*dfdDfM);
             Fekl = B2*Lekl;
             Fskl = Gkl*(1 + dfdDfM/(A + B2*dfdDfM)*B2);
