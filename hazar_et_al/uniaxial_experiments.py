@@ -65,8 +65,8 @@ def strain_transformation(par, epl):
     par = np.abs(par)
     fsb = 1 - (1 - par[0])*np.exp(-par[1]*epl)
     print(fsb, epl, par)
-    c = (0.78 - 1)/np.exp(-par[2]*par[0]**4.)
-    return 1 + c*np.exp(-par[2]*fsb**4.)
+    c = (1 - 0.78)/np.exp(-par[2]*par[0]**4.)
+    return 1 - c*np.exp(-par[2]*fsb**4.)
 
 
 def platic_trans_residual(par, *data):
@@ -139,6 +139,6 @@ if __name__ == '__main__':
     # par = [0.5, 4., 3.]
     print(par)
     plt.plot(epl, strain_transformation(par, epl))
-    strain_transformation(par, 1.32e-3)
+    print(strain_transformation(par, 1.32e-3))
     plt.plot()
     plt.show()
