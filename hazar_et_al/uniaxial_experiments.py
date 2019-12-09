@@ -122,7 +122,6 @@ if __name__ == '__main__':
             plt.plot(x, par[0]*x + par[1])
             print(par)
 
-            dsada
             plt.plot(x, y, '-*')
 
         fMep = fM[fM > 0.78] - np.interp(s[fM > 0.78], experiment.stress_strain[:, 1], fMsigma)
@@ -141,6 +140,6 @@ if __name__ == '__main__':
     # par = [0.5, 4., 3.]
     print(par)
     plt.plot(epl, strain_transformation(par, epl))
-    print(strain_transformation(par, 1.32e-3))
+    print(strain_transformation(par, 1.15e-3))
     plt.plot()
     plt.show()
