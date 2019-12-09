@@ -55,6 +55,7 @@ def uniaxial_stress_strain_curve_plastic(material, epl):
     for C, g in zip(material.Cm, material.gamma_m):
         s += 2./3*C/g*(1-np.exp(-g*epl))
     s /= (1. + material.sde)
+    # print(s)
     e = s/material.E + epl
     data[1:, 0] = e
     data[1:, 1] = s
@@ -64,7 +65,7 @@ def uniaxial_stress_strain_curve_plastic(material, epl):
 def strain_transformation(par, epl):
     par = np.abs(par)
     fsb = 1 - (1 - par[0])*np.exp(-par[1]*epl)
-    print(fsb, epl, par)
+    # print(fsb, epl, par)
     c = (1 - 0.78)/np.exp(-par[2]*par[0]**4.)
     return 1 - c*np.exp(-par[2]*fsb**4.)
 
