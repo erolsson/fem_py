@@ -49,9 +49,9 @@ experiments = [Experiment(temperature=22, color='r'), Experiment(temperature=75,
                Experiment(temperature=100, color='g'), Experiment(temperature=150, color='k')]
 
 
-def uniaxial_stress_strain_curve_plastic(material, epl):
+def uniaxial_stress_strain_curve_plastic(material, epl, fM=0.78):
     data = np.zeros((epl.shape[0]+1, 2))
-    s = 0*epl + material.sy0(0.78)
+    s = 0*epl + material.sy0(fM)
     s += material.Q*(1-np.exp(-material.b*epl))
     for C, g in zip(material.Cm, material.gamma_m):
         s += 2./3*C/g*(1-np.exp(-g*epl))
@@ -138,6 +138,7 @@ if __name__ == '__main__':
 
         fMep = fM[fM > 0.78] - np.interp(s[fM > 0.78], experiment.stress_strain[:, 1], fMsigma)
         dfm = (fM[fM > 0.78] - 0.78)
+
         s_eq = np.interp(experiment.transformation_data[:, 0], experiment.stress_strain[:, 0],
                          experiment.stress_strain[:, 1])
         e_tr = (par_r[1] + par_r[0]*s_eq/hazar_et_al.sy0A + hazar_et_al.dV/3)*dfm
