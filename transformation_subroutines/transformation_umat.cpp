@@ -206,7 +206,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             }
             RA = params.R1() + params.R2()*s_eq_2/params.sy0A();
             ds_eq_2_dfM = -3*G*RA/B;
-            dfdDfM = ds_eq_2_dfM - 3*params.a()*K*params.dV() - (params.sy0M() - params.sy0A());
+            dfdDfM = ds_eq_2_dfM - 3*params.a()*K*params.dV() - 0*(params.sy0M() - params.sy0A());
             sigma_2 -= K*params.dV()*delta_ij*DfM;
             Vector6 dsijdDfM = -K*params.dV()*delta_ij;
 
