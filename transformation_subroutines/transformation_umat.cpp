@@ -242,6 +242,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 double Gamma = params.g0() - params.g1()*temp/params.Ms() + params.g2()*Sigma;
                 norm_drivning_force = (Gamma - params.g_mean())/params.g_std();
                 P = 0.5*(1 + erf(norm_drivning_force));
+                std::cout << "temp" << temp << "P:"  << P << std::endl;
                 As = c*P;
                 pdf = normal_pdf(norm_drivning_force)/params.g_std();
                 Bs = params.g2()*params.beta()*pow(fsb2, n)*pdf*(DSigma > 0);
@@ -316,13 +317,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 return;
             }
         }
-        if (npt == 1) {
-            std::cout << "Converged in " << iter << " iterations" << std::endl;
-            std::cout << "DL: " << DL << " DfM_stress: " << DfM_stress << " DfM_strain: " << DfM_strain << std::endl;
-            std::cout << "RA: " << RA << " R1: " << params.R1() << " R2: " << params.R2() << " s_eq: " << s_eq_2
-                      << std::endl;
-            std::cout << "Sigma_2: " << sigma_2.transpose().format(CleanFmt) << std::endl;
-        }
+
         // Updating state variables
         state.ep_eff() += DL;
         state.fM() += DfM;
@@ -362,11 +357,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         else {
             double B1 = (1 - state.fM())/(1 + As*DL + Bs*DSigma);
             double B2 = B1*(As + DL*dAsdDL);
-            std::cout << "B2: " << B2 << std::endl;
             Lekl = (2*G*nij2 + params.a()*K*delta_ij)/(A*B - B*B2*dfdDfM);
 
             Vector6 Gkl = B1*Bs*Sigma*(1-norm_drivning_force/params.g_std()*params.g2())*(delta_ij/I1_2 - 1.5*s/s_vM_2);
-            std::cout << "Gkl: " << Gkl.transpose().format(CleanFmt) << std::endl;
             Lskl = Gkl*dfdDfM/(A + B2*dfdDfM);
             Fekl = B2*Lekl;
             Fskl = Gkl*(1 + dfdDfM/(A + B2*dfdDfM)*B2);
@@ -386,25 +379,11 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             }
             Bijkl += 2*G*(RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM)*nij2*Fskl.transpose()
                     + K*params.dV()*delta_ij*Fskl.transpose();
-            /*
-            if (npt == 1.) {
-                std::cout << "Fskl: " << Fskl.transpose().format(CleanFmt) << std::endl;
-                std::cout << "Time: " << *time << std::endl;
-                std::cout << "ds_eq_2_dfM: " << ds_eq_2_dfM << "  "
-                          <<  RA + DfM*params.R2()/params.sy0A()*ds_eq_2_dfM << std::endl;
-                std::cout << Bijkl.format(CleanFmt) << std::endl;
-                std::cout << (K*params.dV()*delta_ij*Fskl.transpose()).format(CleanFmt) << std::endl;
-                std::cout << "nij:" << nij2.transpose().format(CleanFmt) << std::endl;
-            }
-             */
             for (unsigned i = 3; i != 6; ++i) {
                 for (unsigned j = 3; j != 6; ++j)
                     Bijkl(i, j) *= 2;
             }
             D_alg = Bijkl.inverse()*D_alg;
-            if (npt == 1.) {
-                std::cout << "D_alg: " << std::endl << D_alg.format(CleanFmt) << std::endl;
-            }
         }
     }
 }
