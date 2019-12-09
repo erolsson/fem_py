@@ -31,7 +31,7 @@ for experiment in experiments[0:1]:
                                      simulation_name=name + '_' + str(int(experiment.temperature)),
                                      temperature=np.array([[0, experiment.temperature], [1, experiment.temperature]]),
                                      user_subroutine=umat_file,
-                                     max_increment=1.)
+                                     max_increment=0.01)
     
     plt.figure(0)
     plt.plot(e[:, 2], s[:, 2], '--x' + experiment.color)
