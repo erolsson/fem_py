@@ -235,6 +235,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 double dDSigmadDL = dSigmadDL*(DI1/I1_2 - DvM/s_vM_2);
                 double dDSigmadDfM = dSigmadDfM*(DI1/I1_2 - DvM/s_vM_2);
                 fsb2 = 1 - (1 - state.fsb0())*exp(-params.alpha()*(state.ep_eff() + DL));
+                std::cout <<
                 dfsb2dDL = params.alpha()*(1 - state.fsb0())*exp(-params.alpha()*(state.ep_eff() + DL));
 
                 double c = params.alpha()*params.beta()*n*(1-fsb2)*pow(fsb2, n-1);
