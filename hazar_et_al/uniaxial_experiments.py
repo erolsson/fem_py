@@ -106,8 +106,8 @@ if __name__ == '__main__':
 
         k = 0.01
         Ms = 220
-        a = 0.0677272727272727
-        Mss = -104.13818181818179
+        a = 0.05
+        Mss = -np.log(1-0.78)/k - Ms - a*850 + 22
         fMsigma = 1 - np.exp(-k*(Ms + a*experiment.stress_strain[:, 1] + Mss - experiment.temperature))
         fMsigma[fMsigma <= 0.78] = 0.78
         plt.plot(experiment.stress_strain[:, 1], fMsigma, '--' + experiment.color)
@@ -126,9 +126,8 @@ if __name__ == '__main__':
             par_r = np.polyfit(x[2:], y[2:], 1)
             plt.plot(x, par_r[0]*x + par_r[1])
             print(par_r)
-            par_r = [0.02/2**0.5, 0.02/2**0.5]
+            par_r = [0.00623/2**0.5, 0.015/2**0.5]
             plt.plot(x, y, '-*')
-
 
         fMep = fM[fM > 0.78] - np.interp(s[fM > 0.78], experiment.stress_strain[:, 1], fMsigma)
         dfm = (fM[fM > 0.78] - 0.78)
