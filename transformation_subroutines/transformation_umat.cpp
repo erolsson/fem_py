@@ -402,7 +402,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             }
             D_alg = Bijkl.inverse()*D_alg;
             if (npt == 1.) {
-                std::cout << D_alg.format(CleanFmt) << std::endl;
+                std::cout << "D_alg: " << std::endl << D_alg.format(CleanFmt) << std::endl;
             }
         }
     }
