@@ -307,10 +307,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
 
             DL -= dDL;
-            if (npt == 1.) {
-                std::cout << "iter: " << iter << " DfM_stress:" << DfM_stress << " h: " << h_stress << " dhdDfM"
-                          << dh_stressDfM << std::endl;
-            }
             DfM_stress -= dDfM_stress;
             DfM_strain -= dDfM_strain;
             DfM = DfM_stress + DfM_strain;
