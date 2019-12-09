@@ -361,7 +361,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
         }
         else {
             double B1 = (1 - state.fM())/(1 + As*DL + Bs*DSigma);
-            double B2 = B1*(As + dAsdDL);
+            double B2 = B1*(As + DL*dAsdDL);
             std::cout << "B2: " << B2 << std::endl;
             Lekl = (2*G*nij2 + params.a()*K*delta_ij)/(A*B - B*B2*dfdDfM);
 
