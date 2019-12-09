@@ -109,8 +109,8 @@ if __name__ == '__main__':
 
         if experiment.temperature == 22.:
             e_tr_free = np.interp(experiment.stress_strain[:, 1],
-                                  transformation_free_data[:, 0],
-                                  transformation_free_data[:, 1])
+                                  transformation_free_data[:, 1],
+                                  transformation_free_data[:, 0])
             e_tr = experiment.stress_strain[:, 0] - e_tr_free
             plt.figure(3)
             x = experiment.stress_strain[1:, 1]/hazar_et_al.sy0A
@@ -122,7 +122,7 @@ if __name__ == '__main__':
             plt.plot(x, par[0]*x + par[1])
             print(par)
             plt.plot(x, y, '-*')
-
+            sdsada
         fMep = fM[fM > 0.78] - np.interp(s[fM > 0.78], experiment.stress_strain[:, 1], fMsigma)
         fMep[fMep < 0] = 0
         e = np.interp(s[fM > 0.78], transformation_free_data[:, 1], transformation_free_data[:, 0])
