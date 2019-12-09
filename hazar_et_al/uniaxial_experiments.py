@@ -69,7 +69,6 @@ def strain_transformation(par, epl, temperature):
     # print(fsb, epl, par)
     Gamma = par[3] - par[4]*np.array(temperature)/hazar_et_al.Ms
     p = norm.cdf(Gamma, loc=0, scale=abs(par[5]))
-    print(p, Gamma)
     c = (1 - 0.78)/np.exp(-par[2]*par[0]**4.*p)
     return 1 - c*np.exp(-par[2]*fsb**4.*p)
 
