@@ -11,7 +11,8 @@ from materials.transformation_materials import test_material
 
 def one_element_abaqus(simulation_directory, material, boundary_conditions, simulation_name='oneElement',
                        element_size=1., element_type='C3D8', user_subroutine=None,
-                       time_period=1., max_increment=1., martensite_fraction=None, temperature=None, **_):
+                       time_period=1., max_increment=1., martensite_fraction=None, temperature=None, output=True,
+                       **_):
     run_directory = os.getcwd()
     file_directory = os.path.dirname(os.path.abspath(__file__))
     if not os.path.isdir(simulation_directory):
@@ -37,8 +38,13 @@ def one_element_abaqus(simulation_directory, material, boundary_conditions, simu
     odb_path = os.path.abspath(simulation_directory + '/' + simulation_name + '.odb')
     odb_abs_dir = os.path.dirname(odb_path)
     os.chdir(file_directory)
-    abaqus_post_processing_job = Popen('abaqus python one_element_post_processing.py ' +
-                                       odb_abs_dir + ' ' + simulation_name, shell=True)
+    if output:
+        abaqus_post_processing_job = Popen('abaqus python one_element_post_processing.py ' +
+                                           odb_abs_dir + ' ' + simulation_name, shell=True)
+    else:
+        FNULL = open(os.devnull, 'w')
+        abaqus_post_processing_job = Popen('abaqus python one_element_post_processing.py ' +
+                                           odb_abs_dir + ' ' + simulation_name, shell=True, stdout=FNULL)
 
     abaqus_post_processing_job.wait()
 
