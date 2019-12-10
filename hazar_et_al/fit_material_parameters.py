@@ -41,7 +41,7 @@ def run_fe_simulation(parameter_values, experiment, parameter_names):
     return e, s, fm
 
 
-def residual(par, data):
+def residual(par, *data):
     parameter_names, experiment_list = data
     res = 0
     for experiment in experiment_list:
