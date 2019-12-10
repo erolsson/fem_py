@@ -1,5 +1,6 @@
 import os
 import pickle
+import subprocess
 from subprocess import Popen
 
 import numpy as np
@@ -39,12 +40,13 @@ def one_element_abaqus(simulation_directory, material, boundary_conditions, simu
     odb_abs_dir = os.path.dirname(odb_path)
     os.chdir(file_directory)
     if output:
-        abaqus_post_processing_job = Popen('abaqus python one_element_post_processing.py ' +
-                                           odb_abs_dir + ' ' + simulation_name, shell=True)
+        abaqus_post_processing_job = subprocess.Popen('abaqus python one_element_post_processing.py ' +
+                                                      odb_abs_dir + ' ' + simulation_name, shell=True)
     else:
         FNULL = open(os.devnull, 'w')
-        abaqus_post_processing_job = Popen('abaqus python one_element_post_processing.py ' +
-                                           odb_abs_dir + ' ' + simulation_name, shell=True, stdout=FNULL)
+        abaqus_post_processing_job = subprocess.Popen('abaqus python one_element_post_processing.py ' +
+                                                      odb_abs_dir + ' ' + simulation_name, shell=True, stdout=FNULL,
+                                                      stderr=subprocess.STDOUT)
 
     abaqus_post_processing_job.wait()
 
