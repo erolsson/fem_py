@@ -48,11 +48,11 @@ def residual(par, *data):
         e_fem, s_fem, fm_fem = run_fe_simulation(par, experiment, parameter_names)
         e_exp = experiment.stress_strain[:, 0]
         s_exp = experiment.stress_strain[:, 1]
-        s_intep = np.interp(e_exp, e_fem, s_fem)
+        s_intep = np.interp(e_exp, e_fem[:, 2], s_fem[:, 2])
         stress_residual = np.sum((s_exp - s_intep)**2)/s_exp.shape[0]/np.max(s_exp)**2
 
         fm_exp = experiment.transformation_data[:, 1]
-        fm_interp = np.interp(experiment.transformation_data[:, 0], e_fem, fm_fem)
+        fm_interp = np.interp(experiment.transformation_data[:, 0], e_fem[:, 2], fm_fem)
         martensite_residual = np.sum((fm_exp - fm_interp)**2)/fm_exp.shape[0]/np.max(fm_fem)**2
         res += stress_residual + martensite_residual
 
