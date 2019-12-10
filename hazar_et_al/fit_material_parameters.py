@@ -58,7 +58,7 @@ def residual(par, *data):
 
     parameter_str = ''
     for name, val in zip(parameter_names, par):
-        parameter_str += name + '=' + val + ', '
+        parameter_str += name + '=' + str(val) + ', '
 
     print(parameter_str + 'R=' + str(res))
     return res
