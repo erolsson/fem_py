@@ -17,7 +17,7 @@ simulation_dir = os.path.expanduser('~/fem_py/abaqus_material_test/hazar_et_al/'
 def write_initial_file(fsb0, initial_austenite=0.22):
     with open(simulation_dir + '/austenite.dat', 'w') as initial_file:
         for gp in (range(1, 9)):
-            initial_file.write('1, ' + str(gp) + ', ' + str(initial_austenite) + ', ' + str(fsb0) + '/n')
+            initial_file.write('1, ' + str(gp) + ', ' + str(initial_austenite) + ', ' + str(fsb0) + '\n')
 
 
 def run_fe_simulation(parameter_values, experiment, parameter_names):
@@ -39,8 +39,7 @@ def run_fe_simulation(parameter_values, experiment, parameter_names):
                                      simulation_name=name + '_' + str(int(experiment.temperature)),
                                      temperature=np.array([[0, experiment.temperature], [1, experiment.temperature]]),
                                      user_subroutine=umat_file,
-                                    max_increment=0.01, output=False)
-    print(fm)
+                                     max_increment=0.01, output=False)
     return e, s, fm
 
 
