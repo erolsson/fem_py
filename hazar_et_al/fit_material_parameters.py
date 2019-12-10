@@ -27,11 +27,13 @@ def run_fe_simulation(parameter_values, experiment, parameter_names):
     for par_value, par_name in zip(parameter_values, parameter_names):
         if par_name != 'fsb0':
             setattr(material, par_name, par_value)
-    strain_bc = BC(amplitude=[[0, 0], [1., 1.*experiment.stress_strain[-1, 0]]], direction='z', mode='strain')
+    e_max = max(experiment.stress_strain[-1, 0], np.max(experiment.transformation_data[:, 0]))
+    strain_bc = BC(amplitude=[[0, 0], [1., 1.1*experiment.stress_strain[-1, 0]]], direction='z', mode='strain')
     if experiment.stress_strain[-1, 1] > 0:
         name = 'tension'
     else:
         name = 'compression'
+
     e, s, _, fm = one_element_abaqus(simulation_dir, material=hazar_et_al,
                                      boundary_conditions=[strain_bc],
                                      simulation_name=name + '_' + str(int(experiment.temperature)),
