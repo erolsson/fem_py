@@ -24,6 +24,7 @@ public:
 };
 
 std::unordered_map<std::pair<unsigned, unsigned>, double, PairHash> austenite;
+std::unordered_map<std::pair<unsigned, unsigned>, double, PairHash> fsb0;
 std::mutex part_info_mutex;
 
 extern "C" void sdvini_(double* statev, const double* coords, const int& nstatev, const int& ncrds, const int& noel,
@@ -40,13 +41,14 @@ extern "C" void sdvini_(double* statev, const double* coords, const int& nstatev
     std::string part_name(part_name_char, part_name_char+part_name_len);
     std::pair<unsigned, unsigned> point_key(user_elem_number, npt);
     double martensite = 1 - austenite[point_key];
+    double fsb = fsb0[point_key];
     for (unsigned i = 0; i != nstatev; ++i) {
         if (i == 1)  {
             // Martensite state var
             statev[i] = martensite;
         }
         else if (i == 5) {
-            statev[i] = 0.1;
+            statev[i] = fsb;
         }
         else {
             statev[i] = 0;
@@ -78,6 +80,7 @@ extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* 
                 line_data.push_back(val);
             }
             austenite.emplace(std::make_pair(stoi(line_data[0]), stoi(line_data[1])), stod(line_data[2]));
+            fsb0.emplace(std::make_pair(stoi(line_data[0]), stoi(line_data[1])), stod(line_data[3]));
         }
     }
 }
