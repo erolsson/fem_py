@@ -53,6 +53,7 @@ def residual(par, *data):
 
         fm_exp = experiment.transformation_data[:, 1]
         fm_interp = np.interp(experiment.transformation_data[:, 0], e_fem[:, 2], fm_fem)
+        print('Martensite fractions at T=' + str(experiment.temperature) + ' is ' + str(fm_interp))
         martensite_residual = np.sum((fm_exp - fm_interp)**2)/fm_exp.shape[0]/np.max(fm_fem)**2
         res += stress_residual + martensite_residual
 
