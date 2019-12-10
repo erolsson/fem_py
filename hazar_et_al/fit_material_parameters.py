@@ -28,7 +28,7 @@ def run_fe_simulation(parameter_values, experiment, parameter_names):
         if par_name != 'fsb0':
             setattr(material, par_name, par_value)
     e_max = max(experiment.stress_strain[-1, 0], np.max(experiment.transformation_data[:, 0]))
-    strain_bc = BC(amplitude=[[0, 0], [1., 1.1*experiment.stress_strain[-1, 0]]], direction='z', mode='strain')
+    strain_bc = BC(amplitude=[[0, 0], [1., 1.1*e_max]], direction='z', mode='strain')
     if experiment.stress_strain[-1, 1] > 0:
         name = 'tension'
     else:
@@ -39,7 +39,8 @@ def run_fe_simulation(parameter_values, experiment, parameter_names):
                                      simulation_name=name + '_' + str(int(experiment.temperature)),
                                      temperature=np.array([[0, experiment.temperature], [1, experiment.temperature]]),
                                      user_subroutine=umat_file,
-                                     max_increment=0.01, output=False)
+                                    max_increment=0.01, output=False)
+    print(fm)
     return e, s, fm
 
 
