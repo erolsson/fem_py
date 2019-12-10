@@ -32,7 +32,11 @@ def one_element_abaqus(simulation_directory, material, boundary_conditions, simu
     job_string = 'abaqus j=' + simulation_name + ' interactive'
     if user_subroutine:
         job_string += ' user=' + user_subroutine
-    abaqus_job = Popen(job_string, shell=True)
+    if output is True:
+        abaqus_job = subprocess.Popen(job_string, shell=True)
+    else:
+        FNULL = open(os.devnull, 'w')
+        abaqus_job = subprocess.Popen(job_string, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
     abaqus_job.wait()
     os.chdir(run_directory)
     odb_path = os.path.abspath(simulation_directory + '/' + simulation_name + '.odb')
@@ -42,7 +46,6 @@ def one_element_abaqus(simulation_directory, material, boundary_conditions, simu
         abaqus_post_processing_job = subprocess.Popen('abaqus python one_element_post_processing.py ' +
                                                       odb_abs_dir + ' ' + simulation_name, shell=True)
     else:
-        print("No output")
         FNULL = open(os.devnull, 'w')
         abaqus_post_processing_job = subprocess.Popen('abaqus python one_element_post_processing.py ' +
                                                       odb_abs_dir + ' ' + simulation_name, shell=True, stdout=FNULL,
