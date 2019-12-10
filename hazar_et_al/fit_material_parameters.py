@@ -44,6 +44,7 @@ def run_fe_simulation(parameter_values, experiment, parameter_names):
 
 
 def residual(par, *data):
+    par = np.abs(par)
     parameter_names, experiment_list = data
     res = 0
     for experiment in experiment_list:
