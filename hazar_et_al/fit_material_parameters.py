@@ -69,13 +69,11 @@ def residual(par, *data):
             vol_fem = np.sum(e_fem[:, 0:3], 1) - s_fem[:, 2]/hazar_et_al.E*(1 - 2*hazar_et_al.v)
             vol_exp = experiment.volume_expansion[:, 1]
             dv_interp = np.interp(experiment.volume_expansion[:, 0], inelastic_strain, vol_fem)
+            fm_vol = np.interp(experiment.volume_expansion[:, 0], inelastic_strain, fm_fem)
             volume_residual = np.sum((dv_interp - vol_exp)**2)/np.max(vol_exp)
             print('Volume expansion at T=' + str(experiment.temperature) + ' is ' + str(dv_interp) + ' Exp. is '
-                  + str(vol_exp))
+                  + str(vol_exp) + 'with a martensite fraction of ' + str(fm_vol) )
         res += stress_residual + martensite_residual + volume_residual
-
-
-
 
     parameter_str = ''
     for name, val in zip(parameter_names, par):
