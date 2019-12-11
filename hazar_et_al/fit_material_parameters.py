@@ -85,7 +85,7 @@ def residual(par, *data):
 
 
 if __name__ == '__main__':
-    parameters = {'R1': 0.015e-02, 'R2:': 0.01e-03, 'beta': 2e+02, 'alpha': 1e+02,
+    parameters = {'R1': 0.015, 'R2:': 0.01, 'beta': 2e+02, 'alpha': 1e+02,
                   'fsb0': 0.1}
     print(fmin(residual, list(parameters.values()), args=(list(parameters.keys()), experiments[1:2]),
                maxfun=1e6, maxiter=1e6))
