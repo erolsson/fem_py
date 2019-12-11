@@ -27,7 +27,11 @@ def run_fe_simulation(parameter_values, experiment, parameter_names):
     for par_value, par_name in zip(parameter_values, parameter_names):
         if par_name != 'fsb0':
             setattr(material, par_name, par_value)
-    e_max = max(experiment.stress_strain[-1, 0], np.max(experiment.transformation_data[:, 0]))
+    if experiment.volume_expansion is not None:
+        e_max = max(experiment.stress_strain[-1, 0], np.max(experiment.transformation_data[:, 0]),
+                    1.1*np.max(experiment.volume_expansion[:, 0]))
+    else:
+        e_max = max(experiment.stress_strain[-1, 0], np.max(experiment.transformation_data[:, 0]))
     strain_bc = BC(amplitude=[[0, 0], [1., 1.1*e_max]], direction='z', mode='strain')
     if experiment.stress_strain[-1, 1] > 0:
         name = 'tension'
