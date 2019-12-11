@@ -103,7 +103,12 @@ if __name__ == '__main__':
             # s = np.hstack(([ms_start[experiment.temperature]], s))
             # fM = np.hstack(([0.78], fM))
         plt.plot(e - s/hazar_et_al.E, fM, 'x' + experiment.color, ms=12, mew=2)
-
+        if experiment.volume_expansion is not None:
+            print("Expansion")
+            print("e_inelastic:" + str(experiment.volume_expansion[:, 0]))
+            e_vol = np.interp(experiment.volume_expansion[:, 0], experiment.stress_strain[:, 0],
+                              experiment.stress_strain[:, 0] - experiment.stress_strain[:, 1]/hazar_et_al.E)
+            print("e_tot" + str(e_vol))
         k = 0.01
         Ms = 220
         a = 0.05
