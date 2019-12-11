@@ -123,5 +123,7 @@ hazar_et_al.dV = 0.0371
 hazar_et_al.R1 = 0.0171479
 hazar_et_al.R2 = 1.23646e-3
 
+# alpha=107.22325390395542, beta=524.5220535554117, fsb0=0.0605173182872788, R1=0.02374542850629363, R2:=0.00288946267796451, R=4.094152361175599e-05
+
 if __name__ == '__main__':
     print(neu_sehitoglu.umat_parameters())
