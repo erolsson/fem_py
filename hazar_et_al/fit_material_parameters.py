@@ -57,7 +57,8 @@ def residual(par, *data):
         s_exp = experiment.stress_strain[:, 1]
         s_intep = np.interp(e_exp, e_fem[:, 2], s_fem[:, 2])
         stress_residual = np.sum((s_exp - s_intep)**2)/s_exp.shape[0]/np.max(s_exp)**2
-        print("Stress at end of test: " + str(np.interp(e_exp[-1, 0], e_fem, s_fem)), " Exp. is " + s_exp[-1])
+        print("Stress at end of test: " + str(np.interp(e_exp[-1, 0], e_fem[:, 2], s_fem[:, 2])) +
+              " Exp. is " + s_exp[-1])
         fm_exp = experiment.transformation_data[:, 1]
         fm_interp = np.interp(experiment.transformation_data[:, 0], e_fem[:, 2], fm_fem)
         print('Martensite fractions at T=' + str(experiment.temperature) + ' is ' + str(fm_interp) + ' Exp. is '
