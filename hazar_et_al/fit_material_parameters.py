@@ -62,7 +62,7 @@ def residual(par, *data):
         fm_interp = np.interp(experiment.transformation_data[:, 0], e_fem[:, 2], fm_fem)
         print('Martensite fractions at T=' + str(experiment.temperature) + ' is ' + str(fm_interp) + ' Exp. is '
               + str(fm_exp))
-        martensite_residual = np.sum((fm_exp - fm_interp)**2)/fm_exp.shape[0]/np.max(fm_fem)**2
+        martensite_residual = np.sum((fm_exp - fm_interp)**2)/fm_exp.shape[0]/(np.max(fm_fem) - 0.78)**2
         volume_residual = 0
         if experiment.volume_expansion is not None:
             inelastic_strain = e_fem[:, 2] - s_fem[:, 2]/hazar_et_al.E
