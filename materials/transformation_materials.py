@@ -125,9 +125,9 @@ hazar_et_al.k = 0.01
 hazar_et_al.dV = 0.037
 hazar_et_al.R1 = 0.01
 hazar_et_al.R2 = 0.005
-parameters = {'beta': 500, 'alpha': 100, 'a1': 0.05, 'Mss': -86., 'fsb0': 0.1,
-              'R1': 0.02, 'R2': 0.01, 'dV': 0.037, 'g1': 100,
-              'g_std': 200, 'g0': 10}
+parameters = {'beta': 500, 'alpha': 200, 'a1': 0.05, 'Mss': -86., 'fsb0': 0.1,
+              'R1': 0.01, 'R2': 0.005, 'dV': 0.037, 'g1': 50,
+              'g_std': 10, 'g0': 10}
 # Hazar et. al
 # Temperature   beta
 # 22            ??
