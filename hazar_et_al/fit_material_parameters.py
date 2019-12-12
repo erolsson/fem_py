@@ -30,6 +30,11 @@ def run_fe_simulation(parameter_values, experiment, parameter_names):
         fsb0 = material.fsb0
     write_initial_file(fsb0)
     for par_value, par_name in zip(parameter_values, parameter_names):
+        if par_name == 'a1':
+            if par_value < 0.04:
+                par_value = 0.04
+            if par_value > 0.07:
+                par_value = 0.07
         if par_name not in signed_parameters:
             par_value = abs(par_value)
         if par_name != 'fsb0':
@@ -92,6 +97,6 @@ def residual(par, *data):
 
 
 if __name__ == '__main__':
-    parameters = {'beta': 4.92067433e+02}
+    parameters = {'beta': 4.92067433e+02, 'a1:': 0.05, 'Mss': -86.}
     print(fmin(residual, list(parameters.values()), args=(list(parameters.keys()), experiments[0:1]),
                maxfun=1e6, maxiter=1e6))
