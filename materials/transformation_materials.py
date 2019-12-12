@@ -7,7 +7,7 @@ import numpy as np
 # noinspection PyPep8Naming
 class ElasticPlasticTransformMaterial:
     def __init__(self, E, v, sy0M, sy0A, Q, b, Cm, gamma_m, a, Ms, name, Mss, fM, beta, alpha, n, sde,
-                 g0, g1, g2, g_mean, g_std):
+                 g0, g1, g2, g_mean, g_std, fsb0=0.):
         # Elastic parameters
         self.E = float(E)
         self.v = float(v)
@@ -55,6 +55,8 @@ class ElasticPlasticTransformMaterial:
 
         self.g_mean = g_mean
         self.g_std = g_std
+
+        self.fsb0 = fsb0
 
         self.back_stresses = Cm.shape[0]
         self.name = name
@@ -116,12 +118,13 @@ hazar_et_al = ElasticPlasticTransformMaterial(E=200.5e3, v=0.27, sy0M=1016, sy0A
                                               gamma_m=np.array([950., 500., 50.]),
                                               a=0.05*np.array([1., 0., 0.]),
                                               Ms=220, name='SKF', Mss=-86.58722673702243, fM=0.78,
-                                              beta=524.5220535554117, alpha=107.22325390395542, n=4., sde=0.04, g0=1e6,
-                                              g1=1.78036231e+02, g2=0, g_mean=0, g_std=9.43482534e+01)
+                                              beta=4.92067433e+02, alpha=1.06625032e+02, n=4., sde=0.04, g0=1e6,
+                                              g1=1.78036231e+02, g2=0, g_mean=0, g_std=9.43482534e+01,
+                                              fsb0=2.83373527e-03)
 hazar_et_al.k = 0.01
-hazar_et_al.dV = 0.0371
-hazar_et_al.R1 = 0.02374542850629363
-hazar_et_al.R2 = 0.00288946267796451
+hazar_et_al.dV = 2.35190122e-02
+hazar_et_al.R1 = 2.46866223e-02
+hazar_et_al.R2 = 2.83373527e-03
 
 # alpha=107.22325390395542, beta=524.5220535554117, fsb0=0.0605173182872788, R1=0.02374542850629363, R2:=0.00288946267796451, R=4.094152361175599e-05
 

@@ -6,12 +6,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from uniaxial_experiments import experiments
+from fit_material_parameters import write_initial_file
 from materials.transformation_materials import hazar_et_al
 from abaqus_material_test.material_test import one_element_abaqus
 from abaqus_material_test.one_element_input_file import BC
 
 umat_file = os.path.expanduser('~/fem_py/transformation_subroutines/transformation_subroutine.o')
 simulation_dir = os.path.expanduser('~/fem_py/abaqus_material_test/hazar_et_al')
+
+write_initial_file(hazar_et_al.fsb0)
 
 for experiment in experiments:
     plt.figure(0)
