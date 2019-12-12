@@ -63,11 +63,13 @@ def residual(par, *data):
         s_exp = experiment.stress_strain[:, 1]
         s_intep = np.interp(e_exp, e_fem[:, 2], s_fem[:, 2])
         stress_residual = np.sum((1 - s_intep/s_exp)**2)/s_exp.shape[0]
+        print('=======================================================================================================')
+        print(' *** *** *** Temperature ' + str(experiment.temperature) + ' *** *** ***')
         print("Stress at end of test: " + str(np.interp(e_exp[-1], e_fem[:, 2], s_fem[:, 2])) +
               " Exp. is " + str(s_exp[-1]))
         fm_exp = experiment.transformation_data[:, 1]
         fm_interp = np.interp(experiment.transformation_data[:, 0], e_fem[:, 2], fm_fem)
-        print('Martensite fractions at T=' + str(experiment.temperature) + ' is ' + str(fm_interp) + ' Exp. is '
+        print('Martensite fractions is ' + str(fm_interp) + ' Exp. is '
               + str(fm_exp))
         martensite_residual = np.sum((fm_exp - fm_interp)**2)/fm_exp.shape[0]/(np.max(fm_fem) - 0.78)**2
         volume_residual = 0
@@ -79,7 +81,7 @@ def residual(par, *data):
             fm_vol = np.interp(experiment.volume_expansion[:, 0], inelastic_strain, fm_fem)
             e_vol = np.interp(experiment.volume_expansion[:, 0], inelastic_strain, e_fem[:, 2])
             volume_residual = np.sum((dv_interp - vol_exp)**2)/np.max(vol_exp)**2
-            print('Volume expansion at T=' + str(experiment.temperature) + ' is ' + str(dv_interp) + ' Exp. is '
+            print('Volume expansion is ' + str(dv_interp) + ' Exp. is '
                   + str(vol_exp) + ' with a martensite fraction of ' + str(fm_vol) + ' at strain' + str(e_vol))
         res += stress_residual + martensite_residual + volume_residual
 
@@ -88,6 +90,7 @@ def residual(par, *data):
         parameter_str += name + '=' + str(val) + ', '
 
     print(parameter_str + 'R=' + str(res))
+
     return res
 
 
@@ -95,5 +98,5 @@ if __name__ == '__main__':
     parameters = {'beta': 4.92067433e+02, 'alpha': 1.06625032e+02, 'a1': 0.05, 'Mss': -86., 'fsb0': 6.40671990e-02,
                   'R1': 2.46866223e-02, 'R2': 2.83373527e-03, 'dV': 2.35190122e-02, 'g1': 1.78036231e+02,
                   'g_std': 1.78036231e+02}
-    print(fmin(residual, list(parameters.values()), args=(list(parameters.keys()), experiments[0:2]),
+    print(fmin(residual, list(parameters.values()), args=(list(parameters.keys()), experiments),
                maxfun=1e6, maxiter=1e6))
