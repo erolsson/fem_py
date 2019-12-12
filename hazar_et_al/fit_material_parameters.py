@@ -97,6 +97,6 @@ def residual(par, *data):
 
 
 if __name__ == '__main__':
-    parameters = {'beta': 4.92067433e+02, 'a1:': 0.05, 'Mss': -86.}
+    parameters = {'beta': 4.92067433e+02, 'a1': 0.05, 'Mss': -86.}
     print(fmin(residual, list(parameters.values()), args=(list(parameters.keys()), experiments[0:1]),
                maxfun=1e6, maxiter=1e6))
