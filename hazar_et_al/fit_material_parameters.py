@@ -65,6 +65,7 @@ def residual(par, *data):
         stress_residual = np.sum((1 - s_intep/s_exp)**2)/s_exp.shape[0]
         print('=======================================================================================================')
         print(' *** *** *** Temperature ' + str(experiment.temperature) + ' *** *** ***')
+        print('=======================================================================================================')
         print("Stress at end of test: " + str(np.interp(e_exp[-1], e_fem[:, 2], s_fem[:, 2])) +
               " Exp. is " + str(s_exp[-1]))
         fm_exp = experiment.transformation_data[:, 1]
@@ -89,7 +90,9 @@ def residual(par, *data):
     for name, val in zip(parameter_names, par):
         parameter_str += name + '=' + str(val) + ', '
 
-    print(parameter_str + 'R=' + str(res))
+    print(parameter_str)
+    print(res)
+    print('')
 
     return res
 
