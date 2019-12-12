@@ -297,7 +297,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     dDfM_stress = -(c + d*e -c*g)/det*f + (a + b*e - a*g)/det*h_stress + h_strain;
                     dDfM_strain = (d*e - c*g)/det*f - (b*e-a*g)/det*h_stress - h_strain;
                 }
-                if (DL - dDL < 0 && stress_transformations) {
+                if (DL - dDL < 0 || DfM_strain - dDfM_strain < 0) {
                     DL = 0;
                     dDL = 0;
                     dDfM_strain = 0;
@@ -305,7 +305,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     dDfM_stress = h_stress/dh_stressDfM;
                 }
 
-                if (DfM_stress - dDfM_stress < 0 && stress_transformations) {
+                if (DfM_stress - dDfM_stress < 0) {
                     DfM_stress = 0;
                     dDfM_stress = 0;
                     double det = dfdDL*(dh_strainDfM - 1) - dfdDfM*dh_straindDL;
