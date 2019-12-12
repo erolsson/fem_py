@@ -124,7 +124,7 @@ hazar_et_al = ElasticPlasticTransformMaterial(E=200.5e3, v=0.27, sy0M=1016, sy0A
 hazar_et_al.k = 0.01
 hazar_et_al.dV = 0.037
 hazar_et_al.R1 = 0.01
-hazar_et_al.R2 = 0.001
+hazar_et_al.R2 = 0.003
 parameters = {'beta': 500, 'alpha': 100, 'a1': 0.05, 'Mss': -86., 'fsb0': 0.1,
               'R1': 0.02, 'R2': 0.01, 'dV': 0.037, 'g1': 100,
               'g_std': 200, 'g0': 10}
