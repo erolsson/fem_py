@@ -16,7 +16,7 @@ simulation_dir = os.path.expanduser('~/fem_py/abaqus_material_test/hazar_et_al')
 
 write_initial_file(hazar_et_al.fsb0)
 
-for experiment in experiments:
+for experiment in experiments[0:1]:
     plt.figure(0)
     experiment.plot_stress_strain()
     plt.figure(1)
