@@ -22,7 +22,10 @@ def write_initial_file(fsb0, initial_austenite=0.22):
 
 def run_fe_simulation(parameter_values, experiment, parameter_names):
     material = hazar_et_al
-    fsb0 = parameter_values[parameter_names.index('fsb0')]
+    try:
+        fsb0 = parameter_values[parameter_names.index('fsb0')]
+    except ValueError:
+        fsb0 = material.fsb0
     write_initial_file(fsb0)
     for par_value, par_name in zip(parameter_values, parameter_names):
         if par_name != 'fsb0':
