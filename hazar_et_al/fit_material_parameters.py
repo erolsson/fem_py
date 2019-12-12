@@ -92,7 +92,7 @@ def residual(par, *data):
 
     print('=======================================================================================================')
     print(parameter_str)
-    print(res)
+    print('Residual:' + str(res))
     print('')
 
     return res
