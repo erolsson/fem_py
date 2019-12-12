@@ -30,11 +30,6 @@ def run_fe_simulation(parameter_values, experiment, parameter_names):
         fsb0 = material.fsb0
     write_initial_file(fsb0)
     for par_value, par_name in zip(parameter_values, parameter_names):
-        if par_name == 'a1':
-            if par_value < 0.04:
-                par_value = 0.04
-            if par_value > 0.07:
-                par_value = 0.07
         if par_name not in signed_parameters:
             par_value = abs(par_value)
         if par_name != 'fsb0':
