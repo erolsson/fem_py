@@ -56,7 +56,7 @@ def residual(par, *data):
         e_exp = experiment.stress_strain[:, 0]
         s_exp = experiment.stress_strain[:, 1]
         s_intep = np.interp(e_exp, e_fem[:, 2], s_fem[:, 2])
-        stress_residual = np.sum((s_exp - s_intep/s_exp)**2)/s_exp.shape[0]
+        stress_residual = np.sum((1 - s_intep/s_exp)**2)/s_exp.shape[0]
         print("Stress at end of test: " + str(np.interp(e_exp[-1], e_fem[:, 2], s_fem[:, 2])) +
               " Exp. is " + str(s_exp[-1]))
         fm_exp = experiment.transformation_data[:, 1]
