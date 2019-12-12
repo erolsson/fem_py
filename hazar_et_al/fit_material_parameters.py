@@ -13,6 +13,8 @@ from abaqus_material_test.one_element_input_file import BC
 umat_file = os.path.expanduser('~/fem_py/transformation_subroutines/transformation_subroutine.o')
 simulation_dir = os.path.expanduser('~/fem_py/abaqus_material_test/hazar_et_al/')
 
+signed_parameters = ['Mss']
+
 
 def write_initial_file(fsb0, initial_austenite=0.22):
     with open(simulation_dir + '/austenite.dat', 'w') as initial_file:
@@ -28,6 +30,8 @@ def run_fe_simulation(parameter_values, experiment, parameter_names):
         fsb0 = material.fsb0
     write_initial_file(fsb0)
     for par_value, par_name in zip(parameter_values, parameter_names):
+        if par_name not in signed_parameters:
+            par_value = abs(par_value)
         if par_name != 'fsb0':
             setattr(material, par_name, par_value)
     if experiment.volume_expansion is not None:
@@ -51,7 +55,6 @@ def run_fe_simulation(parameter_values, experiment, parameter_names):
 
 
 def residual(par, *data):
-    par = np.abs(par)
     parameter_names, experiment_list = data
     res = 0
     for experiment in experiment_list:
