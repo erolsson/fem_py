@@ -126,6 +126,10 @@ hazar_et_al.dV = 2.35190122e-02
 hazar_et_al.R1 = 2.46866223e-02
 hazar_et_al.R2 = 2.83373527e-03
 
+# Hazar et. al
+# Temperature   beta
+# 22            ??
+# 75            4.92067433e+02
 
 if __name__ == '__main__':
     print(neu_sehitoglu.umat_parameters())
