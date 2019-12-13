@@ -34,6 +34,8 @@ def run_fe_simulation(parameter_values, experiment, parameter_names):
             par_value = abs(par_value)
         if par_name != 'fsb0':
             setattr(material, par_name, par_value)
+    stabilization_temp = -np.log(1-0.78)/material.k - material.Ms - material.a1*800 + 22
+    material.Mss = stabilization_temp
     max_exp_strain = np.max(experiment.stress_strain[:, 0])
     if experiment.volume_expansion is not None:
         e_max = max(max_exp_strain, np.max(experiment.transformation_data[:, 0]),
@@ -102,7 +104,7 @@ def residual(par, *data):
 
 
 if __name__ == '__main__':
-    parameters = {'beta': 500, 'alpha': 200, 'a1': 0.05, 'Mss': -86., 'fsb0': 0.1,
+    parameters = {'beta': 500, 'alpha': 200, 'a1': 0.05, 'fsb0': 0.1,
                   'R1': 0.01, 'R2': 0.005, 'dV': 0.037, 'g1': 50,
                   'g_std': 10, 'g0': 10}
     print(fmin(residual, list(parameters.values()), args=(list(parameters.keys()), experiments),
