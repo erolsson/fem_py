@@ -104,8 +104,10 @@ def residual(par, *data):
 
 
 if __name__ == '__main__':
-    parameters = {'beta': 500, 'alpha': 200, 'a1': 0.05, 'fsb0': 0.1,
-                  'R1': 0.01, 'R2': 0.005, 'dV': 0.037, 'g1': 50,
-                  'g_std': 10, 'g0': 10}
+    parameters = {'beta': 521.2142995694604, 'alpha': 129.98359086303265, 'a1': 0.003325945755266598,
+                  'fsb0': 0.11879158373330523,
+                  'R1': 0.01599183565870769, 'R2': 0.00793495890945268, 'dV': 0.023452268954649524,
+                  'g1': 60.62406811305142,
+                  'g_std': 18.056870261724143, 'g0': 14.361769920692034}
     print(fmin(residual, list(parameters.values()), args=(list(parameters.keys()), experiments),
                maxfun=1e6, maxiter=1e6))
