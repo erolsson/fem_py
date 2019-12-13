@@ -16,8 +16,8 @@ simulation_dir = os.path.expanduser('~/fem_py/abaqus_material_test/hazar_et_al/'
 signed_parameters = ['Mss']
 
 
-def write_initial_file(fsb0, initial_austenite=0.22):
-    with open(simulation_dir + '/austenite.dat', 'w') as initial_file:
+def write_initial_file(fsb0, sim_dir, initial_austenite=0.22):
+    with open(sim_dir + '/austenite.dat', 'w') as initial_file:
         for gp in (range(1, 9)):
             initial_file.write('1, ' + str(gp) + ', ' + str(initial_austenite) + ', ' + str(fsb0) + '\n')
 
@@ -28,7 +28,7 @@ def run_fe_simulation(parameter_values, experiment, parameter_names):
         fsb0 = parameter_values[parameter_names.index('fsb0')]
     except ValueError:
         fsb0 = material.fsb0
-    write_initial_file(fsb0)
+    write_initial_file(fsb0, simulation_dir)
     for par_value, par_name in zip(parameter_values, parameter_names):
         if par_name not in signed_parameters:
             par_value = abs(par_value)
