@@ -46,7 +46,7 @@ def run_fe_simulation(parameter_values, experiment, parameter_names):
                                      simulation_name=name,
                                      temperature=np.array([[0, 22.], [1, 22.]]),
                                      user_subroutine=umat_file,
-                                     max_increment=0.01, output=False)
+                                     max_increment=0.01, output=True)
     return e, s, fm
 
 
