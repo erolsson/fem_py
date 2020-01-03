@@ -63,6 +63,8 @@ def residual(par, *data):
     stress_residual = np.sum((1 - s_intep[s_exp > 300]/s_exp[s_exp > 300])**2)/s_exp.shape[0]
     print("Stress at end of test: " + str(np.interp(e_exp[-1], e_fem[:, 2], s_fem[:, 2])) +
           " Exp. is " + str(s_exp[-1]))
+    print("Stress at end of test: " + str(np.interp(e_exp[-1], e_fem[:, 2], e_fem[:, 1])) +
+          " Exp. is " + str(et_exp[-1]))
     strain_residual = np.sum((1 - et_intep[s_exp > 300]/et_exp[s_exp > 300])**2)/s_exp.shape[0]
     res += stress_residual + strain_residual
 
@@ -85,6 +87,6 @@ if __name__ == '__main__':
     experimental_data[:, 0:2] = stress_strain
     experimental_data[:, 2] = strains[:, 1]
     parameters = {'a1': 0.02,
-                  'R1': 0.02, 'R2': 0.02, 'dV': 0.037, 'Mss': -10}
+                  'R1': 0.02, 'R2': 0.02, 'Mss': -10}
     print(fmin(residual, list(parameters.values()), args=(list(parameters.keys()), experimental_data),
                maxfun=1e6, maxiter=1e6))
