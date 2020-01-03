@@ -36,7 +36,7 @@ def run_fe_simulation(parameter_values, experiment, parameter_names):
 
     max_exp_strain = np.max(experiment[:, 0])
     strain_bc = BC(amplitude=[[0, 0], [1., 1.1*max_exp_strain]], direction='z', mode='strain')
-    if experiment.stress_strain[-1, 1] > 0:
+    if experiment[-1, 1] > 0:
         name = 'tension'
     else:
         name = 'compression'
