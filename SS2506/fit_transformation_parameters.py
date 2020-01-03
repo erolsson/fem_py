@@ -43,8 +43,8 @@ def run_fe_simulation(parameter_values, experiment, parameter_names):
 
     e, s, _, fm = one_element_abaqus(simulation_dir, material=material,
                                      boundary_conditions=[strain_bc],
-                                     simulation_name=name + '_' + str(int(experiment.temperature)),
-                                     temperature=np.array([[0, experiment.temperature], [1, experiment.temperature]]),
+                                     simulation_name=name,
+                                     temperature=np.array([[0, 22.], [1, 22.]]),
                                      user_subroutine=umat_file,
                                      max_increment=0.01, output=False)
     return e, s, fm
