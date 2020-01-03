@@ -5,13 +5,13 @@ import numpy as np
 
 from scipy.optimize import fmin
 
-from uniaxial_experiments import experiments
+from hazar_et_al.uniaxial_experiments import experiments
 from materials.transformation_materials import hazar_et_al
 from abaqus_material_test.material_test import one_element_abaqus
 from abaqus_material_test.one_element_input_file import BC
 
 umat_file = os.path.expanduser('~/fem_py/transformation_subroutines/transformation_subroutine.o')
-simulation_dir = os.path.expanduser('~/fem_py/abaqus_material_test/hazar_et_al/')
+simulation_dir = os.path.expanduser('/abaqus_material_test/hazar_et_al/')
 
 signed_parameters = ['Mss']
 
@@ -104,7 +104,7 @@ def residual(par, *data):
 
 
 if __name__ == '__main__':
-    parameters = {'beta': 521.2142995694604, 'alpha': 129.98359086303265, 'a1': 0.003325945755266598,
+    parameters = {'a1': 0.003325945755266598,
                   'fsb0': 0.11879158373330523,
                   'R1': 0.01599183565870769, 'R2': 0.00793495890945268, 'dV': 0.023452268954649524,
                   'g1': 60.62406811305142,
