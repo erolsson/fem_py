@@ -46,7 +46,7 @@ def run_fe_simulation(parameter_values, experiment, parameter_names):
                                      simulation_name=name,
                                      temperature=np.array([[0, 22.], [1, 22.]]),
                                      user_subroutine=umat_file,
-                                     max_increment=0.01, output=True)
+                                     max_increment=0.01, output=False)
     return e, s, fm
 
 
@@ -60,10 +60,10 @@ def residual(par, *data):
     et_exp = experiment[:, 2]
     s_intep = np.interp(e_exp, e_fem[:, 2], s_fem[:, 2])
     et_intep = np.interp(e_exp, e_fem[:, 2], e_fem[:, 1])
-    stress_residual = np.sum((1 - s_intep[s_exp > 800]/s_exp[s_exp > 800])**2)/s_exp.shape[0]
+    stress_residual = np.sum((1 - s_intep[s_exp > 300]/s_exp[s_exp > 300])**2)/s_exp.shape[0]
     print("Stress at end of test: " + str(np.interp(e_exp[-1], e_fem[:, 2], s_fem[:, 2])) +
           " Exp. is " + str(s_exp[-1]))
-    strain_residual = np.sum((1 - et_intep[s_exp > 800]/et_exp[s_exp > 800])**2)/s_exp.shape[0]
+    strain_residual = np.sum((1 - et_intep[s_exp > 300]/et_exp[s_exp > 300])**2)/s_exp.shape[0]
     res += stress_residual + strain_residual
 
     parameter_str = ''
