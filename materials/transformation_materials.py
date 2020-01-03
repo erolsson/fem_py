@@ -112,6 +112,7 @@ neu_sehitoglu = ElasticPlasticTransformMaterial(E=203.3e3, v=0.3, sy0M=813., sy0
                                                 Ms=169, name='NeuSehitoglu', Mss=[0.65, 22., 485], fM=0.65,
                                                 beta=1., alpha=4., n=4., sde=0.04, g0=60, g1=176000, g2=5.2,
                                                 g_mean=57, g_std=350)
+print(neu_sehitoglu.Mss)
 
 hazar_et_al = ElasticPlasticTransformMaterial(E=200.5e3, v=0.27, sy0M=1016, sy0A=420., Q=180., b=100.,
                                               Cm=np.array([135e3, 700e3, 50e3]),

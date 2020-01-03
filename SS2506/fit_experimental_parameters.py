@@ -78,4 +78,10 @@ plt.figure(2)
 strain_data = np.genfromtxt('experimental_data/transversal_strain_tension_EN.dat', delimiter=',')
 plt.plot(strain_data[:, 0], strain_data[:, 1])
 
+plt.figure(3)
+case_data = -np.genfromtxt('experimental_data/compression_data_case_EN.dat', delimiter=',')
+plt.plot(case_data[:, 0], case_data[:, 1])
+case_data = np.genfromtxt('experimental_data/tension_data_case_EN.dat', delimiter=',')
+plt.plot(case_data[:, 0], case_data[:, 1])
+
 plt.show()
