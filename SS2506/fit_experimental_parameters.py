@@ -59,6 +59,7 @@ syA_b = np.diff(syA)/(770-450)
 syA_a = syA[0] - syA_b*450
 print('\t', syA_a, syA_b)
 print("Martensite:")
+print(syM)
 syM_b = np.diff(syM)/(770-450)
 syM_a = syM[0] - syM_b*450
 print('\t', syM_a, syM_b)
