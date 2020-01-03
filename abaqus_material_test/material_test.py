@@ -5,8 +5,8 @@ import subprocess
 import numpy as np
 
 from one_element_input_file import write_input_file
-from common import package_directory
-from materials.transformation_materials import test_material
+from fem_py.common import package_directory
+from fem_py.materials.transformation_materials import test_material
 
 
 def one_element_abaqus(simulation_directory, material, boundary_conditions, simulation_name='oneElement',
