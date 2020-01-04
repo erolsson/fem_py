@@ -5,6 +5,8 @@ import numpy as np
 
 from scipy.optimize import fmin
 
+import matplotlib.pyplot as plt
+
 from fem_py.materials.transformation_materials import SS2506
 from fem_py.abaqus_material_test.material_test import one_element_abaqus
 from fem_py.abaqus_material_test.one_element_input_file import BC
@@ -86,6 +88,14 @@ if __name__ == '__main__':
     experimental_data = np.zeros((stress_strain.shape[0], 3))
     experimental_data[:, 0:2] = stress_strain
     experimental_data[:, 2] = strains[:, 1]
+    plt.figure(0)
+    plt.ion()
+    plt.show()
+    plt.plot(experimental_data[:, 0], experimental_data[:, 1], lw=3)
+    plt.xlabel(r'\varepsilon_zz [-]', fontsize=24)
+    plt.xlabel(r'\sigma_zz [MPa]', fontsize=24)
+    plt.draw()
+    plt.pause(0.001)
     parameters = {'a1': 0.02, 'dV': 0.037,
                   'R1': 0.02, 'R2': 0.02, 'Mss': -10}
     print(fmin(residual, list(parameters.values()), args=(list(parameters.keys()), experimental_data),
