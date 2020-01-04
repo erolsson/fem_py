@@ -26,6 +26,7 @@ simulation_dir = os.path.expanduser('~/python_projects/fem_py/abaqus_material_te
 signed_parameters = ['Mss']
 fit_lines = []
 
+
 def write_initial_file(fsb0, sim_dir, initial_austenite=0.20):
     with open(sim_dir + '/austenite.dat', 'w') as initial_file:
         for gp in (range(1, 9)):
@@ -66,10 +67,13 @@ def residual(par, *data):
     res = 0
     if len(fit_lines) > 0:
         fit_lines[0].remove()
-        fit_lines.remove(fit_lines[0])
+        fit_lines[1].remove()
+        fit_lines[:] = []
     e_fem, s_fem, fm_fem = run_fe_simulation(par, experiment, parameter_names)
     plt.figure(0)
-    fit_lines.append(plt.plot(e_fem[:, 2], s_fem[:, 2], '--')[0])
+    fit_lines.append(plt.plot(e_fem[:, 2], s_fem[:, 2], '--b', lw=2)[0])
+    plt.figure(0)
+    fit_lines.append(plt.plot(e_fem[:, 2], s_fem[:, 0], '--b', lw=2)[0])
     plt.draw()
     plt.pause(0.001)
     e_exp = experiment[:, 0]
@@ -106,13 +110,19 @@ if __name__ == '__main__':
     plt.figure(0)
     plt.ion()
     plt.show()
-    plt.plot(experimental_data[:, 0], experimental_data[:, 1], lw=3)
+    plt.plot(experimental_data[:, 0], experimental_data[:, 1], 'b', lw=3)
     plt.xlabel(r'$\varepsilon_{zz}$ [-]', fontsize=24)
     plt.ylabel(r'$\sigma_{zz}$ [MPa]', fontsize=24)
     plt.tight_layout()
+    plt.figure(1)
+    plt.plot(experimental_data[:, 0], experimental_data[:, 2], 'b', lw=3)
+    plt.xlabel(r'$\varepsilon_{zz}$ [-]', fontsize=24)
+    plt.ylabel(r'$\varepsilon_{xx}$ [-]', fontsize=24)
+    plt.tight_layout()
+
     plt.draw()
     plt.pause(0.001)
-    parameters = {'a1': 0.02, 'dV': 0.037,
+    parameters = {'a1': 0.056, 'dV': 0.037,
                   'R1': 0.02, 'R2': 0.02, 'Mss': -10}
     print(fmin(residual, list(parameters.values()), args=(list(parameters.keys()), experimental_data),
                maxfun=1e6, maxiter=1e6))
