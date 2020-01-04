@@ -128,6 +128,7 @@ if __name__ == '__main__':
                   'R1': 0.015,
                   'R2': 0.02,
                   'Mss': -26.373484453579668,
-                  'k': 0.011}
+                  'k': 0.011,
+                  'dV': 0.037}
     print(fmin(residual, list(parameters.values()), args=(list(parameters.keys()), experimental_data),
                maxfun=1e6, maxiter=1e6))
