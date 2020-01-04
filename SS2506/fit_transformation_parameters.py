@@ -86,7 +86,7 @@ if __name__ == '__main__':
     experimental_data = np.zeros((stress_strain.shape[0], 3))
     experimental_data[:, 0:2] = stress_strain
     experimental_data[:, 2] = strains[:, 1]
-    parameters = {'a1': 0.02,
+    parameters = {'a1': 0.02, 'dV': 0.037,
                   'R1': 0.02, 'R2': 0.02, 'Mss': -10}
     print(fmin(residual, list(parameters.values()), args=(list(parameters.keys()), experimental_data),
                maxfun=1e6, maxiter=1e6))
