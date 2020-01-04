@@ -70,23 +70,25 @@ def residual(par, *data):
         fit_lines[1].remove()
         fit_lines[:] = []
     e_fem, s_fem, fm_fem = run_fe_simulation(par, experiment, parameter_names)
-    plt.figure(0)
-    fit_lines.append(plt.plot(e_fem[:, 2], s_fem[:, 2], '--b', lw=2)[0])
-    plt.figure(1)
-    fit_lines.append(plt.plot(e_fem[:, 2], e_fem[:, 0], '--b', lw=2)[0])
-    plt.draw()
-    plt.pause(0.001)
+
     e_exp = experiment[:, 0]
     s_exp = experiment[:, 1]
     et_exp = experiment[:, 2]
     s_intep = np.interp(e_exp, e_fem[:, 2], s_fem[:, 2])
     et_intep = np.interp(e_exp, e_fem[:, 2], e_fem[:, 1])
-    stress_residual = np.sum((1 - s_intep[s_exp > 300]/s_exp[s_exp > 300])**2)/s_exp.shape[0]
+    plt.figure(0)
+    fit_lines.append(plt.plot(e_exp, s_intep, '--bx', lw=2)[0])
+    plt.figure(1)
+    fit_lines.append(plt.plot(e_exp, et_intep, '--bx', lw=2)[0])
+    plt.draw()
+    plt.pause(0.001)
+
+    stress_residual = np.sum((1 - s_intep/s_exp)**2)/s_exp.shape[0]
     print("Stress at end of test: " + str(np.interp(e_exp[-1], e_fem[:, 2], s_fem[:, 2])) +
           " Exp. is " + str(s_exp[-1]))
     print("Stress at end of test: " + str(np.interp(e_exp[-1], e_fem[:, 2], e_fem[:, 1])) +
           " Exp. is " + str(et_exp[-1]))
-    strain_residual = np.sum((1 - et_intep[s_exp > 300]/et_exp[s_exp > 300])**2)/s_exp.shape[0]
+    strain_residual = np.sum((1 - et_intep/et_exp)**2)/s_exp.shape[0]
     res += stress_residual + strain_residual
 
     parameter_str = ''
@@ -110,12 +112,12 @@ if __name__ == '__main__':
     plt.figure(0)
     plt.ion()
     plt.show()
-    plt.plot(experimental_data[:, 0], experimental_data[:, 1], 'b', lw=3)
+    plt.plot(experimental_data[:, 0], experimental_data[:, 1], 'bx', lw=3)
     plt.xlabel(r'$\varepsilon_{zz}$ [-]', fontsize=24)
     plt.ylabel(r'$\sigma_{zz}$ [MPa]', fontsize=24)
     plt.tight_layout()
     plt.figure(1)
-    plt.plot(experimental_data[:, 0], experimental_data[:, 2], 'b', lw=3)
+    plt.plot(experimental_data[:, 0], experimental_data[:, 2], 'bx', lw=3)
     plt.xlabel(r'$\varepsilon_{zz}$ [-]', fontsize=24)
     plt.ylabel(r'$\varepsilon_{xx}$ [-]', fontsize=24)
     plt.tight_layout()

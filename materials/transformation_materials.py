@@ -124,7 +124,7 @@ hazar_et_al = ElasticPlasticTransformMaterial(E=200.5e3, v=0.27, sy0M=1016, sy0A
                                               g1=68.83381914607745, g2=0, g_mean=0, g_std=29.5540022577844,
                                               fsb0=0.22758101605717712)
 
-SS2506 = ElasticPlasticTransformMaterial(E=205.e3, v=0.3, sy0M=1099.7293833, sy0A=420., Q=0., b=0.,
+SS2506 = ElasticPlasticTransformMaterial(E=200.e3, v=0.273, sy0M=1099.7293833, sy0A=420., Q=0., b=0.,
                                          Cm=np.array([3.45681604e+04, 1.65655117e+05, 5.11479494e+05]),
                                          gamma_m=np.array([4.17222046e+01, 3.05659804e+02, 7.58674760e+02]),
                                          a=0.02*np.array([1., 0., 0.]),
