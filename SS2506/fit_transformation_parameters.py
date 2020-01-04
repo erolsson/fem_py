@@ -124,7 +124,9 @@ if __name__ == '__main__':
 
     plt.draw()
     plt.pause(0.001)
-    parameters = {'a1': 0.056,
-                  'R1': 0.02, 'R2': 0.02, 'Mss': -10}
+    parameters = {'a1': 0.04602469428067546,
+                  'R1': 0.015,
+                  'R2': 0.01,
+                  'Mss': -26.373484453579668}
     print(fmin(residual, list(parameters.values()), args=(list(parameters.keys()), experimental_data),
                maxfun=1e6, maxiter=1e6))

@@ -37,7 +37,7 @@ for i, data_set in enumerate([core_data, case_data]):
     plt.plot(epl, sy0 + alpha)
     print(sy0, params)
 
-epl = np.linspace(0, 3e-2, 1000)
+epl = np.linspace(0, 10e-2, 1000)
 
 for hv in np.linspace(450, 800, 50):
     kin_parameters = np.zeros(2*num_back_stresses)
