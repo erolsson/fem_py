@@ -68,6 +68,8 @@ def residual(par, *data):
     e_fem, s_fem, fm_fem = run_fe_simulation(par, experiment, parameter_names)
     plt.figure(0)
     plt.plot(e_fem[:, 2], s_fem[:, 2], '--')
+    plt.draw()
+    plt.pause(0.001)
     e_exp = experiment[:, 0]
     s_exp = experiment[:, 1]
     et_exp = experiment[:, 2]
@@ -105,6 +107,7 @@ if __name__ == '__main__':
     plt.plot(experimental_data[:, 0], experimental_data[:, 1], lw=3)
     plt.xlabel(r'$\varepsilon_{zz}$ [-]', fontsize=24)
     plt.ylabel(r'$\sigma_{zz}$ [MPa]', fontsize=24)
+    plt.tight_layout()
     plt.draw()
     plt.pause(0.001)
     parameters = {'a1': 0.02, 'dV': 0.037,
