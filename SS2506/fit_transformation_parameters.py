@@ -73,7 +73,7 @@ def residual(par, *data):
     plt.figure(0)
     fit_lines.append(plt.plot(e_fem[:, 2], s_fem[:, 2], '--b', lw=2)[0])
     plt.figure(1)
-    fit_lines.append(plt.plot(e_fem[:, 2], s_fem[:, 0], '--b', lw=2)[0])
+    fit_lines.append(plt.plot(e_fem[:, 2], e_fem[:, 0], '--b', lw=2)[0])
     plt.draw()
     plt.pause(0.001)
     e_exp = experiment[:, 0]
