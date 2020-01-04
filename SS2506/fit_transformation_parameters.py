@@ -103,8 +103,8 @@ if __name__ == '__main__':
     plt.ion()
     plt.show()
     plt.plot(experimental_data[:, 0], experimental_data[:, 1], lw=3)
-    plt.xlabel(r'\varepsilon_zz [-]', fontsize=24)
-    plt.ylabel(r'\sigma_zz [MPa]', fontsize=24)
+    plt.xlabel(r'\varepsilon_{zz} [-]', fontsize=24)
+    plt.ylabel(r'\sigma_{zz} [MPa]', fontsize=24)
     plt.draw()
     plt.pause(0.001)
     parameters = {'a1': 0.02, 'dV': 0.037,
