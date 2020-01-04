@@ -5,17 +5,26 @@ import numpy as np
 
 from scipy.optimize import fmin
 
+import matplotlib
 import matplotlib.pyplot as plt
 
 from fem_py.materials.transformation_materials import SS2506
 from fem_py.abaqus_material_test.material_test import one_element_abaqus
 from fem_py.abaqus_material_test.one_element_input_file import BC
 
+matplotlib.style.use('classic')
+plt.rc('text', usetex=True)
+plt.rc('font', serif='Computer Modern Roman')
+plt.rcParams.update({'font.size': 20})
+plt.rcParams['text.latex.preamble'] = [r"\usepackage{amsmath}", r"\usepackage{gensymb}"]
+plt.rc('font', **{'family': 'serif', 'serif': ['Computer Modern Roman'],
+                  'monospace': ['Computer Modern Typewriter']})
+
 umat_file = os.path.expanduser('~/python_projects/fem_py/transformation_subroutines/transformation_subroutine.o')
 simulation_dir = os.path.expanduser('~/python_projects/fem_py/abaqus_material_test/SS2506/')
 
 signed_parameters = ['Mss']
-
+fit_line = None
 
 def write_initial_file(fsb0, sim_dir, initial_austenite=0.20):
     with open(sim_dir + '/austenite.dat', 'w') as initial_file:
@@ -57,6 +66,8 @@ def residual(par, *data):
     res = 0
 
     e_fem, s_fem, fm_fem = run_fe_simulation(par, experiment, parameter_names)
+    plt.figure(0)
+    plt.plot(e_fem[:, 2], s_fem[:, 2], '--')
     e_exp = experiment[:, 0]
     s_exp = experiment[:, 1]
     et_exp = experiment[:, 2]
@@ -93,7 +104,7 @@ if __name__ == '__main__':
     plt.show()
     plt.plot(experimental_data[:, 0], experimental_data[:, 1], lw=3)
     plt.xlabel(r'\varepsilon_zz [-]', fontsize=24)
-    plt.xlabel(r'\sigma_zz [MPa]', fontsize=24)
+    plt.ylabel(r'\sigma_zz [MPa]', fontsize=24)
     plt.draw()
     plt.pause(0.001)
     parameters = {'a1': 0.02, 'dV': 0.037,
