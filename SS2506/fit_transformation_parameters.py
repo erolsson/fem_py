@@ -35,6 +35,7 @@ def write_initial_file(fsb0, sim_dir, initial_austenite=0.20):
 
 def run_fe_simulation(parameter_values, experiment, parameter_names):
     material = SS2506
+    print(material.umat_parameters())
     try:
         fsb0 = parameter_values[parameter_names.index('fsb0')]
     except ValueError:
