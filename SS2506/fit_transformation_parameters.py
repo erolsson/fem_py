@@ -128,7 +128,6 @@ if __name__ == '__main__':
                   'R1': SS2506.R1,
                   'R2': SS2506.R2,
                   'Mss': SS2506.Mss,
-                  'k': SS2506.k,
-                  'dV': SS2506.dV}
+                  'k': SS2506.k}
     print(fmin(residual, list(parameters.values()), args=(list(parameters.keys()), experimental_data),
                maxfun=1e6, maxiter=1e6))
