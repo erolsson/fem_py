@@ -136,7 +136,7 @@ SS2506 = ElasticPlasticTransformMaterial(E=200.e3, v=0.273, sy0M=1099.7293833, s
 
 SS2506.k = 0.0132
 SS2506.R1 = 0.025
-SS2506.R2 = 0.02
+SS2506.R2 = 0.1
 SS2506.dV = 0.0348
 
 
