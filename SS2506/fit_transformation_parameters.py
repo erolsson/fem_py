@@ -35,7 +35,6 @@ def write_initial_file(fsb0, sim_dir, initial_austenite=0.20):
 
 def run_fe_simulation(parameter_values, experiment, parameter_names):
     material = SS2506
-    print(material.umat_parameters())
     try:
         fsb0 = parameter_values[parameter_names.index('fsb0')]
     except ValueError:
@@ -125,11 +124,11 @@ if __name__ == '__main__':
 
     plt.draw()
     plt.pause(0.001)
-    parameters = {'a1': 0.04602469428067546,
-                  'R1': 0.015,
-                  'R2': 0.02,
-                  'Mss': -26.373484453579668,
-                  'k': 0.011,
-                  'dV': 0.037}
+    parameters = {'a1': SS2506.a1,
+                  'R1': SS2506.R1,
+                  'R2': SS2506.R2,
+                  'Mss': SS2506.Mss,
+                  'k': SS2506.k,
+                  'dV': SS2506.dV}
     print(fmin(residual, list(parameters.values()), args=(list(parameters.keys()), experimental_data),
                maxfun=1e6, maxiter=1e6))
