@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from collections import namedtuple
 
 import numpy as np
@@ -13,6 +15,7 @@ def write_input_file(filename, material, boundary_conditions, temperature=None, 
         material_name = material.name
     except AttributeError:
         material_name = 'material'
+    print(material.umat_parameters())
     file_lines = ['**',
                   '*Heading',
                   '\t One element simulation for testing materials',
