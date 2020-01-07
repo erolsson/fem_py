@@ -138,7 +138,7 @@ if __name__ == '__main__':
                   'fsb0': 0.11879158373330523,
                   'R1': 0.01599183565870769, 'R2': 0.00793495890945268,
                   'g1': 16., 'g2': g2, 'g0': 11.44 - g2}
-    experiments = experiments[1:]
+    experiments = experiments[4:]
     plt.figure(0)
     plt.ion()
     plt.show()
