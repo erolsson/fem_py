@@ -8,10 +8,10 @@ import matplotlib.pyplot as plt
 
 from scipy.optimize import fmin
 
-from hazar_et_al.uniaxial_experiments import experiments
-from materials.transformation_materials import hazar_et_al
-from abaqus_material_test.material_test import one_element_abaqus
-from abaqus_material_test.one_element_input_file import BC
+from fem_py.hazar_et_al.uniaxial_experiments import experiments
+from fem_py.materials.transformation_materials import hazar_et_al
+from fem_py.abaqus_material_test.material_test import one_element_abaqus
+from fem_py.abaqus_material_test.one_element_input_file import BC
 
 matplotlib.style.use('classic')
 plt.rc('text', usetex=True)
