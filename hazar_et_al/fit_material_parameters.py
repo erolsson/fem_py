@@ -42,19 +42,13 @@ def run_fe_simulation(parameter_values, experiment, parameter_names):
         fsb0 = parameter_values[parameter_names.index('fsb0')]
     except ValueError:
         fsb0 = material.fsb0
-    try:
-        yield_multi = parameter_values[parameter_names.index('yield_multi')]
-    except ValueError:
-        yield_multi = 1.
-    write_initial_file(fsb0, simulation_dir)
-    material.Cm *= yield_multi
 
-    k2 = (yield_multi*(0.22*material.sy0A + 0.78*material.sy0M) - 0.22*material.sy0A)/0.78/material.sy0M
-    material.sy0M *= k2
+    write_initial_file(fsb0, simulation_dir)
+
     for par_value, par_name in zip(parameter_values, parameter_names):
         if par_name not in signed_parameters:
             par_value = abs(par_value)
-        if par_name not in ['fsb0', 'yield_multi']:
+        if par_name not in ['fsb0']:
             setattr(material, par_name, par_value)
     stabilization_temp = -np.log(1-0.78)/material.k - material.Ms - material.a1*800 + 22
     material.Mss = stabilization_temp
@@ -145,7 +139,7 @@ if __name__ == '__main__':
     parameters = {'alpha': 139, 'beta': 207.07,
                   'fsb0': 0.1194,
                   'R1': 0.015579953783044144, 'R2': 0.008019577259143854,
-                  'g1': 15.75, 'g2': g2, 'g0': 11.44 - g2}
+                  'g1': 15.75, 'g2': g2, 'g0': 11.44 - g2, 'yield_multi': 1.}
     experiments = experiments[1:]
     plt.figure(0)
     plt.ion()

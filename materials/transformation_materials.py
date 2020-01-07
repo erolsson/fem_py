@@ -7,7 +7,7 @@ import numpy as np
 # noinspection PyPep8Naming
 class ElasticPlasticTransformMaterial:
     def __init__(self, E, v, sy0M, sy0A, Q, b, Cm, gamma_m, a, Ms, name, Mss, fM, beta, alpha, n, sde,
-                 g0, g1, g2, g_mean, g_std, fsb0=0.):
+                 g0, g1, g2, g_mean, g_std, fsb0=0., yield_multi=1.):
         # Elastic parameters
         self.E = float(E)
         self.v = float(v)
@@ -60,6 +60,7 @@ class ElasticPlasticTransformMaterial:
 
         self.back_stresses = Cm.shape[0]
         self.name = name
+        self.yield_multi = 1.
         if isinstance(Mss, numbers.Real):
             self.Mss = Mss
         else:
@@ -86,9 +87,10 @@ class ElasticPlasticTransformMaterial:
         return 7 + (self.back_stresses+1)*6
 
     def umat_parameters(self):
-        parameters = [self.E, self.v, self.sy0M, self.sy0A,  self.Q, self.b, self.gamma_m.shape[0]]
+        k2 = (self.yield_multi*((1-self.fM)*self.sy0A + self.fM.self.sy0M) - (1-self.fM)*self.sy0A)/self.fM/self.sy0M
+        parameters = [self.E, self.v, self.sy0M*k2, self.sy0A,  self.Q, self.b, self.gamma_m.shape[0]]
         kinematic_hardening_params = []
-        for C, g in zip(self.Cm, self.gamma_m):
+        for C, g in zip(self.Cm*self.yield_multi, self.gamma_m):
             kinematic_hardening_params += [C, g]
         return parameters + kinematic_hardening_params + [self.sde, self.R1, self.R2, self.dV, self.Ms, self.Mss,
                                                           self.k, self.a1, self.a2, self.a3, self.beta, self.alpha,
@@ -135,7 +137,7 @@ SS2506 = ElasticPlasticTransformMaterial(E=200.e3, v=0.273, sy0M=1099.7293833, s
                                          beta=306.6016112399211, alpha=115.6731692918583, n=4., sde=0.0,
                                          g0=3.077651873747456,
                                          g1=68.83381914607745, g2=5, g_mean=0, g_std=29.5540022577844,
-                                         fsb0=0.22758101605717712)
+                                         fsb0=0.22758101605717712, yield_multi=1.)
 
 SS2506.k = 0.0132
 SS2506.R1 = 0.025
