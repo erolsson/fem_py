@@ -17,10 +17,15 @@ class Experiment:
     def __init__(self, temperature, color, mode='tension'):
         self.temperature = temperature
         self.color = color
-        stress_strain = np.genfromtxt(data_directory + '/fig6a_' + str(self.temperature) + 'C', delimiter=',')
+        self.mode = mode
+        fig = 'a'
+        if mode == 'compression':
+            fig = 'b'
+        print(mode)
+        stress_strain = np.genfromtxt(data_directory + '/fig6' + fig + '_' + str(self.temperature) + 'C', delimiter=',')
         self.stress_strain = stress_strain[np.argsort(stress_strain[:, 0]), :]
 
-        transformation_data = np.genfromtxt(data_directory + '/fig8a_' + str(self.temperature) + 'C',
+        transformation_data = np.genfromtxt(data_directory + '/fig8' + fig + '_' + str(self.temperature) + 'C',
                                             delimiter=',')
         if len(transformation_data.shape) < 2:
             transformation_data = np.expand_dims(transformation_data, 0)
@@ -46,7 +51,8 @@ class Experiment:
 
 
 experiments = [Experiment(temperature=22, color='r'), Experiment(temperature=75, color='b'),
-               Experiment(temperature=100, color='g'), Experiment(temperature=150, color='k')]
+               Experiment(temperature=100, color='g'), Experiment(temperature=150, color='k'),
+               Experiment(temperature=75, color='b', mode='compression')]
 
 
 def uniaxial_stress_strain_curve_plastic(material, epl, fM=0.78):
@@ -95,79 +101,11 @@ if __name__ == '__main__':
         experiment.plot_stress_strain()
         plt.figure(1)
         experiment.plot_transformation()
-        e = experiment.transformation_data[:, 0]
-        s = np.interp(e, experiment.stress_strain[:, 0], experiment.stress_strain[:, 1])
-        fM = experiment.transformation_data[:, 1]
         plt.figure(2)
-        # if experiment.temperature in ms_start:
-            # s = np.hstack(([ms_start[experiment.temperature]], s))
-            # fM = np.hstack(([0.78], fM))
-        plt.plot(e - s/hazar_et_al.E, fM, 'x' + experiment.color, ms=12, mew=2)
-        if experiment.volume_expansion is not None:
-            print("Expansion")
-            print("e_inelastic:" + str(experiment.volume_expansion[:, 0]))
-            e_vol = np.interp(experiment.volume_expansion[:, 0], experiment.stress_strain[:, 0],
-                              experiment.stress_strain[:, 0] - experiment.stress_strain[:, 1]/hazar_et_al.E)
-            print("e_tot" + str(e_vol))
-        k = 0.01
-        Ms = 220
-        a = 0.05
-        Mss = -np.log(1-0.78)/k - Ms - a*ms_start[22] + 22
-        print(Mss)
-        fMsigma = 1 - np.exp(-k*(Ms + a*experiment.stress_strain[:, 1] + Mss - experiment.temperature))
-        fMsigma[fMsigma <= 0.78] = 0.78
-        # plt.plot(experiment.stress_strain[:, 1], fMsigma, '--' + experiment.color)
+        experiment.plot_volume_expansion()
+        plt.figure(3)
+        if experiment.temperature == 75 and experiment.mode == 'tension':
+            e_inel = experiment.stress_strain[:, 0] - experiment.stress_strain[:, 1]/205E3
+            plt.plot(experiment.stress_strain[:, 0], e_inel)
 
-        if experiment.temperature == 22.:
-            e_tr_free = np.interp(experiment.stress_strain[:, 1],
-                                  transformation_free_data[:, 1],
-                                  transformation_free_data[:, 0])
-            e_tr = experiment.stress_strain[:, 0] - e_tr_free
-            plt.figure(3)
-            x = experiment.stress_strain[1:, 1]/hazar_et_al.sy0A
-            y = np.diff(e_tr)/np.diff(fMsigma) - hazar_et_al.dV/3
-            x = x[~np.isinf(y)]
-            y = y[(~np.isinf(y))]
-
-            plt.figure(10)
-            plt.plot(experiment.stress_strain[:, 1], e_tr)
-
-            par_r = np.polyfit(x[x<2.4],
-                               y[x<2.4], 1)
-            plt.figure(3)
-            plt.plot(x, par_r[0]*x + par_r[1])
-            print(par_r)
-            par_r = np.array([0.00623, 0.015])/2**0.5
-            plt.figure(3)
-            plt.plot(x, y, '-*')
-
-        fMep = fM[fM > 0.78] - np.interp(s[fM > 0.78], experiment.stress_strain[:, 1], fMsigma)
-        dfm = (fM[fM > 0.78] - 0.78)
-
-        s_eq = np.interp(experiment.transformation_data[:, 0], experiment.stress_strain[:, 0],
-                         experiment.stress_strain[:, 1])
-        epl = 0*fM[fM>0.78]
-        for i, f in enumerate(fM[fM>0.78]):
-            uniax = uniaxial_stress_strain_curve_plastic(hazar_et_al, np.linspace(0, 0.01, 1000), f)
-            epl[i] = np.interp(s_eq[i], uniax[:, 1], uniax[:, 0]) - s_eq[i]/hazar_et_al.E
-
-        print(s_eq/hazar_et_al.E)
-        plt.figure(5)
-        plt.plot(epl, fMep + 0.78, 'x' + experiment.color, ms=12, mew=2)
-        all_epl += epl.tolist()
-        all_fMe += fMep.tolist()
-        temp += [experiment.temperature]*len(fMep)
-    all_epl = np.array(all_epl)
-    all_fMe = np.array(all_fMe) + 0.78
-    par_ep = fmin(platic_trans_residual, x0=[0.0, 100, 100, 400, 400, 10], args=(all_epl, all_fMe, temp), maxfun=1e6,
-                  maxiter=1e6)
-    plt.figure(5)
-    epl = np.linspace(0, 0.002, 1000)
-    # par = [0.5, 4., 3.]
-    print(par_ep)
-    plt.plot(epl, strain_transformation(par_ep, epl, 22), 'r')
-    plt.plot(epl, strain_transformation(par_ep, epl, 75), 'b')
-    plt.plot(epl, strain_transformation(par_ep, epl, 100), 'g')
-    plt.plot(epl, strain_transformation(par_ep, epl, 150), 'k')
-    plt.plot()
     plt.show()
