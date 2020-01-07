@@ -120,8 +120,8 @@ def residual(par, *data):
             print('Volume expansion is ' + str(dv_interp) + ' Exp. is '
                   + str(vol_exp) + ' with a martensite fraction of ' + str(fm_vol) + ' at strain' + str(e_vol))
         res += stress_residual + martensite_residual + volume_residual
-    plt.draw()
-    plt.pause(0.001)
+        plt.draw()
+        plt.pause(0.001)
     parameter_str = ''
     for name, val in zip(parameter_names, par):
         parameter_str += name + '=' + str(val) + ', '
