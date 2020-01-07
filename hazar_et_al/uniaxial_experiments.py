@@ -26,12 +26,12 @@ class Experiment:
 
         transformation_data = np.genfromtxt(data_directory + '/fig8' + fig + '_' + str(self.temperature) + 'C',
                                             delimiter=',')
-        if mode == 'compression':
-            self.stress_strain *= -1
-            self.transformation_data[:, 0] *= -1
         if len(transformation_data.shape) < 2:
             transformation_data = np.expand_dims(transformation_data, 0)
         self.transformation_data = transformation_data
+        if mode == 'compression':
+            self.stress_strain *= -1
+            self.transformation_data[:, 0] *= -1
 
         try:
             self.volume_expansion = np.genfromtxt(data_directory + '/fig18_' + mode + '_' + str(self.temperature) + 'C',
