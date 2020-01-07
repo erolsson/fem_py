@@ -46,7 +46,7 @@ def run_fe_simulation(parameter_values, experiment, parameter_names):
     for par_value, par_name in zip(parameter_values, parameter_names):
         if par_name not in signed_parameters:
             par_value = abs(par_value)
-        if par_name != 'fsb0':
+        if par_name not in ['fsb0', 'yield_multi']:
             setattr(material, par_name, par_value)
     stabilization_temp = -np.log(1-0.78)/material.k - material.Ms - material.a1*800 + 22
     material.Mss = stabilization_temp
@@ -137,7 +137,8 @@ if __name__ == '__main__':
     parameters = {'alpha': 134.58146119845568, 'beta': 200,
                   'fsb0': 0.11879158373330523,
                   'R1': 0.01599183565870769, 'R2': 0.00793495890945268,
-                  'g1': 16., 'g2': g2, 'g0': 11.44 - g2}
+                  'g1': 16., 'g2': g2, 'g0': 11.44 - g2,
+                  'yield_multi': 1.}
     experiments = experiments[4:]
     plt.figure(0)
     plt.ion()
