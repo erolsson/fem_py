@@ -50,14 +50,14 @@ def run_fe_simulation(parameter_values, experiment, parameter_names):
             setattr(material, par_name, par_value)
     stabilization_temp = -np.log(1-0.78)/material.k - material.Ms - material.a1*800 + 22
     material.Mss = stabilization_temp
-    max_exp_strain = np.max(experiment.stress_strain[:, 0])
+    max_exp_strain = np.max(abs(experiment.stress_strain[:, 0]))
     if experiment.volume_expansion is not None:
-        e_max = max(max_exp_strain, np.max(experiment.transformation_data[:, 0]),
-                    1.1*np.max(experiment.volume_expansion[:, 0]))
+        e_max = max(abs(max_exp_strain), np.max(abs(experiment.transformation_data[:, 0])),
+                    1.1*np.max(abs(experiment.volume_expansion[:, 0])))
     else:
-        e_max = max(max_exp_strain, np.max(experiment.transformation_data[:, 0]))
+        e_max = max(max_exp_strain, np.max(abs(experiment.transformation_data[:, 0])))
     if experiment.mode == 'compression':
-        e_max = abs(e_max)*-1
+        e_max *= -1
     strain_bc = BC(amplitude=[[0, 0], [1., 1.1*e_max]], direction='z', mode='strain')
 
     e, s, _, fm = one_element_abaqus(simulation_dir, material=hazar_et_al,
