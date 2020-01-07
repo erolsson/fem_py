@@ -244,8 +244,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 norm_drivning_force = (Gamma - params.g_mean())/params.g_std();
 
                 P = 0.5*(1 + erf(norm_drivning_force));
-                std::cout << "Sigma: " << Sigma << " DSigma: " << DSigma << " Gamma: " << Gamma << " P: "
-                          << P <<  std::endl;
+                //std::cout << "Sigma: " << Sigma << " DSigma: " << DSigma << " Gamma: " << Gamma << " P: "
+                //          << P <<  std::endl;
                 As = c*P;
                 pdf = normal_pdf(norm_drivning_force)/params.g_std();
                 Bs = params.g2()*params.beta()*pow(fsb2, n)*pdf*(DSigma > 1e-3);
@@ -282,8 +282,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     double det = dfdDL*(dh_strainDfM - 1) - dfdDfM*dh_straindDL;
                     dDL = ((dh_strainDfM-1)*f - dfdDfM*h_strain)/det;
                     dDfM_strain = (-dh_straindDL*f + dfdDL*h_strain)/det;
-                    std::cout << "h_strain: " << h_strain << " dh_strainDfM: " << dh_strainDfM
-                              << " dh_straindDL: " << dh_straindDL << std::endl;
+                    // std::cout << "h_strain: " << h_strain << " dh_strainDfM: " << dh_strainDfM
+                    //          << " dh_straindDL: " << dh_straindDL << std::endl;
                 }
                 else if (! strain_transformations) {
                     double det = dfdDL*dh_stressDfM - dfdDfM*dh_stressDfM;
