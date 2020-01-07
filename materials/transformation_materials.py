@@ -87,7 +87,7 @@ class ElasticPlasticTransformMaterial:
         return 7 + (self.back_stresses+1)*6
 
     def umat_parameters(self):
-        k2 = (self.yield_multi*((1-self.fM)*self.sy0A + self.fM.self.sy0M) - (1-self.fM)*self.sy0A)/self.fM/self.sy0M
+        k2 = (self.yield_multi*((1-self.fM)*self.sy0A + self.fM*self.sy0M) - (1-self.fM)*self.sy0A)/self.fM/self.sy0M
         parameters = [self.E, self.v, self.sy0M*k2, self.sy0A,  self.Q, self.b, self.gamma_m.shape[0]]
         kinematic_hardening_params = []
         for C, g in zip(self.Cm*self.yield_multi, self.gamma_m):
