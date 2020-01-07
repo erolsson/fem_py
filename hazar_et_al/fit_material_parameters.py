@@ -42,7 +42,15 @@ def run_fe_simulation(parameter_values, experiment, parameter_names):
         fsb0 = parameter_values[parameter_names.index('fsb0')]
     except ValueError:
         fsb0 = material.fsb0
+    try:
+        yield_multi = parameter_values[parameter_names.index('yield_multi')]
+    except ValueError:
+        yield_multi = 1.
     write_initial_file(fsb0, simulation_dir)
+    material.Cm *= yield_multi
+
+    k2 = (yield_multi*(0.22*material.sy0A + 0.78*material.sy0M) - 0.22*material.sy0A)/0.78/material.sy0M
+    material.sy0M *= k2
     for par_value, par_name in zip(parameter_values, parameter_names):
         if par_name not in signed_parameters:
             par_value = abs(par_value)
