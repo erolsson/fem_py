@@ -270,7 +270,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 dh_stressDfM = double_contract(bij, dsijdDfM) - 1;
             }
 
-            if ( !plastic ) {
+            if ( !plastic) {
                 dDfM_stress = h_stress/dh_stressDfM;
             }
             else {
@@ -299,7 +299,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     dDfM_stress = -(c + d*e -c*g)/det*f + (a + b*e - a*g)/det*h_stress + h_strain;
                     dDfM_strain = (d*e - c*g)/det*f - (b*e-a*g)/det*h_stress - h_strain;
                 }
-                if (DL - dDL < 0 || DfM_strain - dDfM_strain < 0) {
+                if ((DL - dDL < 0 || DfM_strain - dDfM_strain < 0) && stress_transformations) {
                     DL = 0;
                     dDL = 0;
                     dDfM_strain = 0;
@@ -307,7 +307,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     dDfM_stress = h_stress/dh_stressDfM;
                 }
 
-                if (DfM_stress - dDfM_stress < 0) {
+                if ((DfM_stress - dDfM_stress < 0) && plastic) {
                     DfM_stress = 0;
                     dDfM_stress = 0;
                     double det = dfdDL*(dh_strainDfM - 1) - dfdDfM*dh_straindDL;
