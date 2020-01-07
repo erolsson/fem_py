@@ -137,7 +137,7 @@ if __name__ == '__main__':
                   'R1': 0.01599183565870769, 'R2': 0.00793495890945268,
                   'g1': 60.62406811305142, 'g2': 5.,
                   'g_std': 18.056870261724143, 'g0': 14.361769920692034}
-    experiments = experiments[0:]
+    experiments = experiments[1:]
     plt.figure(0)
     plt.ion()
     plt.show()
@@ -157,6 +157,6 @@ if __name__ == '__main__':
     plt.draw()
     plt.pause(0.01)
 
-    print(fmin(residual, list(parameters.values()), args=(list(parameters.keys()), experiments[1:]),
+    print(fmin(residual, list(parameters.values()), args=(list(parameters.keys()), experiments),
                maxfun=1e6, maxiter=1e6))
     plt.show()
