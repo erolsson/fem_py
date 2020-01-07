@@ -44,14 +44,14 @@ class Experiment:
             self.volume_expansion = None
 
     def plot_stress_strain(self):
-        plt.plot(self.stress_strain[:, 0], self.stress_strain[:, 1], self.color, lw=2)
+        plt.plot(abs(self.stress_strain[:, 0]), abs(self.stress_strain[:, 1]), self.color, lw=2)
 
     def plot_transformation(self):
-        plt.plot(self.transformation_data[:, 0], self.transformation_data[:, 1], 'x' + self.color, ms=12, mew=2)
+        plt.plot(abs(self.transformation_data[:, 0]), self.transformation_data[:, 1], 'x' + self.color, ms=12, mew=2)
 
     def plot_volume_expansion(self):
         if self.volume_expansion is not None:
-            plt.plot(self.volume_expansion[:, 0], self.volume_expansion[:, 1], 'x' + self.color, ms=12, mew=2)
+            plt.plot(abs(self.volume_expansion[:, 0]), self.volume_expansion[:, 1], 'x' + self.color, ms=12, mew=2)
 
 
 experiments = [Experiment(temperature=22, color='r'), Experiment(temperature=75, color='b'),
