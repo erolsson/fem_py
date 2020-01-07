@@ -248,12 +248,12 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 //          << P <<  std::endl;
                 As = c*P;
                 pdf = normal_pdf(norm_drivning_force)/params.g_std();
-                Bs = params.g2()*params.beta()*pow(fsb2, n)*pdf*(DSigma > 1e-1);
+                Bs = params.g2()*params.beta()*pow(fsb2, n)*pdf*(DSigma > 0);
                 dAsdDL = dcdDL*P + c*params.g2()*pdf*dSigmadDL;
                 double dAsdfM = c*params.g2()*pdf*dSigmadDfM;
 
                 double dBsdDL = (pdf*n*pow(fsb2, n - 1)*dfsb2dDL
-                        -  Bs*norm_drivning_force/params.g_std()*params.g2()*dSigmadDL)*(DSigma > 1e-1);
+                        -  Bs*norm_drivning_force/params.g_std()*params.g2()*dSigmadDL)*(DSigma > 0);
                 double dBsdfM = -Bs*norm_drivning_force/params.g_std()*params.g2()*dSigmadDfM;
                 h_strain = (1 - fM2)*(As*DL + Bs*DSigma) - DfM_strain;
                 dh_straindDL = (1 - fM2)*(As + DL*dAsdDL + Bs*dDSigmadDL + DSigma*dBsdDL);
@@ -302,21 +302,22 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     dDfM_stress = -(c + d*e -c*g)/det*f + (a + b*e - a*g)/det*h_stress + h_strain;
                     dDfM_strain = (d*e - c*g)/det*f - (b*e-a*g)/det*h_stress - h_strain;
                 }
-                if ((DL - dDL < 0 || DfM_strain - dDfM_strain < 0) && stress_transformations) {
-                    DL = 0;
-                    dDL = 0;
-                    dDfM_strain = 0;
-                    DfM_strain = 0;
-                    dDfM_stress = h_stress/dh_stressDfM;
-                }
 
-                if ((DfM_stress - dDfM_stress < 0) && plastic) {
-                    DfM_stress = 0;
-                    dDfM_stress = 0;
-                    double det = dfdDL*(dh_strainDfM - 1) - dfdDfM*dh_straindDL;
-                    dDL = ((dh_strainDfM-1)*f - dfdDfM*h_strain)/det;
-                    dDfM_strain = (-dh_straindDL*f + dfdDL*h_strain)/det;
-                }
+            }
+            if ((DL - dDL < 0 || DfM_strain - dDfM_strain < 0) && stress_transformations) {
+                DL = 0;
+                dDL = 0;
+                dDfM_strain = 0;
+                DfM_strain = 0;
+                dDfM_stress = h_stress/dh_stressDfM;
+            }
+
+            if ((DfM_stress - dDfM_stress < 0) && plastic) {
+                DfM_stress = 0;
+                dDfM_stress = 0;
+                double det = dfdDL*(dh_strainDfM - 1) - dfdDfM*dh_straindDL;
+                dDL = ((dh_strainDfM-1)*f - dfdDfM*h_strain)/det;
+                dDfM_strain = (-dh_straindDL*f + dfdDL*h_strain)/det;
             }
 
 
