@@ -89,7 +89,7 @@ def residual(par, *data):
         s_intep = np.interp(e_exp, e_fem[:, 2], s_fem[:, 2])
         stress_residual = np.sum((1 - s_intep/s_exp)**2)/s_exp.shape[0]
         plt.figure(fig)
-        fit_lines.append(plt.plot(e_exp, s_intep, '--x' + experiment.color, lw=2)[0])
+        fit_lines.append(plt.plot(e_fem[:, 2], s_fem[:, 2], '--x' + experiment.color, lw=2)[0])
 
         print('=======================================================================================================')
         print(' *** *** *** Temperature ' + str(experiment.temperature) + ' *** *** ***')
@@ -101,7 +101,7 @@ def residual(par, *data):
         fm_exp = experiment.transformation_data[:, 1]
         fm_interp = np.interp(experiment.transformation_data[:, 0], e_fem[:, 2], fm_fem)
         plt.figure(fig+1)
-        fit_lines.append(plt.plot(e_exp, fm_interp, '--x' + experiment.color, lw=2)[0])
+        fit_lines.append(plt.plot(e_fem[:, 2], fm_fem, '--x' + experiment.color, lw=2)[0])
         if experiment.temperature < 120:
             print('Martensite fractions is ' + str(fm_interp) + ' Exp. is '
                   + str(fm_exp))
