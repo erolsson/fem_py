@@ -121,14 +121,14 @@ hazar_et_al = ElasticPlasticTransformMaterial(E=200.5e3, v=0.27, sy0M=1016, sy0A
                                               gamma_m=np.array([950., 500., 50.]),
                                               a=0*np.array([1., 0., 0.]),
                                               Ms=220, name='SKF', Mss=-48.194154926470915, fM=0.78,
-                                              beta=282.0966412080984, alpha=134.58146119845568, n=4., sde=0.04,
+                                              beta=282.0966412080984, alpha=141.507365886, n=4., sde=0.04,
                                               g0=0.,  # 3.077651873747456,
                                               # g1=68.83381914607745, g2=0, g_mean=0, g_std=1.,
                                               g1=0, g2=0, g_mean=0, g_std=1.,
-                                              fsb0=0.22758101605717712)
-hazar_et_al.dV = 0.023
-hazar_et_al.R1 = 0.015579953783044144
-hazar_et_al.R2 = 0.008019577259143854
+                                              fsb0=0.12230665)
+hazar_et_al.dV = 0.023364550877
+hazar_et_al.R1 = 0.0154161628962
+hazar_et_al.R2 = 0.0073451035740
 
 SS2506 = ElasticPlasticTransformMaterial(E=200.e3, v=0.273, sy0M=1099.7293833, sy0A=420., Q=0., b=0.,
                                          Cm=np.array([3.45681604e+04, 1.65655117e+05, 5.11479494e+05]),
