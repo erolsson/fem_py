@@ -225,7 +225,6 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             // h_strain and derivatives of h_strain
             if (plastic) {
                 Sigma = I1_2/s_vM_2;
-                std::cout << Sigma << std::endl;
                 double DI1 = 3*K*(de[0] + de[1] + de[2] - DfM*params.dV());
                 double DvM = 1.5/s_vM_2*double_contract(deviator(sigma_t),
                         static_cast<Vector6>(2*G*(deviator(static_cast<Vector6>(de)) - (DL + RA*DfM)*nij2)));
@@ -241,9 +240,11 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 double c = params.alpha()*params.beta()*n*(1-fsb2)*pow(fsb2, n-1);
                 double dcdDL = n*params.alpha()*params.beta()*pow(fsb2, n-2)*(n*(1-fsb2) - 1)*dfsb2dDL;
                 double Gamma = params.g0() - params.g1()*(temp+273.15)/(params.Ms() + 273.15) + params.g2()*Sigma;
-                norm_drivning_force = (Gamma - params.g_mean())/params.g_std();
-                P = 0.5*(1 + erf(norm_drivning_force));
 
+                norm_drivning_force = (Gamma - params.g_mean())/params.g_std();
+
+                P = 0.5*(1 + erf(norm_drivning_force));
+                std::cout << "Sigma: " << Sigma << " Gamma: " << Gamma << " P: " << P <<  std::endl;
                 As = c*P;
                 pdf = normal_pdf(norm_drivning_force)/params.g_std();
                 Bs = params.g2()*params.beta()*pow(fsb2, n)*pdf*(DSigma > 0);
