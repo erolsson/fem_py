@@ -56,15 +56,13 @@ def run_fe_simulation(parameter_values, experiment, parameter_names):
                     1.1*np.max(experiment.volume_expansion[:, 0]))
     else:
         e_max = max(max_exp_strain, np.max(experiment.transformation_data[:, 0]))
+    if experiment.mode == 'compression':
+        e_max = abs(e_max)*-1
     strain_bc = BC(amplitude=[[0, 0], [1., 1.1*e_max]], direction='z', mode='strain')
-    if experiment.stress_strain[-1, 1] > 0:
-        name = 'tension'
-    else:
-        name = 'compression'
 
     e, s, _, fm = one_element_abaqus(simulation_dir, material=hazar_et_al,
                                      boundary_conditions=[strain_bc],
-                                     simulation_name=name + '_' + str(int(experiment.temperature)),
+                                     simulation_name=experiment.mode + '_' + str(int(experiment.temperature)),
                                      temperature=np.array([[0, experiment.temperature], [1, experiment.temperature]]),
                                      user_subroutine=umat_file,
                                      max_increment=0.01, output=False)
