@@ -144,7 +144,7 @@ if __name__ == '__main__':
     g2 = 1
     parameters = {'alpha': 139, 'beta': 207.07,
                   'fsb0': 0.1194,
-                  'g1': 15.75, 'g2': g2, 'g0': 11.44 - g2}
+                  'g1': 15.75, 'g2': g2, 'g0': 11.44 - g2, 'yield_multi': 0.99}
     experiments = experiments[1:]
     plt.figure(0)
     plt.ion()
