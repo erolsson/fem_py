@@ -24,7 +24,7 @@ plt.rc('font', **{'family': 'serif', 'serif': ['Computer Modern Roman'],
 umat_file = os.path.expanduser('~/python_projects/fem_py/transformation_subroutines/transformation_subroutine.o')
 simulation_dir = os.path.expanduser('~/python_projects/fem_py/abaqus_material_test/hazar_et_al/')
 
-signed_parameters = ['Mss']
+signed_parameters = ['Mss', 'g0']
 
 fit_lines = []
 
