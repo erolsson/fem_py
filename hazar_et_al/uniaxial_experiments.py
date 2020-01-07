@@ -8,7 +8,7 @@ from scipy.stats import norm
 
 import matplotlib.pyplot as plt
 
-from materials.transformation_materials import hazar_et_al
+from fem_py.materials.transformation_materials import hazar_et_al
 
 data_directory = os.path.expanduser('~/phase_transformations/hazar_et_al/')
 
