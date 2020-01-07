@@ -43,6 +43,12 @@ def run_fe_simulation(parameter_values, experiment, parameter_names):
     except ValueError:
         fsb0 = material.fsb0
 
+    try:
+        a1 = parameter_values[parameter_names.index('a1')]
+    except ValueError:
+        a1 = material.a1
+
+    material.a2 = 2*a1
     write_initial_file(fsb0, simulation_dir)
 
     for par_value, par_name in zip(parameter_values, parameter_names):
@@ -136,7 +142,7 @@ def residual(par, *data):
 
 if __name__ == '__main__':
     g2 = 0
-    parameters = {'beta': 50.0}
+    parameters = {'beta': 50.0, 'a1': 0.01}
     experiments = experiments[4::]
     plt.figure(0)
     plt.ion()
