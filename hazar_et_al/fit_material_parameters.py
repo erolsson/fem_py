@@ -135,7 +135,7 @@ def residual(par, *data):
 
 
 if __name__ == '__main__':
-    g2 = 2
+    g2 = 1.5
     parameters = {'alpha': 139, 'beta': 207.07,
                   'fsb0': 0.1194,
                   'R1': 0.015579953783044144, 'R2': 0.008019577259143854,
