@@ -137,7 +137,7 @@ def residual(par, *data):
 if __name__ == '__main__':
     g2 = 0
     parameters = {'beta': 50.0}
-    experiments = experiments[3:4]
+    experiments = experiments[4::]
     plt.figure(0)
     plt.ion()
     plt.show()
