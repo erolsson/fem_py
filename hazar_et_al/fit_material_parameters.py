@@ -82,8 +82,6 @@ def residual(par, *data):
         else:
             fig = 0
         e_fem, s_fem, fm_fem = run_fe_simulation(par, experiment, parameter_names)
-        e_fem[:, 2] = np.abs(e_fem[:, 2])
-        s_fem[:, 2] = np.abs(s_fem[:, 2])
         e_exp = experiment.stress_strain[:, 0]
         s_exp = experiment.stress_strain[:, 1]
         s_intep = np.interp(e_exp, e_fem[:, 2], s_fem[:, 2])

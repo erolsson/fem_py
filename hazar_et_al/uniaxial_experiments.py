@@ -21,12 +21,14 @@ class Experiment:
         fig = 'a'
         if mode == 'compression':
             fig = 'b'
-        print(mode)
         stress_strain = np.genfromtxt(data_directory + '/fig6' + fig + '_' + str(self.temperature) + 'C', delimiter=',')
         self.stress_strain = stress_strain[np.argsort(stress_strain[:, 0]), :]
 
         transformation_data = np.genfromtxt(data_directory + '/fig8' + fig + '_' + str(self.temperature) + 'C',
                                             delimiter=',')
+        if mode == 'compression':
+            self.stress_strain *= -1
+            self.transformation_data[:, 0] *= -1
         if len(transformation_data.shape) < 2:
             transformation_data = np.expand_dims(transformation_data, 0)
         self.transformation_data = transformation_data
@@ -36,6 +38,8 @@ class Experiment:
                                                   delimiter=',')
             if len(self.volume_expansion.shape) < 2:
                 self.volume_expansion = np.expand_dims(self.volume_expansion, 0)
+            if self.mode == 'compression':
+                self.volume_expansion[:, 0] *= -1
         except IOError:
             self.volume_expansion = None
 
