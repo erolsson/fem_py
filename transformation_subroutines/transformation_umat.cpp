@@ -253,7 +253,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 double dAsdfM = c*params.g2()*pdf*dSigmadDfM;
 
                 double dBsdDL = (pdf*n*pow(fsb2, n - 1)*dfsb2dDL
-                        -  Bs*norm_drivning_force/params.g_std()*params.g2()*dSigmadDL)*(DSigma > 0);
+                        -  Bs*norm_drivning_force/params.g_std()*params.g2()*dSigmadDL)*(DSigma > 1e-3);
                 double dBsdfM = -Bs*norm_drivning_force/params.g_std()*params.g2()*dSigmadDfM;
                 h_strain = (1 - fM2)*(As*DL + Bs*DSigma) - DfM_strain;
                 dh_straindDL = (1 - fM2)*(As + DL*dAsdDL + Bs*dDSigmadDL + DSigma*dBsdDL);
