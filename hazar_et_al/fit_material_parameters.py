@@ -156,8 +156,9 @@ if __name__ == '__main__':
         experiment.plot_transformation()
         plt.figure(fig+2)
         experiment.plot_volume_expansion()
+    plt.draw()
+    plt.pause(0.01)
 
-    plt.ioff()
     print(fmin(residual, list(parameters.values()), args=(list(parameters.keys()), experiments[1:]),
                maxfun=1e6, maxiter=1e6))
     plt.show()
