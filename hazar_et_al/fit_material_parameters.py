@@ -95,7 +95,6 @@ def residual(par, *data):
         print('=======================================================================================================')
         print("Stress at end of test: " + str(np.interp(e_exp[-1], e_fem[:, 2], s_fem[:, 2])) +
               " Exp. is " + str(s_exp[-1]))
-        martensite_residual = 0
 
         fm_exp = experiment.transformation_data[:, 1]
         fm_interp = np.interp(experiment.transformation_data[:, 0], e_fem[:, 2], fm_fem)
@@ -104,7 +103,7 @@ def residual(par, *data):
 
         print('Martensite fractions is ' + str(fm_interp) + ' Exp. is '
               + str(fm_exp))
-        martensite_residual = np.sum((fm_exp - fm_interp)**2)/fm_exp.shape[0]/(np.max(fm_fem) - 0.78)**2
+        martensite_residual = np.sum((fm_exp - fm_interp)**2)/fm_exp.shape[0]
         volume_residual = 0
         inelastic_strain = e_fem[:, 2] - s_fem[:, 2]/hazar_et_al.E
         vol_fem = np.sum(e_fem[:, 0:3], 1) - s_fem[:, 2]/hazar_et_al.E*(1 - 2*hazar_et_al.v)
