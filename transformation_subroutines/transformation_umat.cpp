@@ -283,8 +283,10 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     double det = dfdDL*(dh_strainDfM - 1) - dfdDfM*dh_straindDL;
                     dDL = ((dh_strainDfM-1)*f - dfdDfM*h_strain)/det;
                     dDfM_strain = (-dh_straindDL*f + dfdDL*h_strain)/det;
-                     std::cout << "h_strain: " << h_strain << " dh_strainDfM: " << dh_strainDfM
-                               << " dh_straindDL: " << dh_straindDL << std::endl;
+                    std::cout << "h_strain: " << h_strain << " dh_strainDfM: " << dh_strainDfM
+                              << " dh_straindDL: " << dh_straindDL << std::endl;
+                    std::cout << "f: " << f << " dfDfM: " << dfdDfM
+                              << " dfdDL: " << dfdDL << std::endl;
                 }
                 else if (! strain_transformations) {
                     double det = dfdDL*dh_stressDfM - dfdDfM*dh_stressDfM;
