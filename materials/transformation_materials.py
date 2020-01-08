@@ -56,6 +56,9 @@ class ElasticPlasticTransformMaterial:
         self.g_mean = g_mean
         self.g_std = g_std
 
+        self.M_sigma = 50
+        self.M_d = 200
+
         self.fsb0 = fsb0
 
         self.back_stresses = Cm.shape[0]
@@ -94,7 +97,8 @@ class ElasticPlasticTransformMaterial:
             kinematic_hardening_params += [C, g]
         return parameters + kinematic_hardening_params + [self.sde, self.R1, self.R2, self.dV, self.Ms, self.Mss,
                                                           self.k, self.a1, self.a2, self.a3, self.beta, self.alpha,
-                                                          self.n, self.g0, self.g1, self.g2, self.g_mean, self.g_std]
+                                                          self.n, self.g0, self.g1, self.g2, self.g_mean, self.g_std,
+                                                          self.M_sigma, self.M_d]
 
     def sy0(self, fm):
         return fm*self.sy0M + (1 - fm)*self.sy0A

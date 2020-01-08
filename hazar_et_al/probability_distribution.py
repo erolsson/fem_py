@@ -18,12 +18,12 @@ plt.rc('font', **{'family': 'serif', 'serif': ['Computer Modern Roman'],
 
 
 def beta(temperature, beta_0, loc, scale):
-    x = (temperature + 273.15)/(220+273.15)
+    x = (temperature - 50)/(200 - 50)
     return norm.cdf(-x, loc=loc, scale=scale)*beta_0
 
 
 def beta_g(temperature, triax, beta0, g0, g1, g2):
-    x = (temperature + 273.15)/(220+273.15)
+    x = (temperature - 50)/(200 - 50)
     gamma = g0 - g1*x + g2*triax
     return norm.cdf(gamma)*beta0
 
@@ -43,23 +43,23 @@ if __name__ == '__main__':
 
     # par = fmin(residual, [1000, -0.65, 0.1], args=(temp, beta_vals), maxfun=1e6, maxiter=1e6)
 
-    x = (temp + 275.15)/(220+273.15)
+    x = (temp - 50.)/(220. - 50.)
     plt.plot(x, beta_vals, 'x', lw=2, mew=2, ms=16)
-    x_comp = -norm.ppf(0.1161132/1000, -0.65, 0.1)
+    x_comp = -norm.ppf(0.1161132/1000, 0, 0.3)
     print(x_comp - x[1])
-    g2 = (x_comp - x[1])/0.2
+    g2 = (x_comp - x[1])/0.6
     print(g2)
-    g0 = 0.65/0.1 - g2
-    g = g0 - 10*x + g2
+    g0 = 0/0.3 - g2
+    g = g0 - 1/0.3*x + g2
     temp = np.linspace(0, 500, 1000)
-    x = (temp + 275.15)/(220+273.15)
-    f = beta(temp, 1000, -0.65, 0.1)
+    x = (temp - 50)/(200 - 50)
+    f = beta(temp, 1000, 0, 0.3)
     plt.plot(x, f)
     plt.figure(2)
     plt.plot(g, beta_vals, 'x', lw=2, mew=2, ms=16)
-    g = g0 - 10*x + g2
-    plt.plot(g, beta_g(temp, 1, 1000, g0, 10, g2), lw=2, mew=2, ms=16)
-    plt.plot(g0 - 10*(75+275.15)/(220+273.15) - g2, beta_g(75, -1, 1000, g0, 10, g2), 'rx', lw=2, mew=2, ms=16)
+    g = g0 - x/0.3 + g2
+    plt.plot(g, beta_g(temp, 1, 1000, g0, 1/0.3, g2), lw=2, mew=2, ms=16)
+    plt.plot(g0 - (75 - 50)/(200 - 50)/0.3 - g2, beta_g(75, -1, 1000, g0, 1/0.3, g2), 'rx', lw=2, mew=2, ms=16)
     print(g0, g2)
     plt.show()
 

@@ -75,8 +75,15 @@ def residual(par, *data):
         for line in fit_lines:
             line.remove()
     fit_lines[:] = []
-    parameter_names, experiment_list = data
+    parameter_names, experiment_list, parameter_bounds = data
     res = 0
+    for bounded_par_name, bound in parameter_bounds.items():
+        idx = parameter_names.index(bounded_par_name)
+        if bound[0] is not None and par[idx] < bound[0]:
+            par[idx] = bound[0]
+        if bound[1] is not None and par[idx] > bound[1]:
+            par[idx] = bound[1]
+
     for experiment in experiment_list:
         if experiment.mode == 'compression':
             fig = 3
@@ -133,7 +140,8 @@ def residual(par, *data):
 
 
 if __name__ == '__main__':
-    parameters = {'beta': 1000, 'g0': 6.5, 'g1': 10}
+    parameters = {'beta': 1000, 'g0': 6.5, 'g1': 10, 'M_sigma': 50, 'M_d': 200}
+    bounds = {'M_sigma': (22., 75), 'M_d': (160, None)}
     # parameters = {'beta': 700, 'a1': 0.034709588, 'Mss': -150}
     experiments = experiments[0:4]
     plt.figure(0)
@@ -155,6 +163,6 @@ if __name__ == '__main__':
     plt.draw()
     plt.pause(0.01)
 
-    print(fmin(residual, list(parameters.values()), args=(list(parameters.keys()), experiments),
+    print(fmin(residual, list(parameters.values()), args=(list(parameters.keys()), experiments, bounds),
                maxfun=1e6, maxiter=1e6))
     plt.show()
