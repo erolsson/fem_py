@@ -297,12 +297,11 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     double d = dh_stressDfM;
                     double e = dh_straindDL;
                     double g = dh_strainDfM;
-                    double det = a*d- c*b;   // Pseudo determinant appearing in the inverse
+                    double det = a*d - c*b;   // Pseudo determinant appearing in the inverse
                     dDL = (d*f - b*h_stress)/det;
                     dDfM_stress = -(c + d*e -c*g)/det*f + (a + b*e - a*g)/det*h_stress + h_strain;
                     dDfM_strain = (d*e - c*g)/det*f - (b*e-a*g)/det*h_stress - h_strain;
                 }
-
             }
             if ((DL - dDL < 0 || DfM_strain - dDfM_strain < 0) && stress_transformations) {
                 DL = 0;

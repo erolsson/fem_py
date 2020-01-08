@@ -117,7 +117,7 @@ def residual(par, *data):
         vol_fem = np.sum(e_fem[:, 0:3], 1) - s_fem[:, 2]/hazar_et_al.E*(1 - 2*hazar_et_al.v)
         plt.figure(fig+2)
         fit_lines.append(plt.plot(abs(inelastic_strain), vol_fem, '--' + experiment.color, lw=2)[0])
-        if experiment.volume_expansion is not None:
+        if experiment.volume_expansion is not None and experiment.mode == 'tension':
             vol_exp = experiment.volume_expansion[:, 1]
             dv_interp = np.interp(experiment.volume_expansion[:, 0], inelastic_strain, vol_fem)
             fm_vol = np.interp(experiment.volume_expansion[:, 0], inelastic_strain, fm_fem)
@@ -142,7 +142,7 @@ def residual(par, *data):
 
 if __name__ == '__main__':
     g2 = 0
-    parameters = {'beta': 0.0005, 'a2': 0.025}
+    parameters = {'beta': 0.5}
     experiments = experiments[4::]
     plt.figure(0)
     plt.ion()
