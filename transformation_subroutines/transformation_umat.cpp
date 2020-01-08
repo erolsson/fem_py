@@ -226,7 +226,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             if (plastic) {
                 Sigma = I1_2/s_vM_2;
                 double DI1 = 3*K*(de[0] + de[1] + de[2] - DfM*params.dV());
-                double DvM = 1.5/s_vM_2*double_contract(deviator(sigma_t),
+                double DvM = 1.5/s_vM_2*double_contract(deviator(sigma_2),
                         static_cast<Vector6>(2*G*(deviator(static_cast<Vector6>(de)) - (DL + RA*DfM)*nij2)));
                 DSigma = Sigma*(DI1/I1_2 - DvM/s_vM_2);
                 double n = params.n();
