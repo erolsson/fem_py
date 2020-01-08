@@ -295,7 +295,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                     dDfM_stress = (-dh_stressDfM*f + dfdDL*h_stress)/det;
                 }
                 else {
-                    std::cout << "Combined transformations:" << std::endl;
+                    // std::cout << "Combined transformations:" << std::endl;
                     double a = dfdDL;
                     double b = dfdDfM;
                     double c = dh_stressDL;
