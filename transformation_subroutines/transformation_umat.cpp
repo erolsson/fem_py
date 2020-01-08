@@ -239,7 +239,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
 
                 double c = params.alpha()*params.beta()*n*(1-fsb2)*pow(fsb2, n-1);
                 double dcdDL = n*params.alpha()*params.beta()*pow(fsb2, n-2)*(n*(1-fsb2) - 1)*dfsb2dDL;
-                double Gamma = params.g0() - params.g1()*(params.M_d()-params.M_sigma())/(params.M_d() - temp)
+                double Gamma = params.g0() - params.g1()*(temp-params.M_sigma())/(params.M_d() - params.M_sigma())
                         + params.g2()*Sigma;
 
                 norm_drivning_force = (Gamma - params.g_mean())/params.g_std();
