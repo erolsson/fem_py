@@ -244,8 +244,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 norm_drivning_force = (Gamma - params.g_mean())/params.g_std();
 
                 P = 0.5*(1 + erf(norm_drivning_force));
-                std::cout << "Sigma: " << Sigma << " DSigma: " << DSigma << " Gamma: " << Gamma << " P: "
-                          << P <<  std::endl;
+                // std::cout << "Sigma: " << Sigma << " DSigma: " << DSigma << " Gamma: " << Gamma << " P: "
+                //          << P <<  std::endl;
                 As = c*P;
                 pdf = normal_pdf(norm_drivning_force)/params.g_std();
                 Bs = params.g2()*params.beta()*pow(fsb2, n)*pdf*(DSigma > 0)*0;
