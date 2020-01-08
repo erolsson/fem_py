@@ -248,7 +248,7 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                 //          << P <<  std::endl;
                 As = c*P;
                 pdf = normal_pdf(norm_drivning_force)/params.g_std();
-                Bs = params.g2()*params.beta()*pow(fsb2, n)*pdf*(DSigma > 0);
+                Bs = params.g2()*params.beta()*pow(fsb2, n)*pdf*(DSigma > 0)*0;
                 dAsdDL = dcdDL*P + c*params.g2()*pdf*dSigmadDL;
                 double dAsdfM = c*params.g2()*pdf*dSigmadDfM;
 
@@ -256,8 +256,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
                         -  Bs*norm_drivning_force/params.g_std()*params.g2()*dSigmadDL)*(DSigma > 0);
                 double dBsdfM = -Bs*norm_drivning_force/params.g_std()*params.g2()*dSigmadDfM;
                 h_strain = (1 - fM2)*(As*DL + Bs*DSigma) - DfM_strain;
-                dh_straindDL = (1 - fM2)*(As + DL*dAsdDL + Bs*dDSigmadDL + DSigma*dBsdDL);
-                dh_strainDfM = -(As*DL + Bs*DSigma) + (1 - fM2)*(DL*dAsdfM + Bs*dDSigmadDfM + DSigma*dBsdfM);
+                dh_straindDL = (1 - fM2)*(As + DL*dAsdDL + Bs*dDSigmadDL*0 + DSigma*dBsdDL*0);
+                dh_strainDfM = -(As*DL + Bs*DSigma) + (1 - fM2)*(DL*dAsdfM + Bs*dDSigmadDfM*0 + DSigma*dBsdfM*0);
             }
 
             if (stress_transformations) {
