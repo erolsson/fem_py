@@ -60,7 +60,7 @@ if __name__ == '__main__':
     g = g0 - x/0.3 + g2
     plt.plot(g, beta_g(temp, 1, 1000, g0, 1/0.3, g2), lw=2, mew=2, ms=16)
     plt.plot(g0 - (75 - 50)/(200 - 50)/0.3 - g2, beta_g(75, -1, 1000, g0, 1/0.3, g2), 'rx', lw=2, mew=2, ms=16)
-    print(g0, g2)
+    print(g0+g2, 1./0.3, g2)
     plt.show()
 
 
