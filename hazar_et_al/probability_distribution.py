@@ -16,8 +16,8 @@ plt.rcParams['text.latex.preamble'] = [r"\usepackage{amsmath}", r"\usepackage{ge
 plt.rc('font', **{'family': 'serif', 'serif': ['Computer Modern Roman'],
                   'monospace': ['Computer Modern Typewriter']})
 
-Md = 250.
-Msigma = 50.
+Md = 354.
+Msigma = 22.
 
 
 def beta(temperature, beta_0, loc, scale):
@@ -62,9 +62,12 @@ if __name__ == '__main__':
     plt.plot(-x, f)
     plt.figure(2)
     plt.plot(g, beta_vals, 'x', lw=2, mew=2, ms=16)
-    g = g0 - x/std + g2
-    plt.plot(g, beta_g(temp, 1, 1000, g0, 1/std, g2), lw=2, mew=2, ms=16)
-    plt.plot(g0 - (75 - Msigma)/(Md - Msigma)/std - g2, beta_g(75, -1, 1000, g0, 1/std, g2), 'rx', lw=2, mew=2, ms=16)
+    g0 = 0 - g2
+
+    g = g0 - 5.244*x + g2
+
+    plt.plot(g, beta_g(temp, 1, 916, g0, 5.244, g2), lw=2, mew=2, ms=16)
+    plt.plot(g0 - 5.244*(75 - Msigma)/(Md - Msigma) - g2, beta_g(75, -1, 916, g0, 5.244, g2), 'rx', lw=2, mew=2, ms=16)
     print(g0+g2, 1./std, g2)
 
     plt.show()
