@@ -98,13 +98,13 @@ def residual(par, *data):
         s_intep = np.interp(e_exp, e_fem[:, 2], s_fem[:, 2])
         stress_residual = np.sum((1 - s_intep[s_exp != 0]/s_exp[s_exp != 0])**2)/s_exp[s_exp != 0].shape[0]
         plt.figure(fig)
-        fit_lines.append(plt.plot(abs(e_fem[:, 2]), abs(s_fem[:, 2]), '--x' + experiment.color, lw=2)[0])
+        fit_lines.append(plt.plot(abs(e_exp), abs(s_intep), '--x' + experiment.color, lw=2)[0])
 
         print('=======================================================================================================')
         print(' *** *** *** Temperature ' + str(experiment.temperature) + ' *** *** ***')
         print('=======================================================================================================')
         print("Stress at end of test: " + str(np.interp(e_exp[-1], e_fem[:, 2], s_fem[:, 2])) +
-              " Exp. is " + str(s_exp[-1]) + str(stress_residual))
+              " Exp. is " + str(s_exp[-1]) + " R = " + str(stress_residual))
 
         fm_exp = experiment.transformation_data[:, 1]
         fm_interp = np.interp(experiment.transformation_data[:, 0], e_fem[:, 2], fm_fem)
@@ -112,7 +112,7 @@ def residual(par, *data):
         fit_lines.append(plt.plot(abs(e_fem[:, 2]), fm_fem, '--x' + experiment.color, lw=2)[0])
         martensite_residual = np.sum((fm_exp - fm_interp)**2)/fm_exp.shape[0]
         print('Martensite fractions is ' + str(fm_interp) + ' Exp. is '
-              + str(fm_exp) + "R = " + str(martensite_residual))
+              + str(fm_exp) + " R = " + str(martensite_residual))
 
         volume_residual = 0
         inelastic_strain = e_fem[:, 2] - s_fem[:, 2]/hazar_et_al.E
@@ -127,7 +127,7 @@ def residual(par, *data):
             volume_residual = np.sum((1 - vol_exp/dv_interp)**2)
             print('Volume expansion is ' + str(dv_interp) + ' Exp. is '
                   + str(vol_exp) + ' with a martensite fraction of ' + str(fm_vol) + ' at strain' + str(e_vol)
-                  + "R = " + str(volume_residual))
+                  + " R = " + str(volume_residual))
 
         res += stress_residual + martensite_residual + volume_residual
         plt.draw()
