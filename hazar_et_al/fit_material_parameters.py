@@ -48,8 +48,10 @@ def run_fe_simulation(parameter_values, experiment, parameter_names):
     for par_value, par_name in zip(parameter_values, parameter_names):
         if par_name not in signed_parameters:
             par_value = abs(par_value)
-        if par_name not in ['fsb0']:
+        if par_name not in ['fsb0'] or par_name in material.__dict__:
             setattr(material, par_name, par_value)
+        else:
+            raise KeyError("Parameter " + par_name + " not defined in material")
 
     max_exp_strain = np.max(abs(experiment.stress_strain[:, 0]))
     if experiment.volume_expansion is not None:
