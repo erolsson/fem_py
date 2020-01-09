@@ -96,15 +96,15 @@ def residual(par, *data):
         e_exp = experiment.stress_strain[:, 0]
         s_exp = experiment.stress_strain[:, 1]
         if e_exp[-1] > 0:
-            s_intep = np.interp(e_exp, e_fem[:, 2], s_fem[:, 2])
+            s_interp = np.interp(e_exp, e_fem[:, 2], s_fem[:, 2])
         else:
             print(e_exp[::-1], e_fem[::-1, 2], s_fem[::-1, 2])
-            s_intep = np.interp(e_exp[::-1], e_fem[::-1, 2], s_fem[::-1, 2])
-            s_interp = s_intep[::-1]
-        stress_residual = np.sum((1 - s_intep[abs(s_exp) > 500]/s_exp[abs(s_exp) > 500])**2) / \
+            s_interp = np.interp(e_exp[::-1], e_fem[::-1, 2], s_fem[::-1, 2])
+            s_interp = s_interp[::-1]
+        stress_residual = np.sum((1 - s_interp[abs(s_exp) > 500]/s_exp[abs(s_exp) > 500])**2) / \
             s_exp[abs(s_exp) > 500].shape[0]
         plt.figure(fig)
-        fit_lines.append(plt.plot(abs(e_exp), abs(s_intep), '--x' + experiment.color, lw=2)[0])
+        fit_lines.append(plt.plot(abs(e_exp), abs(s_interp), '--x' + experiment.color, lw=2)[0])
 
         print('=======================================================================================================')
         print(' *** *** *** Temperature ' + str(experiment.temperature) + ' *** *** ***')
