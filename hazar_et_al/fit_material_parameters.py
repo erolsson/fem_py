@@ -104,16 +104,16 @@ def residual(par, *data):
         print(' *** *** *** Temperature ' + str(experiment.temperature) + ' *** *** ***')
         print('=======================================================================================================')
         print("Stress at end of test: " + str(np.interp(e_exp[-1], e_fem[:, 2], s_fem[:, 2])) +
-              " Exp. is " + str(s_exp[-1]))
+              " Exp. is " + str(s_exp[-1]) + str(stress_residual))
 
         fm_exp = experiment.transformation_data[:, 1]
         fm_interp = np.interp(experiment.transformation_data[:, 0], e_fem[:, 2], fm_fem)
         plt.figure(fig+1)
         fit_lines.append(plt.plot(abs(e_fem[:, 2]), fm_fem, '--x' + experiment.color, lw=2)[0])
-
-        print('Martensite fractions is ' + str(fm_interp) + ' Exp. is '
-              + str(fm_exp))
         martensite_residual = np.sum((fm_exp - fm_interp)**2)/fm_exp.shape[0]
+        print('Martensite fractions is ' + str(fm_interp) + ' Exp. is '
+              + str(fm_exp) + "R = " + str(martensite_residual))
+
         volume_residual = 0
         inelastic_strain = e_fem[:, 2] - s_fem[:, 2]/hazar_et_al.E
         vol_fem = np.sum(e_fem[:, 0:3], 1) - s_fem[:, 2]/hazar_et_al.E*(1 - 2*hazar_et_al.v)
@@ -126,7 +126,9 @@ def residual(par, *data):
             e_vol = np.interp(experiment.volume_expansion[:, 0], inelastic_strain, e_fem[:, 2])
             volume_residual = np.sum((1 - vol_exp/dv_interp)**2)
             print('Volume expansion is ' + str(dv_interp) + ' Exp. is '
-                  + str(vol_exp) + ' with a martensite fraction of ' + str(fm_vol) + ' at strain' + str(e_vol))
+                  + str(vol_exp) + ' with a martensite fraction of ' + str(fm_vol) + ' at strain' + str(e_vol)
+                  + "R = " + str(volume_residual))
+
         res += stress_residual + martensite_residual + volume_residual
         plt.draw()
         plt.pause(0.001)
