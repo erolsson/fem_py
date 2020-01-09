@@ -41,15 +41,16 @@ def residual(par, *data):
 
 
 if __name__ == '__main__':
+    beta_0 = 2000
     temp = np.array([22, 75, 100, 150])
     beta_vals = np.array([1815.3888, 1485., 675, 480])
 
     # par = fmin(residual, [1000, -0.65, 0.1], args=(temp, beta_vals), maxfun=1e6, maxiter=1e6)
     std = 0.2
-    mean = 0
+    mean = -0.2
     x = (temp-Msigma)/(Md - Msigma)
     plt.plot(-x, beta_vals, 'x', lw=2, mew=2, ms=16)
-    x_comp = -norm.ppf(0.1161132/1000, mean, std)
+    x_comp = -norm.ppf(0.19/beta_0, mean, std)
     print(x_comp - x[1])
     g2 = (x_comp - x[1])/2/std
     print(g2)
@@ -57,7 +58,7 @@ if __name__ == '__main__':
     g = g0 - 1./std*x + g2
     temp = np.linspace(-50, 350, 1000)
     x = (temp-Msigma)/(Md - Msigma)
-    f = beta(temp, 1000, mean, std)
+    f = beta(temp, beta_0, mean, std)
 
     plt.plot(-x, f)
     plt.figure(2)
@@ -66,8 +67,8 @@ if __name__ == '__main__':
 
     g = g0 - 5.244*x + g2
 
-    plt.plot(g, beta_g(temp, 1, 916, g0, 5.244, g2), lw=2, mew=2, ms=16)
-    plt.plot(g0 - 5.244*(75 - Msigma)/(Md - Msigma) - g2, beta_g(75, -1, 916, g0, 5.244, g2), 'rx', lw=2, mew=2, ms=16)
+    plt.plot(g, beta_g(temp, 1, beta_0, g0, 5.244, g2), lw=2, mew=2, ms=16)
+    plt.plot(g0 - 5.244*(75 - Msigma)/(Md - Msigma) - g2, beta_g(75, -1, beta_0, g0, 5.244, g2), 'rx', lw=2, mew=2, ms=16)
     print(g0+g2, 1./std, g2)
 
     plt.show()
