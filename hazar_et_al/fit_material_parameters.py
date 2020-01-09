@@ -98,6 +98,7 @@ def residual(par, *data):
         if e_exp[-1] > 0:
             s_intep = np.interp(e_exp, e_fem[:, 2], s_fem[:, 2])
         else:
+            print(e_exp[::-1], e_fem[::-1, 2], s_fem[::-1, 2])
             s_intep = np.interp(e_exp[::-1], e_fem[::-1, 2], s_fem[::-1, 2])
         stress_residual = np.sum((1 - s_intep[abs(s_exp) > 500]/s_exp[abs(s_exp) > 500])**2) / \
             s_exp[abs(s_exp) > 500].shape[0]
