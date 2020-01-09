@@ -150,11 +150,11 @@ def residual(par, *data):
 
 
 if __name__ == '__main__':
-    # parameters = {'beta': 1176, 'fsb0:': 0.0602, 'alpha': 110.435, 'R1': 0.01046,
-    #               'R2': 0.008255, 'a1': 0.0258, 'Mss': -128.44}
+    parameters = {'beta': 800, 'fsb0:': 0.2, 'alpha': 150, 'R1': 0.01046,
+                  'R2': 0.008255, 'a1': 0.0258, 'Mss': -128.44}
     # parameters = {'beta': 916, 'g0': 0., 'g1': 5.244, 'M_sigma': 22, 'M_d': 350}
     bounds = {'M_sigma': (22., 75), 'M_d': (160, None)}
-    parameters = {'beta': 800, 'alpha': 150, 'fsb0': 0.2}
+    # parameters = {'beta': 800, 'alpha': 150, 'fsb0': 0.2}
     experiments = experiments[0:1]
     plt.figure(0)
     plt.ion()
