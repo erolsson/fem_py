@@ -78,11 +78,14 @@ def residual(par, *data):
     parameter_names, experiment_list, parameter_bounds = data
     res = 0
     for bounded_par_name, bound in parameter_bounds.items():
-        idx = parameter_names.index(bounded_par_name)
-        if bound[0] is not None and par[idx] < bound[0]:
-            par[idx] = bound[0]
-        if bound[1] is not None and par[idx] > bound[1]:
-            par[idx] = bound[1]
+        try:
+            idx = parameter_names.index(bounded_par_name)
+            if bound[0] is not None and par[idx] < bound[0]:
+                par[idx] = bound[0]
+            if bound[1] is not None and par[idx] > bound[1]:
+                par[idx] = bound[1]
+        except ValueError:
+            pass
 
     for experiment in experiment_list:
         if experiment.mode == 'compression':
