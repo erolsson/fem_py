@@ -95,8 +95,10 @@ def residual(par, *data):
         e_fem, s_fem, fm_fem = run_fe_simulation(par, experiment, parameter_names)
         e_exp = experiment.stress_strain[:, 0]
         s_exp = experiment.stress_strain[:, 1]
-        s_intep = np.interp(e_exp, e_fem[:, 2], s_fem[:, 2])
-
+        if e_exp[-1] > 0:
+            s_intep = np.interp(e_exp, e_fem[:, 2], s_fem[:, 2])
+        else:
+            s_intep = np.interp(e_exp[::-1], e_fem[::-1, 2], s_fem[::-1, 2])
         stress_residual = np.sum((1 - s_intep[abs(s_exp) > 500]/s_exp[abs(s_exp) > 500])**2) / \
             s_exp[abs(s_exp) > 500].shape[0]
         plt.figure(fig)
