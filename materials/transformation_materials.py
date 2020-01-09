@@ -123,7 +123,7 @@ print(neu_sehitoglu.Mss)
 hazar_et_al = ElasticPlasticTransformMaterial(E=200.5e3, v=0.27, sy0M=1016, sy0A=420., Q=180., b=100.,
                                               Cm=np.array([135e3, 700e3, 50e3]),
                                               gamma_m=np.array([950., 500., 50.]),
-                                              a=0.00687*np.array([1, 1, 0.])/2,
+                                              a=0.00687*np.array([1, 0, 0.])/2,
                                               Ms=220., name='SKF', Mss=-112.89, fM=0.78,
                                               beta=282.0966412080984, alpha=83.433615, n=4., sde=0.04,
                                               g0=0.,  # 3.077651873747456,
