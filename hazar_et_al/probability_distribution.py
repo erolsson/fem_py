@@ -42,7 +42,7 @@ def residual(par, *data):
 
 if __name__ == '__main__':
     temp = np.array([22, 75, 100, 150])
-    beta_vals = np.array([741.70, 211, 125, 67.5])
+    beta_vals = np.array([1815.3888, 211, 125, 67.5])
 
     # par = fmin(residual, [1000, -0.65, 0.1], args=(temp, beta_vals), maxfun=1e6, maxiter=1e6)
     std = 0.2
