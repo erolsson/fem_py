@@ -97,7 +97,8 @@ def residual(par, *data):
         s_exp = experiment.stress_strain[:, 1]
         s_intep = np.interp(e_exp, e_fem[:, 2], s_fem[:, 2])
 
-        stress_residual = np.sum((1 - s_intep[s_exp > 500]/s_exp[s_exp > 500])**2)/s_exp[s_exp > 500].shape[0]
+        stress_residual = np.sum((1 - s_intep[abs(s_exp) > 500]/s_exp[abs(s_exp) > 500])**2) / \
+            s_exp[abs(s_exp) > 500].shape[0]
         plt.figure(fig)
         fit_lines.append(plt.plot(abs(e_exp), abs(s_intep), '--x' + experiment.color, lw=2)[0])
 
@@ -150,8 +151,8 @@ if __name__ == '__main__':
     #               'R2': 0.008255, 'a1': 0.0258, 'Mss': -128.44}
     # parameters = {'beta': 916, 'g0': 0., 'g1': 5.244, 'M_sigma': 22, 'M_d': 350}
     bounds = {'M_sigma': (22., 75), 'M_d': (160, None)}
-    parameters = {'beta': 200}
-    experiments = experiments[3:4]
+    parameters = {'beta': 100}
+    experiments = experiments[4:5]
     plt.figure(0)
     plt.ion()
     plt.show()
