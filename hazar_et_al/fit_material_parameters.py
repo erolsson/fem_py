@@ -152,8 +152,8 @@ def residual(par, *data):
 
 
 if __name__ == '__main__':
-    parameters = {'beta': 700, 'fsb0': 0.214, 'alpha': 150, 'R1': 0.015,
-                  'R2': 0.01, 'a1': 0.02, 'Mss': -130., 'g0': 0., 'g1': 5.244, 'M_sigma': 50, 'M_d': 350}
+    parameters = {'beta': 908, 'fsb0': 0.147, 'alpha': 110.2, 'R1': 0.0181,
+                  'R2': 0.00547, 'a1': 0.01955, 'Mss': -162.979, 'g0': 9.3, 'g1': 5.244}
     # parameters = {'beta': 916, 'g0': 0., 'g1': 5.244, 'M_sigma': 22, 'M_d': 350}
     bounds = {'M_sigma': (22., 75), 'M_d': (160, None)}
     # parameters = {'beta': 800, 'alpha': 150, 'fsb0': 0.2}
