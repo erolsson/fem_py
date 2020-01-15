@@ -158,7 +158,7 @@ if __name__ == '__main__':
     parameters = {'g0': -2}
     bounds = {'M_sigma': (22., 75), 'M_d': (160, None)}
     # parameters = {'beta': 800, 'alpha': 150, 'fsb0': 0.2}
-    experiments = experiments[4:]
+    experiments = experiments
     plt.figure(0)
     plt.ion()
     plt.show()
