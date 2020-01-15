@@ -56,8 +56,8 @@ class ElasticPlasticTransformMaterial:
         self.g_mean = g_mean
         self.g_std = g_std
 
-        self.M_sigma = 50
-        self.M_d = 200
+        self.M_sigma = 22
+        self.M_d = 383.585
 
         self.fsb0 = fsb0
 
@@ -125,10 +125,10 @@ hazar_et_al = ElasticPlasticTransformMaterial(E=200.5e3, v=0.27, sy0M=1016, sy0A
                                               gamma_m=np.array([950., 500., 50.]),
                                               a=0.0084967*np.array([1, 0, 0.]),
                                               Ms=220., name='SKF', Mss=-114.08, fM=0.78,
-                                              beta=282.0966412080984, alpha=129.5, n=4., sde=0.04,
+                                              beta=841.893, alpha=129.5, n=4., sde=0.04,
                                               g0=0.,  # 3.077651873747456,
                                               # g1=68.83381914607745, g2=0, g_mean=0, g_std=1.,
-                                              g1=0, g2=0, g_mean=0, g_std=1.,
+                                              g1=5.18, g2=0., g_mean=0, g_std=1.,
                                               fsb0=0.12948)
 hazar_et_al.dV = 0.023364550877
 hazar_et_al.R1 = 0.0198377

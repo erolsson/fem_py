@@ -109,4 +109,5 @@ if __name__ == '__main__':
                  Node(coordinates=[0, 1, 1])]
 
     element = Element8(nodes=node_list, material=ElasticMaterial, material_parameters={'E': 1., 'v': 0.0})
-    print element.Kt()[22:, 22:]
+    print element.J(0, 0, 0)
+

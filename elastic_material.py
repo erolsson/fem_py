@@ -17,7 +17,6 @@ class ElasticMaterial:
                            [0,  0,  0,  C3, 0,  0],
                            [0,  0,  0,  0,  C3, 0],
                            [0,  0,  0,  0,  0,  C3]])
-        print self.C
         self._stress = np.zeros(6)
 
     # noinspection PyPep8Naming
