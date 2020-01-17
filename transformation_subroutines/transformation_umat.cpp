@@ -79,6 +79,9 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
     State state(statev, params.back_stresses());
 
     Eigen::Map<Vector6> stress_vec(stress);
+    double I1_1 = stress_vec[0] + stress_vec[1] + stress_vec[2];
+    double s_vM_1 = von_Mises(static_cast<Vector6>(stress_vec));
+    double Sigma1 = I1_1/s_vM_1;
 
     const Eigen::Map<Vector6> de(dstran);
     Eigen::Map<Matrix6x6> D_alg(ddsdde);
@@ -226,8 +229,8 @@ extern "C" void umat_(double *stress, double *statev, double *ddsdde, double *ss
             if (plastic) {
                 Sigma = I1_2/s_vM_2;
                 double DI1 = 3*K*(de[0] + de[1] + de[2] - DfM*params.dV());
-                double DvM = 1.5/s_vM_2*double_contract(deviator(sigma_2),
-                        static_cast<Vector6>(2*G*(deviator(static_cast<Vector6>(de)) - (DL + RA*DfM)*nij2)));
+                Vector6 Dsij = static_cast<Vector6>(2*G*(deviator(static_cast<Vector6>(de)) - (DL + RA*DfM)*nij2));
+                double DvM = 1.5/s_vM_2*double_contract(deviator(sigma_2), Dsij);
                 DSigma = Sigma*(DI1/I1_2 - DvM/s_vM_2);
                 double n = params.n();
                 double dSigmadDL = -Sigma/s_vM_2*double_contract(dsvMdsij, dsijdDL);
