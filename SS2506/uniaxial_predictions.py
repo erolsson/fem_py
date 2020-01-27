@@ -39,7 +39,7 @@ plt.ylabel('Stress [MPa]')
 plt.tight_layout()
 plt.savefig('stress_strain2506.png')
 
-plt.figure(0)
+plt.figure(1)
 plt.xlim(0, 0.025)
 plt.ylim(0, 0.015)
 plt.legend(loc='best')
