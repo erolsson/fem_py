@@ -22,6 +22,7 @@ for name, color in zip(['tension', 'compression'], ['b', 'r']):
     plt.plot(abs(strains[:, 0]), abs(strains[:, 1]), color, lw=3, label=name)
 
     e, s, _ = run_fe_simulation([], data, [])
+    print(s, e)
     plt.figure(0)
     plt.plot(abs(e[:, 2]), abs(s[:, 2]), color + '--', lw=3)
 
