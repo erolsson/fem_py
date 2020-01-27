@@ -14,12 +14,12 @@ plt.rcParams['text.latex.preamble'] = [r"\usepackage{amsmath}", r"\usepackage{ge
 plt.rc('font', **{'family': 'serif', 'serif': ['Computer Modern Roman'],
                   'monospace': ['Computer Modern Typewriter']})
 
-for name, color in zip(['tension', 'compression'], ['b', 'r']):
-    data = np.genfromtxt('experimental_data/' + name + '_data_case_EN.dat', delimiter=',')
+for name, color in zip(['Tension', 'Compression'], ['b', 'r']):
+    data = np.genfromtxt('experimental_data/' + name.lower() + '_data_case_EN.dat', delimiter=',')
     plt.figure(0)
     plt.plot(abs(data[:, 0]), abs(data[:, 1]), color, lw=3, label=name)
     plt.figure(1)
-    strains = np.genfromtxt('experimental_data/transversal_strain_' + name + '_EN.dat', delimiter=',')
+    strains = np.genfromtxt('experimental_data/transversal_strain_' + name.lower() + '_EN.dat', delimiter=',')
     plt.plot(abs(strains[:, 0]), abs(strains[:, 1]), color, lw=3, label=name)
 
     e, s, _ = run_fe_simulation([], data, [])
