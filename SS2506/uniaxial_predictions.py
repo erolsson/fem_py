@@ -21,7 +21,7 @@ for name in ['tension', 'compression']:
     strains = np.genfromtxt('experimental_data/transversal_strain_' + name + '_EN.dat', delimiter=',')
     plt.plot(abs(strains[:, 0]), abs(strains[:, 1]), lw=3, label=name)
 
-    e, s, _, _ = run_fe_simulation([], data, [])
+    e, s, _ = run_fe_simulation([], data, [])
     plt.figure(0)
     plt.plot(abs(e[:, 2]), abs(s[:, 1]), '--', lw=3)
 
