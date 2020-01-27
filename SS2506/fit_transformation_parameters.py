@@ -45,13 +45,12 @@ def run_fe_simulation(parameter_values, experiment, parameter_names):
             par_value = abs(par_value)
         if par_name != 'fsb0':
             setattr(material, par_name, par_value)
-
-    max_exp_strain = np.max(experiment[:, 0])
-    strain_bc = BC(amplitude=[[0, 0], [1., 1.1*max_exp_strain]], direction='z', mode='strain')
     if experiment[-1, 1] > 0:
         name = 'tension'
     else:
         name = 'compression'
+
+    strain_bc = BC(amplitude=[[0, 0], [1., 1.1*experiment[-1, 0]]], direction='z', mode='strain')
 
     e, s, _, fm = one_element_abaqus(simulation_dir, material=material,
                                      boundary_conditions=[strain_bc],
