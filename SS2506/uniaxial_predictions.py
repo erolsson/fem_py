@@ -23,7 +23,7 @@ for name in ['tension', 'compression']:
 
     e, s, _ = run_fe_simulation([], data, [])
     plt.figure(0)
-    plt.plot(abs(e[:, 2]), abs(s[:, 1]), '--', lw=3)
+    plt.plot(abs(e[:, 2]), abs(s[:, 2]), '--', lw=3)
 
 plt.figure(0)
 plt.xlim(0, 0.01)
