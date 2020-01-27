@@ -25,6 +25,9 @@ for name in ['tension', 'compression']:
     plt.figure(0)
     plt.plot(abs(e[:, 2]), abs(s[:, 2]), '--', lw=3)
 
+    plt.figure(1)
+    plt.plot(abs(e[:, 2]), abs(e[:, 0]), '--', lw=3)
+
 plt.figure(0)
 plt.xlim(0, 0.01)
 plt.ylim(0, 2000)
