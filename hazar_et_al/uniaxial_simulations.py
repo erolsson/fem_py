@@ -27,7 +27,7 @@ for experiment in experiments:
     experiment.plot_stress_strain()
     plt.figure(1 + fig_idx)
     experiment.plot_transformation()
-    stress_bc = BC(amplitude=[[0, 0], [1., 1.*experiment.stress_strain[-1, 0]]], direction='z', mode='strain')
+    stress_bc = BC(amplitude=[[0, 0], [1., 1.2*experiment.stress_strain[-1, 0]]], direction='z', mode='strain')
 
     e, s, _, fm = one_element_abaqus(simulation_dir, material=hazar_et_al,
                                      boundary_conditions=[stress_bc],
