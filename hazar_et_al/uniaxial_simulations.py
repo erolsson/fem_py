@@ -61,6 +61,6 @@ for i, fig in enumerate('abcd'):
     else:
         plt.ylabel('Fraction martensite [-]')
     if i == 0:
-        plt.legend(loc='upper left', bbox_to_anchor=(0.5, 0.5), framealpha=0.9)
+        plt.legend(loc='upper left', bbox_to_anchor=(0.4, 0.6), framealpha=0.9)
     plt.tight_layout()
 plt.show()
