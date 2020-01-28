@@ -63,4 +63,5 @@ for i, fig in enumerate('abcd'):
     if i == 0:
         plt.legend(loc='upper left', bbox_to_anchor=(0.4, 0.63), framealpha=0.9)
     plt.tight_layout()
+    plt.savefig('figure_' + fig + '.png')
 plt.show()
