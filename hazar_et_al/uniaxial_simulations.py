@@ -17,17 +17,17 @@ simulation_dir = os.path.expanduser('~/python_projects/fem_py/abaqus_material_te
 write_initial_file(hazar_et_al.fsb0, simulation_dir)
 
 for experiment in experiments:
-    plt.figure(0)
-    experiment.plot_stress_strain()
-    plt.figure(1)
-    experiment.plot_transformation()
-    plt.figure(2)
-    experiment.plot_volume_expansion()
-    stress_bc = BC(amplitude=[[0, 0], [1., 1.*experiment.stress_strain[-1, 0]]], direction='z', mode='strain')
+    fig_idx = 0
     if experiment.stress_strain[-1, 1] > 0:
         name = 'tension'
     else:
         name = 'compression'
+        fig_idx = 2
+    plt.figure(0 + fig_idx)
+    experiment.plot_stress_strain()
+    plt.figure(1 + fig_idx)
+    experiment.plot_transformation()
+    stress_bc = BC(amplitude=[[0, 0], [1., 1.*experiment.stress_strain[-1, 0]]], direction='z', mode='strain')
 
     e, s, _, fm = one_element_abaqus(simulation_dir, material=hazar_et_al,
                                      boundary_conditions=[stress_bc],
@@ -36,13 +36,10 @@ for experiment in experiments:
                                      user_subroutine=umat_file,
                                      max_increment=0.01)
     
-    plt.figure(0)
+    plt.figure(0 + fig_idx)
     plt.plot(e[:, 2], s[:, 2], '--x' + experiment.color)
-    plt.figure(1)
+    plt.figure(1 + fig_idx)
     plt.plot(e[:, 2], fm, '--x' + experiment.color)
-    plt.figure(2)
-    inelastic_strain = e[:, 2] - s[:, 2]/hazar_et_al.E
-    dV = np.sum(e[:, 0:3], 1) - s[:, 2]/hazar_et_al.E*(1 - 2*hazar_et_al.v)
-    plt.plot(inelastic_strain, dV, '--x' + experiment.color)
+
 
 plt.show()
