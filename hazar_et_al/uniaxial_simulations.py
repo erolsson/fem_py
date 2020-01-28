@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 
 from uniaxial_experiments import experiments
 from fit_material_parameters import write_initial_file
+
 from fem_py.materials.transformation_materials import hazar_et_al
 from fem_py.abaqus_material_test.material_test import one_element_abaqus
 from fem_py.abaqus_material_test.one_element_input_file import BC
@@ -46,5 +47,11 @@ for i, fig in enumerate('abcd'):
     plt.xlabel('Strain [-]')
     ax = plt.gca()
     plt.text(0.05, 0.9, '(' + fig + ')', horizontalalignment='left', verticalalignment='bottom', transform=ax.transAxes)
-
+    if i % 2 == 0:
+        plt.ylabel('Stress [MPa]')
+    else:
+        plt.ylabel('Fraction martensite [-]')
+    if i == 0:
+        plt.legend(loc='upper left', bbox_to_anchor=(0., 0.89), framealpha=0.9)
+    plt.tight_layout()
 plt.show()
