@@ -12,7 +12,7 @@ from fem_py.abaqus_material_test.material_test import one_element_abaqus
 from fem_py.abaqus_material_test.one_element_input_file import BC
 
 umat_file = os.path.expanduser('~/fem_py/transformation_subroutines/transformation_subroutine.o')
-simulation_dir = os.path.expanduser('~/fem_py/abaqus_material_test/hazar_et_al_2')
+simulation_dir = os.path.expanduser('~/fem_py/abaqus_material_test/hazar_et_al')
 
 write_initial_file(hazar_et_al.fsb0, simulation_dir)
 
