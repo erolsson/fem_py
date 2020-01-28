@@ -6,10 +6,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from uniaxial_experiments import experiments
-from hazar_et_al.fit_material_parameters import write_initial_file
-from materials.transformation_materials import hazar_et_al
-from abaqus_material_test.material_test import one_element_abaqus
-from abaqus_material_test.one_element_input_file import BC
+from fit_material_parameters import write_initial_file
+from fem_py.materials.transformation_materials import hazar_et_al
+from fem_py.abaqus_material_test.material_test import one_element_abaqus
+from fem_py.abaqus_material_test.one_element_input_file import BC
 
 umat_file = os.path.expanduser('~/fem_py/transformation_subroutines/transformation_subroutine.o')
 simulation_dir = os.path.expanduser('~/fem_py/abaqus_material_test/hazar_et_al_2')
