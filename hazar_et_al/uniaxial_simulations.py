@@ -12,6 +12,14 @@ from fem_py.materials.transformation_materials import hazar_et_al
 from fem_py.abaqus_material_test.material_test import one_element_abaqus
 from fem_py.abaqus_material_test.one_element_input_file import BC
 
+matplotlib.style.use('classic')
+plt.rc('text', usetex=True)
+plt.rc('font', serif='Computer Modern Roman')
+plt.rcParams.update({'font.size': 24})
+plt.rcParams['text.latex.preamble'] = [r"\usepackage{amsmath}", r"\usepackage{gensymb}"]
+plt.rc('font', **{'family': 'serif', 'serif': ['Computer Modern Roman'],
+                  'monospace': ['Computer Modern Typewriter']})
+
 umat_file = os.path.expanduser('~/python_projects/fem_py/transformation_subroutines/transformation_subroutine.o')
 simulation_dir = os.path.expanduser('~/python_projects/fem_py/abaqus_material_test/hazar_et_al')
 
