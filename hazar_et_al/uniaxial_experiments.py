@@ -44,7 +44,7 @@ class Experiment:
             self.volume_expansion = None
 
     def plot_stress_strain(self):
-        plt.plot(abs(self.stress_strain[:, 0]), abs(self.stress_strain[:, 1]), self.color, lw=2)
+        plt.plot(abs(self.stress_strain[:, 0]), abs(self.stress_strain[:, 1]), self.color, lw=3)
 
     def plot_transformation(self):
         plt.plot(abs(self.transformation_data[:, 0]), self.transformation_data[:, 1], 'x' + self.color, ms=12, mew=2)

@@ -37,9 +37,14 @@ for experiment in experiments:
                                      max_increment=0.01)
     
     plt.figure(0 + fig_idx)
-    plt.plot(e[:, 2], s[:, 2], '--x' + experiment.color)
+    plt.plot(abs(e[:, 2]), abs(s[:, 2]), '--' + experiment.color, lw=3)
     plt.figure(1 + fig_idx)
-    plt.plot(e[:, 2], fm, '--x' + experiment.color)
+    plt.plot(abs(e[:, 2]), fm, '--' + experiment.color, lw=3)
 
+for i, fig in enumerate('abcd'):
+    plt.figure(i)
+    plt.xlabel('Strain [-]')
+    ax = plt.gca()
+    plt.text(0.05, 0.9, '(' + fig + ')', horizontalalignment='left', verticalalignment='bottom', transform=ax.transAxes)
 
 plt.show()
