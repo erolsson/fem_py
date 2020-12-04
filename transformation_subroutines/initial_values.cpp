@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <vector>
 
+extern "C" void getelemnumberuser_(const int& num, int& user_num);
 extern "C" void getoutdir_(char* outdir, int&, int);
 extern "C" void getpartinfoc_(char* name, int& name_len, const int& num, const int& jtype, int& user_num, int& error);
 
@@ -30,15 +31,11 @@ std::mutex part_info_mutex;
 extern "C" void sdvini_(double* statev, const double* coords, const int& nstatev, const int& ncrds, const int& noel,
         const int& npt, const int& layer, const int& kspt) {
     int user_elem_number = 0;
-    char part_name_char[80];
-    int part_name_len = 0;
-    int error = 0;
-    const int jtype = 1;
     {
         std::lock_guard<std::mutex> lock(part_info_mutex);
-        getpartinfoc_(part_name_char, part_name_len, noel, jtype, user_elem_number, error);
+        getelemnumberuser_(noel, user_elem_number);
     }
-    std::string part_name(part_name_char, part_name_char+part_name_len);
+
     std::pair<unsigned, unsigned> point_key(user_elem_number, npt);
     double martensite = 1 - austenite[point_key];
     double fsb = fsb0[point_key];
@@ -82,5 +79,6 @@ extern "C" void uexternaldb_(const int* lop, const int* lrestart, const double* 
             austenite.emplace(std::make_pair(stoi(line_data[0]), stoi(line_data[1])), stod(line_data[2]));
             fsb0.emplace(std::make_pair(stoi(line_data[0]), stoi(line_data[1])), stod(line_data[3]));
         }
+
     }
 }

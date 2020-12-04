@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import print_function, division
 import numbers
 
 import numpy as np
@@ -114,11 +114,15 @@ test_material = ElasticPlasticTransformMaterial(E=200e3, v=0.3, sy0M=1000000., s
 neu_sehitoglu = ElasticPlasticTransformMaterial(E=203.3e3, v=0.3, sy0M=813., sy0A=420., Q=0*2100., b=100.,
                                                 Cm=np.array([335485, 245783, 6853]),
                                                 gamma_m=np.array([1016.5, 185, 0.]),
-                                                a=np.array([0.056/3, 0.028, 0.]),
-                                                Ms=169, name='NeuSehitoglu', Mss=[0.65, 22., 485], fM=0.65,
-                                                beta=1., alpha=4., n=4., sde=0.04, g0=60, g1=176000, g2=5.2,
+                                                a=np.array([0.03501554463596976, 0.013017505521745059, 0.]),
+                                                Ms=129.1, name='NeuSehitoglu', Mss=-112.59175344345212, fM=0.65,
+                                                beta=0., alpha=4., n=4., sde=0.04, g0=60, g1=176000, g2=5.2,
                                                 g_mean=57, g_std=350)
-print(neu_sehitoglu.Mss)
+neu_sehitoglu.R1 = 0.02013530291125219
+neu_sehitoglu.R2 = 0.02013530291125219
+neu_sehitoglu.dV = 0.037438411828539964
+neu_sehitoglu.k = 0.008300252500000004
+
 
 hazar_et_al = ElasticPlasticTransformMaterial(E=200.5e3, v=0.27, sy0M=1016, sy0A=420., Q=180., b=100.,
                                               Cm=np.array([135e3, 700e3, 50e3]),
@@ -135,21 +139,23 @@ hazar_et_al.dV = 0.023364550877
 hazar_et_al.R1 = 0.0198377
 hazar_et_al.R2 = 0.00533789
 
-SS2506 = ElasticPlasticTransformMaterial(E=200.e3, v=0.273, sy0M=1099.7293833, sy0A=420., Q=0., b=0.,
-                                         Cm=np.array([3.45681604e+04, 1.65655117e+05, 5.11479494e+05]),
-                                         gamma_m=np.array([4.17222046e+01, 3.05659804e+02, 7.58674760e+02]),
-                                         a=0.04174*np.array([1., 0., 0.]),
-                                         Ms=166.69903883197608, name='SS2506', Mss=-43.44, fM=0.8,
-                                         beta=841.893, alpha=129.5, n=4., sde=0.04,
+SS2506 = ElasticPlasticTransformMaterial(E=195.e3, v=0.27, sy0M=1137.77878007, sy0A=420., Q=0., b=0.,
+                                         Cm=np.array([43496.06492213, 438169.64328922, 542518.46435554]),
+                                         gamma_m=np.array([52.29850275, 483.57664975, 2541.45441662]),
+                                         a=np.array([0.009337669592, 2*2e-5,
+                                                     81/16*2e-7]),
+                                         Ms=197.75201617791663, name='SS2506', Mss=-148.38998859637542, fM=0.8,
+                                         beta=0*841.893, alpha=129.5, n=4., sde=0.04,
                                          g0=-1.918/2,  # 3.077651873747456,
                                          # g1=68.83381914607745, g2=0, g_mean=0, g_std=1.,
                                          g1=5.18, g2=1.918/2., g_mean=0, g_std=1.,
                                          fsb0=0.12948)
 
-SS2506.k = 0.0132
-SS2506.R1 = 0.025
-SS2506.R2 = 0.01
-SS2506.dV = 0.037
+SS2506.k = 0.014793663333333332
+SS2506.R1 = 8.76558745e-03
+SS2506.R2 = 2.11646233e-02
+SS2506.dV = 0.030435492416000003
+# SS2506.dV = 0.037
 
 
 """
@@ -170,5 +176,6 @@ g1=68.83381914607745,
 # 75            4.92067433e+02
 
 if __name__ == '__main__':
-    print(neu_sehitoglu.umat_parameters())
-    print(-np.log(1-0.78)/hazar_et_al.k - hazar_et_al.Ms - hazar_et_al.a1*800 + 22)
+    ms = -np.log(0.2)/SS2506.k - SS2506.Ms --53.40614314338714 + 22
+    print(ms, SS2506.dV/3)
+    print(SS2506.a1, SS2506.a2, SS2506.a3)

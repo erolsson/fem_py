@@ -6,10 +6,8 @@ import numpy as np
 
 import odbAccess
 
-simulation_directory = sys.argv[-2]
 simulation_name = sys.argv[-1]
 
-os.chdir(simulation_directory)
 odb = odbAccess.openOdb(simulation_name + '.odb')
 frames_load = odb.steps['step'].frames
 

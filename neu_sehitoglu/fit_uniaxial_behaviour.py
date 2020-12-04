@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 def kinematic_hardening(strain, par):
     back_stress = 0*strain
-    for i in range(len(par)/2):
+    for i in range(len(par)//2):
         C = abs(par[2*i])
         g = abs(par[2*i + 1])
         back_stress += C/g*(1 - np.exp(-g*strain))
